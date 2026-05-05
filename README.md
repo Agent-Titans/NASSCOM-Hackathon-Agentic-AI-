@@ -13,7 +13,7 @@ An autonomous, multi-agent AI solution for IT ticket classification, routing, au
 
 ### Prerequisites
 - Python 3.9+
-- pip or conda
+- pip
 
 ### Installation
 ```bash
