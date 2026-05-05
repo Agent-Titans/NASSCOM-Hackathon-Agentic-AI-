@@ -1,6 +1,8 @@
 # NASSCOM-Hackathon-Agentic-AI-
-Repository will contain all files and entity diagrams of IT ticketing Agentic AI system
+The repository will contain all files and entity diagrams of IT ticketing Agentic AI system
 # Intelligent Multi-Agent System for IT Ticket Routing and Automated Resolution
+
+Please Read Tracking/Simplified_project_structure for more simplified project doc
 
 Team: Agent Titans | NASSCOM Agentic AI Hackathon 2026
 
