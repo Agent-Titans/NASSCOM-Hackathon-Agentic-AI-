@@ -1,0 +1,587 @@
+# Simple Project Documentation - IT Ticket Routing System
+
+Design will be changed, and by the 15th, a final design will be submitted, entity diagrams will be made using Visio
+LLM setup will be either with GEMINI API and Claude Code or MiniMax and Claude Code
+
+---
+
+## What Are We Doing? (Simple Explanation)
+
+We are building a **smart automatic ticket system for IT support teams. 
+
+The Problem: When someone has a computer problem (broken printer, lost password, etc.), the IT team receives tickets. Right now:
+- Tickets go to the wrong team (wrong routing)
+- People wait too long for help
+- The same problems get solved again and again
+- Support staff are overworked
+
+Our Solution: We will build 4 robot assistants that work together to:
+1. Read the problem (ticket)
+2. Understand what type of problem it is (classify)
+3. Send it to the right team (route)
+4. Give step-by-step instructions to fix it (resolve)
+5. Check if they should ask a human for help (escalate)
+
+All of this happens in seconds, not hours!
+
+---
+
+## Simple Architecture (How It Works)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│         User Types Problem in Streamlit App                │
+│                 (Web Interface)                            │
+│                                                             │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│          AGENT 1: CLASSIFIER AGENT                         │
+│  "What type of problem is this?"                           │
+│  (Reads ticket, checks keywords)                           │
+│  Output: Category (Hardware/Software/Network/etc)          │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│          AGENT 2: ROUTER AGENT                             │
+│  "Which team should fix this?"                             │
+│  (Looks at category, priority)                             │
+│  Output: Department, Priority (High/Medium/Low)            │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│          AGENT 3: RESOLVER AGENT                           │
+│  "How do we fix this?"                                     │
+│  (Searches similar past tickets, creates steps)            │
+│  Output: Step-by-step instructions                         │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│          AGENT 4: SUPERVISOR AGENT                         │
+│  "Is this ready? Or does a human need to help?"            │
+│  (Checks confidence, decides escalation)                   │
+│  Output: Final decision + confidence score                 │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│              FINAL RESULT SHOWN TO USER                     │
+│  Category | Team | Priority | Steps | Escalate? | Confidence
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Tech Stack (What We Use)
+
+| Technology | What It Does | Where We Get It |
+|-----------|-------------|-----------------|
+| **Python** | Programming language | Open-source, free |
+| **Streamlit** | Makes the web app (buttons, forms, displays) | Open-source, pip install |
+| **CrewAI** | Makes the agents work together | Open-source, pip install |
+| **LangChain** | Helps AI understand language | Open-source, pip install |
+| **Google Gemini API** | AI brain (reads and understands tickets) | Free API with API key |
+| **ChromaDB** | Database to store past tickets | Open-source, pip install |
+| **FastAPI** | Backend server (for future) | Open-source, pip install |
+
+### Tech Explanation (Simple)
+
+**Python** - Like English for computers. We write instructions in Python, and the computer understands.
+
+**Streamlit** - A magic tool that turns Python code into a website. You don't need to be a web expert. Write Python → Get a website.
+
+**CrewAI** - Framework that makes multiple AI agents work together like a team. Each agent has a job.
+
+**LangChain** - Makes it easier to work with AI. Think of it as a translator between your code and the AI.
+
+**Google Gemini API** - Free AI from Google. We send it text, it understands and responds. (Alternative: ChatGPT API)
+
+**ChromaDB** - Stores information in a smart way. When we ask "show me similar tickets", it searches fast.
+
+---
+
+## Code Flow (Where Code Goes)
+
+### Step 1: User Submits Ticket
+```
+User fills form in Streamlit app
+    ↓
+Form data goes to app.py
+    ↓
+app.py calls process_ticket() function
+```
+
+### Step 2: Four Agents Process
+```
+ClassifierAgent.classify() → Reads ticket text → Finds category
+    ↓
+RouterAgent.route() → Takes category → Finds department + priority
+    ↓
+ResolverAgent.resolve() → Finds similar past tickets → Creates steps
+    ↓
+SupervisorAgent.supervise() → Checks confidence → Decides escalation
+```
+
+### Step 3: Result Displayed
+```
+All results combined
+    ↓
+Sent back to Streamlit
+    ↓
+User sees: Category, Team, Priority, Steps, Confidence, Escalate?
+```
+
+---
+
+## File Structure (Where Everything Lives)
+
+```
+📁 NASSCOM/                           (Main folder)
+│
+├── 📄 app.py                         (Main Streamlit app - the website)
+├── 📄 requirements.txt               (List of libraries to install)
+├── 📄 README.md                      (Project description)
+│
+├── 📁 agents/                        (The 4 robot assistants)
+│   ├── 📄 classifier.py              (Agent 1: Understands problem type)
+│   ├── 📄 router.py                  (Agent 2: Sends to right team)
+│   ├── 📄 resolver.py                (Agent 3: Gives instructions)
+│   ├── 📄 supervisor.py              (Agent 4: Checks confidence)
+│   └── 📄 __init__.py                (Makes it a module)
+│
+├── 📁 knowledge/                     (Database stuff)
+│   ├── 📄 rag_handler.py             (Searches for similar tickets)
+│   ├── 📄 vector_store.py            (Stores tickets smartly)
+│   └── 📄 __init__.py
+│
+├── 📁 utils/                         (Helper tools)
+│   ├── 📄 config.py                  (Settings, API keys)
+│   ├── 📄 data_processor.py          (Cleans data, hides private info)
+│   └── 📄 __init__.py
+│
+└── 📁 data/                          (Past ticket examples)
+    └── 📄 sample_tickets.json        (5 example tickets for learning)
+```
+
+---
+
+## How to Install and Run (Steps)
+
+### Step 1: Get the Code
+```bash
+cd /Users/karanjoshi/Desktop/NASSCOM
+```
+
+### Step 2: Install Libraries
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+- `streamlit` - Website maker
+- `crewai` - Agent framework
+- `langchain` - AI helper
+- `chromadb` - Database
+- And others...
+
+### Step 3: Add Google API Key
+Create `.env` file:
+```
+GOOGLE_API_KEY=your_key_here
+LLM_MODEL=gemini-1.5-pro
+```
+
+Get key from: https://makersuite.google.com/app/apikeys
+
+### Step 4: Run the App
+```bash
+streamlit run app.py
+```
+
+Opens at: `http://localhost:8501`
+
+---
+
+## APIs and Libraries - Where We Get Them
+
+| Source | What We Use | Free? | Purpose |
+|--------|------------|-------|---------|
+| **PyPI (pip)** | Streamlit, CrewAI, LangChain, ChromaDB | YES | Core libraries |
+| **Google Cloud** | Gemini API (or GPT-4) | YES (free tier) | AI brain |
+| **GitHub** | Open-source code | YES | Reference code |
+| **Python.org** | Python language | YES | Base programming |
+
+---
+
+## Key Concepts Explained
+
+### What is an "Agent"?
+An agent is a small AI program that does ONE job:
+- **Classifier**: "What is this?"
+- **Router**: "Who handles it?"
+- **Resolver**: "How to fix it?"
+- **Supervisor**: "Is this good enough?"
+
+### What is "RAG" (Knowledge Retrieval)?
+RAG = Retrieval Augmented Generation
+
+Simple: When the resolver needs to give instructions, it searches past tickets that are similar:
+- "User has a printer problem."
+- System finds: "2 weeks ago, someone had a printer problem → solution was restart printer"
+- Uses that solution as reference
+
+### What is Confidence Score?
+A percentage (0-100%) that says: "How sure are we this answer is correct?"
+- 90% confidence = Probably right, send to user
+- 50% confidence = Not sure, ask a human
+
+---
+
+## Data Model (Database Design)
+
+### Ticket Entity (What information about each ticket)
+```
+Ticket
+├── ticket_id (unique number, like T-2001)
+├── description (what the user typed)
+├── category (Hardware, Software, Network, Security, HR/IT Access)
+├── subcategory (Printer, Monitor, etc)
+├── priority (Low, Medium, High, Critical)
+├── department (Hardware Support, DevOps, etc)
+├── resolved (yes/no)
+├── resolution_steps (list of fix instructions)
+├── confidence_score (0.0 to 1.0)
+└── escalate (yes/no - needs human?)
+```
+
+### Relationships
+```
+One Ticket → Goes to One Department
+One Department → Has Many Support Teams
+One Ticket → Has Many Resolution Steps
+```
+
+---
+
+## Data Sources
+
+Where we get ticket information:
+
+1. **User Input** (Right Now)
+   - User types in Streamlit form
+   - System processes it
+
+2. **Sample Data** (For Learning)
+   - File: `data/sample_tickets.json`
+   - 5 example tickets to learn patterns
+
+3. **Past Tickets** (Future)
+   - Will connect to: ServiceNow, Jira, Zendesk
+   - Real tickets from companies
+
+4. **Knowledge Base** (Future)
+   - Internal documentation
+   - IT solutions from past
+   - Error logs and solutions
+
+---
+
+## Low-Level Design (LLD)
+
+### How Each Agent Works (Inside Details)
+
+#### Agent 1: Classifier
+```
+Input: "My printer is not printing"
+Process:
+  1. Convert to lowercase: "my printer is not printing"
+  2. Count keywords: printer=1, not=1, printing=1
+  3. Score each category:
+     - Hardware: 3 matches → score 3
+     - Software: 0 matches → score 0
+     - Network: 0 matches → score 0
+  4. Winner: Hardware (highest score)
+Output: 
+  category = "Hardware"
+  subcategory = "Printer"
+  confidence = 0.6
+```
+
+#### Agent 2: Router
+```
+Input: category="Hardware", urgency="High"
+Process:
+  1. Look up Hardware in routing map
+  2. Get: department="Hardware Support", team="IT Operations"
+  3. Adjust priority based on category + urgency
+     - If Security → raise to High
+     - If Critical urgency → raise to Critical
+Output:
+  department = "Hardware Support"
+  team = "IT Operations"
+  priority = "High"
+```
+
+#### Agent 3: Resolver
+```
+Input: category="Hardware", subcategory="Printer"
+Process:
+  1. Look up "Hardware" + "Printer" in solutions database
+  2. Find stored solution steps:
+     - "Check if powered on"
+     - "Clear printer queue"
+     - "Restart printer"
+     - etc
+Output:
+  resolution_steps = [list of 5 steps]
+  estimated_time = "4-24 hours"
+```
+
+#### Agent 4: Supervisor
+```
+Input: classification, routing, resolution
+Process:
+  1. Calculate confidence:
+     - Classifier confidence: 60%
+     - Resolver confidence: 80% (5 steps available)
+     - Average = 70%
+  2. Check if escalate:
+     - Confidence < 75%? → YES, escalate
+     - Is Security? → YES, escalate
+     - Priority = Critical? → YES, escalate
+Output:
+  confidence = 0.70
+  escalate = true (because < 75%)
+  escalation_reason = "Low confidence score"
+```
+
+---
+
+## Data Flow Diagram (DFD)
+
+```
+                    ┌──────────────┐
+                    │ Streamlit UI │
+                    └────────┬─────┘
+                             │
+                    ┌────────▼────────┐
+                    │  Ticket Input   │
+                    │  (text, etc)    │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+    ┌───▼───┐           ┌───▼───┐           ┌───▼───┐
+    │Classify│          │ Route │         │Resolve │
+    │ Agent  │          │ Agent │         │ Agent  │
+    └───┬───┘           └───┬───┘         └───┬───┘
+        │                   │                 │
+        └───────────────────┼─────────────────┘
+                            │
+                      ┌─────▼─────┐
+                      │ Supervisor│
+                      │  Agent    │
+                      └─────┬─────┘
+                            │
+                    ┌───────▼───────┐
+                    │  Final Result │
+                    │  (JSON Data)  │
+                    └───────┬───────┘
+                            │
+                    ┌───────▼────────┐
+                    │ Display on UI  │
+                    │ (website)      │
+                    └────────────────┘
+```
+
+---
+
+## Sequence Diagram (What Happens in Order)
+
+```
+User          Streamlit        Classifier      Router          Resolver        Supervisor
+ │                │                 │             │               │               │
+ │─ Submit ───────▶│                 │             │               │               │
+ │  Ticket         │                 │             │               │               │
+ │                 │─ Classify ─────▶│             │               │               │
+ │                 │                 │─ Category  │               │               │
+ │                 │◀────────────────│             │               │               │
+ │                 │                 │             │               │               │
+ │                 │─ Route ──────────────────────▶│               │               │
+ │                 │                 │             │─ Department  │               │
+ │                 │◀────────────────────────────────               │               │
+ │                 │                 │             │               │               │
+ │                 │─ Resolve ───────────────────────────────────▶│               │
+ │                 │                 │             │               │─ Steps       │
+ │                 │◀──────────────────────────────────────────────               │
+ │                 │                 │             │               │               │
+ │                 │─ Supervise ──────────────────────────────────────────────────▶│
+ │                 │                 │             │               │               │
+ │                 │                 │             │               │  Confidence  │
+ │◀─ Show Result ──│◀──────────────────────────────────────────────────────────────│
+ │                 │                 │             │               │               │
+```
+
+---
+
+## State Transition Diagram
+
+```
+           ┌─────────────────────┐
+           │   TICKET RECEIVED   │
+           │  (User submitted)   │
+           └──────────┬──────────┘
+                      │
+                      ▼
+           ┌─────────────────────┐
+           │  CLASSIFYING (1/4)  │
+           │ Agent 1 working     │
+           └──────────┬──────────┘
+                      │
+                      ▼
+           ┌─────────────────────┐
+           │  ROUTING (2/4)      │
+           │ Agent 2 working     │
+           └──────────┬──────────┘
+                      │
+                      ▼
+           ┌─────────────────────┐
+           │  RESOLVING (3/4)    │
+           │ Agent 3 working     │
+           └──────────┬──────────┘
+                      │
+                      ▼
+           ┌─────────────────────┐
+           │  SUPERVISING (4/4)  │
+           │ Agent 4 working     │
+           └──────────┬──────────┘
+                      │
+           ┌──────────┴──────────┐
+           │                     │
+      ┌────▼────┐          ┌─────▼──────┐
+      │ READY   │          │ ESCALATE   │
+      │  AUTO   │          │  TO HUMAN  │
+      │RESOLVE  │          │  REVIEW    │
+      └────┬────┘          └─────┬──────┘
+           │                     │
+           ▼                     ▼
+        [SENT]                [WAITING]
+        (To team)          (For human to read)
+```
+
+---
+
+## How Agents Communicate
+
+```python
+# Example: How the flow works in code
+
+# Step 1: Classifier reads and classifies
+classifier = ClassifierAgent()
+classification = classifier.classify("My printer is broken")
+# Returns: {category: "Hardware", confidence: 0.6}
+
+# Step 2: Router takes classifier output
+router = RouterAgent()
+routing = router.route(classification, urgency="High")
+# Returns: {department: "Hardware Support", priority: "High"}
+
+# Step 3: Resolver takes classifier output
+resolver = ResolverAgent()
+resolution = resolver.resolve(classification, ticket_text)
+# Returns: {resolution_steps: [...], estimated_time: "4-24 hours"}
+
+# Step 4: Supervisor takes ALL outputs
+supervisor = SupervisorAgent()
+final_result = supervisor.supervise(classification, routing, resolution)
+# Returns: Everything + confidence + escalate decision
+
+# Step 5: Show to user
+streamlit_display(final_result)
+```
+
+---
+
+## Open Source Libraries We Use
+
+| Library | Purpose | Installation |
+|---------|---------|--------------|
+| **Streamlit** | Web UI framework | `pip install streamlit` |
+| **CrewAI** | Agent framework | `pip install crewai` |
+| **LangChain** | LLM helper | `pip install langchain` |
+| **ChromaDB** | Vector database | `pip install chromadb` |
+| **FAISS** | Vector search | `pip install faiss-cpu` |
+| **Pandas** | Data manipulation | `pip install pandas` |
+| **Pydantic** | Data validation | `pip install pydantic` |
+| **Python-dotenv** | Environment variables | `pip install python-dotenv` |
+
+---
+
+## API Sources
+
+### 1. Google Gemini API (Free)
+**Where:** https://makersuite.google.com/app/apikeys
+**Cost:** Free with limits
+**What:** AI brain - understands and generates text
+**How we use:** Send ticket text, get understanding + suggestions
+
+### 2. Alternative: OpenAI GPT API (Paid)
+**Where:** https://platform.openai.com/api-keys
+**Cost:** Pay per token
+**What:** Advanced AI (better than Gemini)
+**How we use:** Same as Gemini, but better results
+
+---
+
+## Summary Table - Everything in One Place
+
+| Component | Type | Open Source? | Free? | What It Does |
+|-----------|------|-------------|-------|-------------|
+| Python | Language | YES | YES | Lets us code |
+| Streamlit | Library | YES | YES | Makes website |
+| CrewAI | Framework | YES | YES | Agent management |
+| LangChain | Library | YES | YES | AI helper |
+| ChromaDB | Database | YES | YES | Stores tickets |
+| Google Gemini | API | NO | YES (free tier) | AI brain |
+| FastAPI | Framework | YES | YES | Backend server |
+
+---
+
+## What We're Learning/Building
+
+1. **Now:** Simple keyword-based classification (works for demo)
+2. **Next:** Add Google Gemini API (AI reads tickets better)
+3. **Later:** Connect to real tickets from ServiceNow/Jira
+4. **Future:** Add machine learning (learns from past tickets)
+
+---
+
+## Important Files Quick Reference
+
+| File | What To Edit | When |
+|------|-------------|------|
+| `.env.example` → `.env` | Add your Google API key | Before running |
+| `requirements.txt` | Add new libraries | If adding features |
+| `app.py` | Change UI/website look | To redesign interface |
+| `agents/*.py` | Change how agents work | To improve accuracy |
+| `data/sample_tickets.json` | Add more examples | To train system |
+
+---
+
+## Quick Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `ModuleNotFoundError` | Run `pip install -r requirements.txt` |
+| `API key error` | Add GOOGLE_API_KEY to `.env` file |
+| `Website won't load` | Run `streamlit run app.py` in the correct folder |
+| `Slow response` | Might be waiting for AI - takes 5-10 seconds |
+
+---
+
+
