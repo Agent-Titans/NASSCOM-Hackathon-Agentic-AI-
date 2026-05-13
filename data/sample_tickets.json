@@ -1,0 +1,52 @@
+[
+  {
+    "ticket_id": "T-2001",
+    "description": "My printer is not printing anything even though it shows connected",
+    "category": "Hardware",
+    "subcategory": "Printer",
+    "department": "Hardware Support",
+    "resolution": "Restarted printer service and updated drivers",
+    "resolution_time": "2 hours",
+    "resolved": true
+  },
+  {
+    "ticket_id": "T-2002",
+    "description": "Cannot connect to company VPN on my laptop",
+    "category": "Network",
+    "subcategory": "VPN",
+    "department": "Network Team",
+    "resolution": "Reinstalled VPN client and verified credentials",
+    "resolution_time": "1 hour",
+    "resolved": true
+  },
+  {
+    "ticket_id": "T-2003",
+    "description": "Application keeps crashing when I try to open reports",
+    "category": "Software",
+    "subcategory": "Application",
+    "department": "DevOps",
+    "resolution": "Cleared application cache and restarted",
+    "resolution_time": "30 minutes",
+    "resolved": true
+  },
+  {
+    "ticket_id": "T-2004",
+    "description": "Need password reset for my account",
+    "category": "HR/IT Access",
+    "subcategory": "Account Reset",
+    "department": "IT Helpdesk",
+    "resolution": "Sent password reset link to recovery email",
+    "resolution_time": "15 minutes",
+    "resolved": true
+  },
+  {
+    "ticket_id": "T-2005",
+    "description": "Monitor showing no signal from desktop",
+    "category": "Hardware",
+    "subcategory": "Monitor",
+    "department": "Hardware Support",
+    "resolution": "Checked cable connections and restarted computer",
+    "resolution_time": "45 minutes",
+    "resolved": true
+  }
+]
