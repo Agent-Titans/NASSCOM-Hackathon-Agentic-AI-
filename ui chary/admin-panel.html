@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Control Panel · Helpdesk</title>
+<style>
+:root {
+  --bg:#ffffff; --surface:#f5f5f7; --surface-warm:#fbfbfd;
+  --fg:#1d1d1f; --fg-2:#424245; --muted:#6e6e73; --meta:#86868b;
+  --border:#d2d2d7; --border-soft:#e8e8ed;
+  --accent:#0071e3; --accent-on:#ffffff; --accent-hover:#0077ed; --accent-active:#0066cc;
+  --success:#16a34a; --warn:#d97706; --danger:#dc2626;
+  --font-display:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-body:"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-mono:"SF Mono",ui-monospace,Menlo,monospace;
+  --text-xs:12px; --text-sm:14px; --text-base:17px; --text-lg:21px; --text-xl:28px;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:18px; --radius-pill:980px;
+  --elev-raised:0 12px 32px rgba(0,0,0,0.08);
+  --focus-ring:0 0 0 4px color-mix(in oklab,var(--accent),transparent 65%);
+  --ease:cubic-bezier(0.28,0,0.22,1); --t:220ms; --tf:150ms;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--fg);background:var(--surface);-webkit-font-smoothing:antialiased;display:flex}
+
+/* sidebar */
+.sidebar{width:240px;min-height:100dvh;background:var(--bg);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:20}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.02em;color:var(--fg);border-bottom:1px solid var(--border-soft)}
+.brand-icon{width:28px;height:28px;background:var(--fg);border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.brand-icon svg{width:16px;height:16px;fill:var(--bg)}
+.admin-chip{margin-left:auto;background:color-mix(in oklab,var(--danger) 12%,transparent);color:var(--danger);font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-pill);letter-spacing:0.04em}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--meta);padding:10px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);font-size:var(--text-sm);color:var(--fg-2);cursor:pointer;transition:background var(--tf) var(--ease),color var(--tf) var(--ease);border:none;background:none;width:100%;text-align:left}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-item:hover{background:var(--surface);color:var(--fg)}
+.nav-item.active{background:color-mix(in oklab,var(--accent) 10%,transparent);color:var(--accent);font-weight:600}
+.nav-item .nbadge{margin-left:auto;background:var(--accent);color:var(--accent-on);font-size:10px;font-weight:700;padding:1px 6px;border-radius:var(--radius-pill);min-width:18px;text-align:center}
+.nav-item .nbadge.warn{background:var(--warn)}
+.nav-item .nbadge.danger{background:var(--danger)}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border-soft)}
+.user-row{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0}
+.user-info .name{font-size:var(--text-sm);font-weight:600}
+.user-info .role{font-size:11px;color:var(--muted)}
+
+/* main */
+.main{margin-left:240px;flex:1;min-height:100dvh}
+.topbar{height:52px;background:color-mix(in oklab,var(--bg) 85%,transparent);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;padding:0 28px;gap:12px;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:-0.02em}
+.topbar-sub{font-size:var(--text-sm);color:var(--muted);margin-left:8px}
+.topbar-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 16px;border:none;border-radius:var(--radius-pill);font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;cursor:pointer;transition:background var(--tf) var(--ease),transform 80ms var(--ease)}
+.btn svg{width:14px;height:14px}
+.btn:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.btn-primary{background:var(--accent);color:var(--accent-on)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary:active{background:var(--accent-active);transform:scale(0.97)}
+.btn-ghost{background:transparent;color:var(--fg-2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface)}
+
+/* pages */
+.page{display:none;padding:28px}
+.page.active{display:block}
+
+/* section title */
+.section-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.02em;margin-bottom:4px}
+.section-sub{font-size:var(--text-sm);color:var(--muted);margin-bottom:24px}
+
+/* KPI cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.kpi-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:20px 22px}
+.kpi-label{font-size:var(--text-sm);color:var(--muted);margin-bottom:8px}
+.kpi-value{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.kpi-meta{font-size:11px;color:var(--meta);margin-top:4px}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;margin-top:6px}
+.delta-up{background:color-mix(in oklab,var(--success) 12%,transparent);color:var(--success)}
+.delta-dn{background:color-mix(in oklab,var(--danger) 10%,transparent);color:var(--danger)}
+
+/* two-col layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+
+/* widget card */
+.widget{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:20px 22px}
+.widget-title{font-size:var(--text-sm);font-weight:700;color:var(--fg-2);margin-bottom:14px}
+
+/* hand bar */
+.hand-bar{display:flex;flex-direction:column;gap:10px}
+.hbar-row{display:flex;align-items:center;gap:10px}
+.hbar-label{font-size:var(--text-sm);color:var(--fg-2);width:80px;flex-shrink:0}
+.hbar-track{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:4px;transition:width 0.6s var(--ease)}
+.fill-h1{background:var(--success)}
+.fill-h2{background:var(--warn)}
+.fill-h3{background:var(--danger)}
+.hbar-count{font-size:var(--text-sm);font-family:var(--font-mono);color:var(--muted);width:32px;text-align:right;flex-shrink:0}
+
+/* status donut-like legend */
+.status-legend{display:flex;flex-direction:column;gap:10px}
+.sl-row{display:flex;align-items:center;gap:10px}
+.sl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sl-name{flex:1;font-size:var(--text-sm);color:var(--fg-2)}
+.sl-val{font-size:var(--text-sm);font-family:var(--font-mono);font-weight:600;color:var(--fg)}
+.sl-bar{width:100%;height:6px;background:var(--surface);border-radius:3px;overflow:hidden;margin-top:3px}
+.sl-fill{height:100%;border-radius:3px}
+
+/* tickets table */
+.t-wrap{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);overflow:hidden}
+.t-toolbar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap}
+.t-search{flex:1;min-width:160px;height:34px;padding:0 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:var(--text-sm);color:var(--fg);outline:none}
+.t-search:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.t-filter{height:34px;padding:0 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:var(--text-sm);color:var(--fg);outline:none;cursor:pointer}
+.t-filter:focus{border-color:var(--accent)}
+.t-row{display:grid;grid-template-columns:100px 1fr 100px 120px 140px 100px 90px;border-bottom:1px solid var(--border-soft)}
+.t-row:last-child{border-bottom:none}
+.t-head{background:var(--surface);font-size:11px;font-weight:700;letter-spacing:0.04em;color:var(--meta);text-transform:uppercase}
+.t-cell{padding:11px 14px;font-size:var(--text-sm);display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.t-cell.id{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.t-cell.subj{white-space:normal;line-height:1.3}
+.data-row{cursor:pointer;transition:background var(--tf) var(--ease)}
+.data-row:hover{background:var(--surface)}
+
+/* badges */
+.badge-status{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap}
+.badge-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+.s-open{background:color-mix(in oklab,var(--accent) 12%,transparent);color:var(--accent)}
+.s-resolved{background:color-mix(in oklab,var(--success) 12%,transparent);color:var(--success)}
+.s-closed{background:color-mix(in oklab,var(--fg) 8%,transparent);color:var(--muted)}
+.s-triaged{background:color-mix(in oklab,var(--warn) 14%,transparent);color:var(--warn)}
+.conf{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:0.04em;white-space:nowrap}
+.conf-high{background:color-mix(in oklab,var(--success) 12%,transparent);color:var(--success)}
+.conf-medium{background:color-mix(in oklab,var(--warn) 14%,transparent);color:var(--warn)}
+.conf-none{background:color-mix(in oklab,var(--danger) 10%,transparent);color:var(--danger)}
+
+/* team workload */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:28px}
+.agent-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:18px 20px}
+.ac-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ac-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;flex-shrink:0}
+.ac-name{font-size:var(--text-sm);font-weight:600;color:var(--fg)}
+.ac-dept{font-size:11px;color:var(--muted)}
+.ac-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.ac-stat{text-align:center}
+.ac-stat-val{font-family:var(--font-mono);font-size:var(--text-lg);font-weight:600;font-variant-numeric:tabular-nums}
+.ac-stat-lbl{font-size:10px;color:var(--meta)}
+.ac-load-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.ac-load-track{height:6px;background:var(--surface);border-radius:3px;overflow:hidden}
+.ac-load-fill{height:100%;border-radius:3px;transition:width 0.6s var(--ease)}
+
+/* triage queue */
+.triage-table{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);overflow:hidden}
+.tr-row{display:grid;grid-template-columns:100px 1fr 130px 110px 120px 100px;border-bottom:1px solid var(--border-soft)}
+.tr-row:last-child{border-bottom:none}
+.tr-head{background:var(--surface);font-size:11px;font-weight:700;letter-spacing:0.04em;color:var(--meta);text-transform:uppercase}
+.tr-cell{padding:12px 14px;font-size:var(--text-sm);display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tr-cell.id{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.tr-cell.subj{white-space:normal;line-height:1.3}
+.priority-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.p-high{background:color-mix(in oklab,var(--danger) 12%,transparent);color:var(--danger)}
+.p-med{background:color-mix(in oklab,var(--warn) 14%,transparent);color:var(--warn)}
+.p-low{background:color-mix(in oklab,var(--success) 10%,transparent);color:var(--success)}
+.assign-btn{height:26px;padding:0 10px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-pill);font-size:11px;font-weight:600;color:var(--accent);cursor:pointer;transition:background var(--tf) var(--ease)}
+.assign-btn:hover{background:color-mix(in oklab,var(--accent) 8%,transparent)}
+
+/* empty state */
+.empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:var(--text-sm)}
+.empty svg{width:40px;height:40px;opacity:.3;margin-bottom:12px}
+
+/* toast */
+#toast{position:fixed;bottom:24px;right:24px;z-index:100;pointer-events:none}
+.toast-item{background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:var(--radius-pill);font-size:var(--text-sm);font-weight:600;margin-top:8px;opacity:0;transform:translateY(8px);transition:all 0.3s var(--ease)}
+.toast-item.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .t-row,.tr-row{grid-template-columns:80px 1fr 90px 80px}
+  .t-row .t-cell:nth-child(n+5),.tr-row .tr-cell:nth-child(n+5){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.99 16.01 1 13.66 1c-1.18 0-2.25.49-3.01 1.28L10 2.96l-.65-.68C8.59 1.49 7.52 1 6.34 1 4 1 2 2.99 2 5.34c0 .46.1.9.18 1.34H0v2h1l1 13h20l1-13h1V6h-4zm-6.34-3c.87 0 1.66.77 1.66 1.66 0 .45-.19.87-.51 1.18L12 8.59 9.19 5.84C8.88 5.53 8.68 5.11 8.68 4.66 8.68 3.77 9.47 3 10.34 3H13.66z"/></svg>
+    </div>
+    Helpdesk
+    <span class="admin-chip">ADMIN</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </button>
+
+    <div class="nav-label">Tickets</div>
+    <button class="nav-item" onclick="showPage('alltickets')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6H4V4h16v2zm-2 4H4v2h14v-2zm2 4H4v2h16v-2zm-2 4H4v2h14v-2z"/></svg>
+      All Tickets
+      <span class="nbadge">48</span>
+    </button>
+    <button class="nav-item" onclick="showPage('triage')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      Triage Queue
+      <span class="nbadge danger">11</span>
+    </button>
+
+    <div class="nav-label">Team</div>
+    <button class="nav-item" onclick="showPage('team')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      Team Workload
+      <span class="nbadge warn">3</span>
+    </button>
+
+    <div class="nav-label">System</div>
+    <button class="nav-item" onclick="toast('Settings coming soon')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      Settings
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar" style="background:#6366f1;color:#fff">SA</div>
+      <div class="user-info">
+        <div class="name">Super Admin</div>
+        <div class="role">admin@corp.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE: DASHBOARD -->
+  <section class="page active" id="page-dashboard">
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">Dashboard</span>
+        <span class="topbar-sub">Real-time overview — Jun 7, 2026</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="toast('Report exported')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export
+        </button>
+        <button class="btn btn-primary" onclick="toast('Refreshed')">Refresh</button>
+      </div>
+    </div>
+    <div style="padding:28px">
+      <div class="section-title">Overview</div>
+      <div class="section-sub">Across all agents, teams and queues</div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Tickets</div>
+          <div class="kpi-value">248</div>
+          <div class="kpi-delta delta-up">↑ 12% vs last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Open</div>
+          <div class="kpi-value" style="color:var(--accent)">48</div>
+          <div class="kpi-meta">34 with agent · 14 pending user</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Resolution Time</div>
+          <div class="kpi-value">4.2h</div>
+          <div class="kpi-delta delta-dn">↑ 0.6h vs last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Auto-Resolved (Hand 1)</div>
+          <div class="kpi-value" style="color:var(--success)">61%</div>
+          <div class="kpi-meta">151 of 248 this month</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="two-col">
+        <div class="widget">
+          <div class="widget-title">Tickets by AI Hand</div>
+          <div class="hand-bar">
+            <div class="hbar-row">
+              <span class="hbar-label">Hand 1</span>
+              <div class="hbar-track"><div class="hbar-fill fill-h1" style="width:61%"></div></div>
+              <span class="hbar-count">151</span>
+            </div>
+            <div class="hbar-row">
+              <span class="hbar-label">Hand 2</span>
+              <div class="hbar-track"><div class="hbar-fill fill-h2" style="width:28%"></div></div>
+              <span class="hbar-count">70</span>
+            </div>
+            <div class="hbar-row">
+              <span class="hbar-label">Hand 3</span>
+              <div class="hbar-track"><div class="hbar-fill fill-h3" style="width:11%"></div></div>
+              <span class="hbar-count">27</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+            <span class="conf conf-high">61% High Confidence</span>
+            <span class="conf conf-medium">28% Medium</span>
+            <span class="conf conf-none">11% No Match</span>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-title">Status Breakdown</div>
+          <div class="status-legend">
+            <div>
+              <div class="sl-row">
+                <div class="sl-dot" style="background:var(--accent)"></div>
+                <span class="sl-name">Open</span>
+                <span class="sl-val">48</span>
+              </div>
+              <div class="sl-bar"><div class="sl-fill" style="width:19%;background:var(--accent)"></div></div>
+            </div>
+            <div>
+              <div class="sl-row">
+                <div class="sl-dot" style="background:var(--success)"></div>
+                <span class="sl-name">Resolved</span>
+                <span class="sl-val">151</span>
+              </div>
+              <div class="sl-bar"><div class="sl-fill" style="width:61%;background:var(--success)"></div></div>
+            </div>
+            <div>
+              <div class="sl-row">
+                <div class="sl-dot" style="background:var(--muted)"></div>
+                <span class="sl-name">Closed</span>
+                <span class="sl-val">38</span>
+              </div>
+              <div class="sl-bar"><div class="sl-fill" style="width:15%;background:var(--muted)"></div></div>
+            </div>
+            <div>
+              <div class="sl-row">
+                <div class="sl-dot" style="background:var(--warn)"></div>
+                <span class="sl-name">In Triage</span>
+                <span class="sl-val">11</span>
+              </div>
+              <div class="sl-bar"><div class="sl-fill" style="width:4%;background:var(--warn)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team summary -->
+      <div class="widget-title" style="margin-bottom:12px">Team Load Summary</div>
+      <div class="three-col">
+        <div class="widget">
+          <div class="widget-title">IT Department</div>
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:4px">18 <span style="font-size:var(--text-sm);color:var(--muted);font-family:var(--font-body)">open</span></div>
+          <div style="font-size:var(--text-sm);color:var(--muted);margin-bottom:10px">5 agents · avg 3.6 tickets each</div>
+          <div style="height:6px;background:var(--surface);border-radius:3px"><div style="width:72%;height:100%;border-radius:3px;background:var(--accent)"></div></div>
+          <div style="font-size:11px;color:var(--meta);margin-top:4px">72% capacity</div>
+        </div>
+        <div class="widget">
+          <div class="widget-title">Network Team</div>
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:4px">12 <span style="font-size:var(--text-sm);color:var(--muted);font-family:var(--font-body)">open</span></div>
+          <div style="font-size:var(--text-sm);color:var(--muted);margin-bottom:10px">3 agents · avg 4.0 tickets each</div>
+          <div style="height:6px;background:var(--surface);border-radius:3px"><div style="width:80%;height:100%;border-radius:3px;background:var(--warn)"></div></div>
+          <div style="font-size:11px;color:var(--meta);margin-top:4px">80% capacity — near limit</div>
+        </div>
+        <div class="widget">
+          <div class="widget-title">Triage Team</div>
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;margin-bottom:4px">11 <span style="font-size:var(--text-sm);color:var(--muted);font-family:var(--font-body)">unassigned</span></div>
+          <div style="font-size:var(--text-sm);color:var(--muted);margin-bottom:10px">2 agents active</div>
+          <div style="height:6px;background:var(--surface);border-radius:3px"><div style="width:55%;height:100%;border-radius:3px;background:var(--danger)"></div></div>
+          <div style="font-size:11px;color:var(--meta);margin-top:4px">11 awaiting assignment</div>
+        </div>
+      </div>
+
+      <!-- Recent activity table -->
+      <div class="widget-title" style="margin-bottom:12px">Recent Activity</div>
+      <div class="t-wrap">
+        <div class="t-row t-head">
+          <div class="t-cell">ID</div>
+          <div class="t-cell">Subject</div>
+          <div class="t-cell">Status</div>
+          <div class="t-cell">Hand</div>
+          <div class="t-cell">Assigned To</div>
+          <div class="t-cell">Submitter</div>
+          <div class="t-cell">Time</div>
+        </div>
+        <div class="t-row data-row" onclick="showPage('alltickets')">
+          <div class="t-cell id">TKT-1048</div>
+          <div class="t-cell subj">Laptop won't boot after Windows update</div>
+          <div class="t-cell"><span class="badge-status s-open">Open</span></div>
+          <div class="t-cell"><span class="conf conf-high">Hand 1</span></div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">John Smith</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">a.kumar</div>
+          <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">9:04 AM</div>
+        </div>
+        <div class="t-row data-row" onclick="showPage('alltickets')">
+          <div class="t-cell id">TKT-1047</div>
+          <div class="t-cell subj">Slack notifications not working on mobile</div>
+          <div class="t-cell"><span class="badge-status s-resolved">Resolved</span></div>
+          <div class="t-cell"><span class="conf conf-high">Hand 1</span></div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">jane.doe</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">m.patel</div>
+          <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">8:51 AM</div>
+        </div>
+        <div class="t-row data-row" onclick="showPage('triage')">
+          <div class="t-cell id">TKT-1046</div>
+          <div class="t-cell subj">Custom ERP plugin crashes on checkout</div>
+          <div class="t-cell"><span class="badge-status s-triaged">Triage</span></div>
+          <div class="t-cell"><span class="conf conf-none">Hand 3</span></div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Triage Team</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">r.chen</div>
+          <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">8:33 AM</div>
+        </div>
+        <div class="t-row data-row" onclick="showPage('alltickets')">
+          <div class="t-cell id">TKT-1045</div>
+          <div class="t-cell subj">VPN latency spikes during peak hours</div>
+          <div class="t-cell"><span class="badge-status s-open">Open</span></div>
+          <div class="t-cell"><span class="conf conf-medium">Hand 2</span></div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Network Team</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">l.wang</div>
+          <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">8:17 AM</div>
+        </div>
+        <div class="t-row data-row" onclick="showPage('alltickets')">
+          <div class="t-cell id">TKT-1044</div>
+          <div class="t-cell subj">Request: additional storage for dev team</div>
+          <div class="t-cell"><span class="badge-status s-closed">Closed</span></div>
+          <div class="t-cell"><span class="conf conf-high">Hand 1</span></div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">IT Dept</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">s.lee</div>
+          <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">7:58 AM</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE: ALL TICKETS -->
+  <section class="page" id="page-alltickets">
+    <div class="topbar">
+      <span class="topbar-title">All Tickets</span>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="toast('Exported 48 tickets')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+    <div style="padding:28px">
+      <div class="section-title">All Tickets</div>
+      <div class="section-sub">48 open across all teams · use filters to narrow</div>
+      <div class="t-wrap">
+        <div class="t-toolbar">
+          <input class="t-search" placeholder="Search by ID, subject or user…" oninput="filterTickets(this.value)"/>
+          <select class="t-filter" id="f-status" onchange="filterTickets()">
+            <option value="">All Status</option>
+            <option>Open</option>
+            <option>Resolved</option>
+            <option>Closed</option>
+            <option>Triage</option>
+          </select>
+          <select class="t-filter" id="f-hand" onchange="filterTickets()">
+            <option value="">All Hands</option>
+            <option>Hand 1</option>
+            <option>Hand 2</option>
+            <option>Hand 3</option>
+          </select>
+          <select class="t-filter" id="f-team" onchange="filterTickets()">
+            <option value="">All Teams</option>
+            <option>IT Dept</option>
+            <option>Network Team</option>
+            <option>Triage Team</option>
+          </select>
+        </div>
+        <div class="t-row t-head">
+          <div class="t-cell">ID</div>
+          <div class="t-cell">Subject</div>
+          <div class="t-cell">Status</div>
+          <div class="t-cell">Hand</div>
+          <div class="t-cell">Assigned</div>
+          <div class="t-cell">Submitter</div>
+          <div class="t-cell">Date</div>
+        </div>
+        <div id="tickets-body">
+          <!-- rows injected by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE: TEAM WORKLOAD -->
+  <section class="page" id="page-team">
+    <div class="topbar">
+      <span class="topbar-title">Team Workload</span>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="toast('Rebalancing assignments…')">Auto-Rebalance</button>
+      </div>
+    </div>
+    <div style="padding:28px">
+      <div class="section-title">Team Workload</div>
+      <div class="section-sub">Agent-level ticket distribution and capacity</div>
+      <div class="team-grid" id="team-grid">
+        <!-- injected by JS -->
+      </div>
+
+      <div class="widget-title" style="margin-bottom:12px">Department Overview</div>
+      <div class="t-wrap">
+        <div class="t-row t-head" style="grid-template-columns:160px 1fr 90px 90px 90px 110px">
+          <div class="t-cell">Department</div>
+          <div class="t-cell">Active Agents</div>
+          <div class="t-cell">Open</div>
+          <div class="t-cell">Resolved</div>
+          <div class="t-cell">Avg Time</div>
+          <div class="t-cell">Capacity</div>
+        </div>
+        <div class="t-row" style="grid-template-columns:160px 1fr 90px 90px 90px 110px">
+          <div class="t-cell" style="font-weight:600">IT Dept</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">5 agents</div>
+          <div class="t-cell"><span class="badge-status s-open">18</span></div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">94</div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">3.8h</div>
+          <div class="t-cell"><span class="conf conf-medium">72%</span></div>
+        </div>
+        <div class="t-row" style="grid-template-columns:160px 1fr 90px 90px 90px 110px">
+          <div class="t-cell" style="font-weight:600">Network Team</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">3 agents</div>
+          <div class="t-cell"><span class="badge-status s-open">12</span></div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">41</div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">5.1h</div>
+          <div class="t-cell"><span class="conf conf-none">80%</span></div>
+        </div>
+        <div class="t-row" style="grid-template-columns:160px 1fr 90px 90px 90px 110px">
+          <div class="t-cell" style="font-weight:600">Triage Team</div>
+          <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">2 agents</div>
+          <div class="t-cell"><span class="badge-status s-triaged">11</span></div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">16</div>
+          <div class="t-cell" style="font-family:var(--font-mono);font-size:var(--text-sm)">6.4h</div>
+          <div class="t-cell"><span class="conf conf-none">55%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE: TRIAGE QUEUE -->
+  <section class="page" id="page-triage">
+    <div class="topbar">
+      <span class="topbar-title">Triage Queue</span>
+      <span style="margin-left:8px;font-size:var(--text-sm);background:color-mix(in oklab,var(--danger) 12%,transparent);color:var(--danger);padding:3px 10px;border-radius:var(--radius-pill);font-weight:600">11 unassigned</span>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="toast('Assigned all to triage team')">Assign All</button>
+        <button class="btn btn-primary" onclick="toast('AI suggested assignments applied')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          AI Suggest
+        </button>
+      </div>
+    </div>
+    <div style="padding:28px">
+      <div class="section-title">Triage Queue</div>
+      <div class="section-sub">Hand 3 tickets — no RAG match found, awaiting human assignment</div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);max-width:620px;margin-bottom:24px">
+        <div class="kpi-card">
+          <div class="kpi-label">Awaiting Assignment</div>
+          <div class="kpi-value" style="color:var(--danger)">11</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Wait Time</div>
+          <div class="kpi-value">2.3h</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">SLA Breaching</div>
+          <div class="kpi-value" style="color:var(--warn)">3</div>
+        </div>
+      </div>
+
+      <div class="triage-table">
+        <div class="tr-row tr-head">
+          <div class="tr-cell">ID</div>
+          <div class="tr-cell">Subject</div>
+          <div class="tr-cell">Submitted By</div>
+          <div class="tr-cell">Priority</div>
+          <div class="tr-cell">Wait</div>
+          <div class="tr-cell">Action</div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1046</div>
+          <div class="tr-cell subj">Custom ERP plugin crashes on checkout</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">r.chen</div>
+          <div class="tr-cell"><span class="priority-tag p-high">High</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--warn)">4.1h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1046 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1043</div>
+          <div class="tr-cell subj">SSO login failure for contractors</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">d.nguyen</div>
+          <div class="tr-cell"><span class="priority-tag p-high">High</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--warn)">3.7h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1043 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1040</div>
+          <div class="tr-cell subj">Data sync failing between CRM and warehouse</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">k.okafor</div>
+          <div class="tr-cell"><span class="priority-tag p-high">High</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--warn)">3.2h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1040 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1039</div>
+          <div class="tr-cell subj">Wi-Fi drops in building C after 6pm</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">p.smith</div>
+          <div class="tr-cell"><span class="priority-tag p-med">Medium</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">2.8h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1039 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1037</div>
+          <div class="tr-cell subj">New hire can't access Teams channels</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">hr.team</div>
+          <div class="tr-cell"><span class="priority-tag p-med">Medium</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">2.4h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1037 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1034</div>
+          <div class="tr-cell subj">Scheduled report not emailing on Fridays</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">f.ali</div>
+          <div class="tr-cell"><span class="priority-tag p-med">Medium</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">1.9h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1034 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1031</div>
+          <div class="tr-cell subj">Touchscreen monitor not calibrating</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">b.jones</div>
+          <div class="tr-cell"><span class="priority-tag p-low">Low</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">1.4h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1031 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1029</div>
+          <div class="tr-cell subj">External webcam not recognized in Zoom</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">c.torres</div>
+          <div class="tr-cell"><span class="priority-tag p-low">Low</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">1.1h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1029 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1027</div>
+          <div class="tr-cell subj">SharePoint migration breaking old links</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">m.garcia</div>
+          <div class="tr-cell"><span class="priority-tag p-low">Low</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">0.8h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1027 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1026</div>
+          <div class="tr-cell subj">PDF renderer crashing in production app</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">v.kumar</div>
+          <div class="tr-cell"><span class="priority-tag p-high">High</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">0.5h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1026 assigned')">Assign</button></div>
+        </div>
+        <div class="tr-row">
+          <div class="tr-cell id">TKT-1025</div>
+          <div class="tr-cell subj">Badge access not working on 3rd floor</div>
+          <div class="tr-cell" style="font-size:var(--text-sm);color:var(--muted)">e.brown</div>
+          <div class="tr-cell"><span class="priority-tag p-med">Medium</span></div>
+          <div class="tr-cell" style="font-family:var(--font-mono);font-size:12px;color:var(--meta)">0.2h</div>
+          <div class="tr-cell"><button class="assign-btn" onclick="toast('TKT-1025 assigned')">Assign</button></div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:color-mix(in oklab,var(--accent) 6%,transparent);border:1px solid color-mix(in oklab,var(--accent) 20%,transparent);border-radius:var(--radius-md);padding:16px 20px">
+        <div style="font-size:var(--text-sm);font-weight:700;color:var(--accent);margin-bottom:6px">Next steps for Hand 3 tickets</div>
+        <div style="font-size:var(--text-sm);color:var(--fg-2);line-height:1.6">The triage team will review each ticket, then assign it back to the submitter requesting additional information. Once the user submits a new ticket with the extra details, the 3-hand RAG flow runs again from scratch.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── data ──
+const AGENTS = [
+  {name:'John Smith',dept:'IT Dept',color:'#0071e3',initials:'JS',open:6,resolved:32,avg:'3.2h',load:60},
+  {name:'Maria Lopez',dept:'IT Dept',color:'#16a34a',initials:'ML',open:4,resolved:28,avg:'2.9h',load:40},
+  {name:'Raj Patel',dept:'IT Dept',color:'#8b5cf6',initials:'RP',open:5,resolved:19,avg:'4.1h',load:50},
+  {name:'Amy Chen',dept:'IT Dept',color:'#ec4899',initials:'AC',open:2,resolved:10,avg:'2.4h',load:20},
+  {name:'Omar Hassan',dept:'IT Dept',color:'#f59e0b',initials:'OH',open:1,resolved:5,avg:'3.6h',load:10},
+  {name:'Sam Reeves',dept:'Network Team',color:'#06b6d4',initials:'SR',open:5,resolved:18,avg:'5.8h',load:83},
+  {name:'Lisa Tam',dept:'Network Team',color:'#d97706',initials:'LT',open:4,resolved:14,avg:'4.9h',load:67},
+  {name:'Dev Nair',dept:'Network Team',color:'#dc2626',initials:'DN',open:3,resolved:9,avg:'4.6h',load:50},
+  {name:'Kim Park',dept:'Triage Team',color:'#7c3aed',initials:'KP',open:6,resolved:9,avg:'7.1h',load:75},
+  {name:'Tom Wu',dept:'Triage Team',color:'#059669',initials:'TW',open:5,resolved:7,avg:'5.7h',load:63},
+];
+
+const TICKETS_DATA = [
+  {id:'TKT-1048',subj:'Laptop won\'t boot after Windows update',status:'open',hand:'Hand 1',team:'IT Dept',user:'a.kumar',date:'Jun 7'},
+  {id:'TKT-1047',subj:'Slack notifications not working on mobile',status:'resolved',hand:'Hand 1',team:'IT Dept',user:'m.patel',date:'Jun 7'},
+  {id:'TKT-1046',subj:'Custom ERP plugin crashes on checkout',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'r.chen',date:'Jun 7'},
+  {id:'TKT-1045',subj:'VPN latency spikes during peak hours',status:'open',hand:'Hand 2',team:'Network Team',user:'l.wang',date:'Jun 7'},
+  {id:'TKT-1044',subj:'Request: additional storage for dev team',status:'closed',hand:'Hand 1',team:'IT Dept',user:'s.lee',date:'Jun 6'},
+  {id:'TKT-1043',subj:'SSO login failure for contractors',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'d.nguyen',date:'Jun 6'},
+  {id:'TKT-1042',subj:'Printer queue stuck after driver update',status:'resolved',hand:'Hand 2',team:'IT Dept',user:'p.kim',date:'Jun 6'},
+  {id:'TKT-1041',subj:'Cannot access VPN from home network',status:'open',hand:'Hand 1',team:'Network Team',user:'jane.doe',date:'Jun 5'},
+  {id:'TKT-1040',subj:'Data sync failing between CRM and warehouse',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'k.okafor',date:'Jun 5'},
+  {id:'TKT-1039',subj:'Wi-Fi drops in building C after 6pm',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'p.smith',date:'Jun 5'},
+  {id:'TKT-1038',subj:'Email client keeps crashing on Outlook 365',status:'resolved',hand:'Hand 2',team:'IT Dept',user:'j.doe',date:'Jun 3'},
+  {id:'TKT-1037',subj:'New hire can\'t access Teams channels',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'hr.team',date:'Jun 3'},
+  {id:'TKT-1036',subj:'Docker desktop not starting on M2 Mac',status:'open',hand:'Hand 2',team:'IT Dept',user:'dev.team',date:'Jun 3'},
+  {id:'TKT-1035',subj:'Printer not responding after macOS update',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'j.doe',date:'Jun 1'},
+  {id:'TKT-1034',subj:'Scheduled report not emailing on Fridays',status:'triaged',hand:'Hand 3',team:'Triage Team',user:'f.ali',date:'Jun 1'},
+];
+
+// ── render tickets ──
+function renderTickets(list) {
+  const statusMap = {open:'s-open',resolved:'s-resolved',closed:'s-closed',triaged:'s-triaged'};
+  const statusLabel = {open:'Open',resolved:'Resolved',closed:'Closed',triaged:'Triage'};
+  const handMap = {'Hand 1':'conf-high','Hand 2':'conf-medium','Hand 3':'conf-none'};
+  return list.map(t => `
+    <div class="t-row data-row">
+      <div class="t-cell id">${t.id}</div>
+      <div class="t-cell subj">${t.subj}</div>
+      <div class="t-cell"><span class="badge-status ${statusMap[t.status]}">${statusLabel[t.status]}</span></div>
+      <div class="t-cell"><span class="conf ${handMap[t.hand]}">${t.hand}</span></div>
+      <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">${t.team}</div>
+      <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">${t.user}</div>
+      <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">${t.date}</div>
+    </div>`).join('');
+}
+
+function filterTickets(q) {
+  const status = document.getElementById('f-status')?.value.toLowerCase() || '';
+  const hand = document.getElementById('f-hand')?.value || '';
+  const team = document.getElementById('f-team')?.value || '';
+  const search = typeof q === 'string' ? q.toLowerCase() : '';
+  const filtered = TICKETS_DATA.filter(t => {
+    if (status && t.status !== status.replace('triage','triaged')) return false;
+    if (hand && t.hand !== hand) return false;
+    if (team && t.team !== team) return false;
+    if (search && !t.id.toLowerCase().includes(search) && !t.subj.toLowerCase().includes(search) && !t.user.includes(search)) return false;
+    return true;
+  });
+  document.getElementById('tickets-body').innerHTML = filtered.length
+    ? renderTickets(filtered)
+    : '<div class="empty"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6H4V4h16v2zm-2 4H4v2h14v-2zm2 4H4v2h16v-2zm-2 4H4v2h14v-2z"/></svg><div>No tickets match</div></div>';
+}
+
+// ── render team ──
+function renderTeam() {
+  const loadColor = l => l >= 75 ? 'var(--danger)' : l >= 50 ? 'var(--warn)' : 'var(--success)';
+  document.getElementById('team-grid').innerHTML = AGENTS.map(a => `
+    <div class="agent-card">
+      <div class="ac-header">
+        <div class="ac-avatar" style="background:${a.color};color:#fff">${a.initials}</div>
+        <div><div class="ac-name">${a.name}</div><div class="ac-dept">${a.dept}</div></div>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat"><div class="ac-stat-val" style="color:var(--accent)">${a.open}</div><div class="ac-stat-lbl">Open</div></div>
+        <div class="ac-stat"><div class="ac-stat-val" style="color:var(--success)">${a.resolved}</div><div class="ac-stat-lbl">Resolved</div></div>
+        <div class="ac-stat"><div class="ac-stat-val">${a.avg}</div><div class="ac-stat-lbl">Avg Time</div></div>
+      </div>
+      <div class="ac-load-label">Workload — ${a.load}%</div>
+      <div class="ac-load-track"><div class="ac-load-fill" style="width:${a.load}%;background:${loadColor(a.load)}"></div></div>
+    </div>`).join('');
+}
+
+// ── navigation ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id)?.classList.add('active');
+  const map = {dashboard:0, alltickets:1, triage:2, team:3};
+  const items = document.querySelectorAll('.nav-item');
+  if (map[id] !== undefined) items[map[id]]?.classList.add('active');
+  if (id === 'alltickets') filterTickets('');
+  if (id === 'team') renderTeam();
+}
+
+// ── toast ──
+function toast(msg) {
+  const c = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = 'toast-item';
+  el.textContent = msg;
+  c.appendChild(el);
+  requestAnimationFrame(() => { el.classList.add('show'); });
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 2400);
+}
+
+// init
+filterTickets('');
+renderTeam();
+</script>
+</body>
+</html>

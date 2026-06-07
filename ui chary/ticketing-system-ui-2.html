@@ -1,0 +1,967 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support Tickets · Helpdesk</title>
+  <style>
+    /* ── Apple design system tokens ── */
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-warm: #fbfbfd;
+      --fg: #1d1d1f;
+      --fg-2: #424245;
+      --muted: #6e6e73;
+      --meta: #86868b;
+      --border: #d2d2d7;
+      --border-soft: #e8e8ed;
+      --accent: #0071e3;
+      --accent-on: #ffffff;
+      --accent-hover: #0077ed;
+      --accent-active: #0066cc;
+      --success: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --font-display: "SF Pro Display","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+      --font-body: "SF Pro Text","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+      --font-mono: "SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+      --text-xs: 12px; --text-sm: 14px; --text-base: 17px;
+      --text-lg: 21px; --text-xl: 28px;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-pill: 980px;
+      --elev-raised: 0 12px 32px rgba(0,0,0,0.08);
+      --focus-ring: 0 0 0 4px color-mix(in oklab,var(--accent),transparent 65%);
+      --ease: cubic-bezier(0.28,0,0.22,1);
+      --t: 220ms; --tf: 150ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--fg);
+      background: var(--surface);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+    }
+
+    /* ── sidebar ── */
+    .sidebar {
+      width: 240px;
+      min-height: 100dvh;
+      background: var(--bg);
+      border-right: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 20;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 20px 16px;
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .brand-dot {
+      width: 28px; height: 28px;
+      background: var(--fg);
+      border-radius: 8px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .brand-dot svg { width: 16px; height: 16px; fill: var(--bg); }
+
+    .sidebar-nav { flex: 1; padding: 12px 10px; }
+    .nav-group-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--meta);
+      padding: 6px 10px 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+      color: var(--fg-2);
+      cursor: pointer;
+      transition: background var(--tf) var(--ease), color var(--tf) var(--ease);
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .nav-item:hover { background: var(--surface); color: var(--fg); }
+    .nav-item.active { background: color-mix(in oklab,var(--accent) 10%,transparent); color: var(--accent); font-weight: 600; }
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: var(--accent-on);
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+    }
+
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-soft);
+    }
+    .user-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-on);
+      font-size: 12px; font-weight: 700;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .user-info .name { font-size: var(--text-sm); font-weight: 600; color: var(--fg); }
+    .user-info .role { font-size: 11px; color: var(--muted); }
+
+    /* ── main content ── */
+    .main { margin-left: 240px; flex: 1; min-height: 100dvh; }
+
+    .topbar {
+      height: 52px;
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border-soft);
+      display: flex; align-items: center;
+      padding: 0 28px;
+      gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* ── btn ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 36px; padding: 0 16px;
+      border: none; border-radius: var(--radius-pill);
+      font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--tf) var(--ease), transform 80ms var(--ease);
+    }
+    .btn svg { width: 14px; height: 14px; }
+    .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .btn-primary { background: var(--accent); color: var(--accent-on); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:active { background: var(--accent-active); transform: scale(0.97); }
+    .btn-ghost {
+      background: transparent; color: var(--fg-2);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); }
+    .btn-sm { height: 30px; padding: 0 12px; font-size: 12px; }
+
+    /* ── view pages ── */
+    .page { display: none; padding: 28px; }
+    .page.active { display: block; }
+
+    /* ── status badge ── */
+    .badge-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .badge-status::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.7;
+    }
+    .s-open   { background: color-mix(in oklab,var(--accent) 12%,transparent); color: var(--accent); }
+    .s-resolved{ background: color-mix(in oklab,var(--success) 12%,transparent); color: var(--success); }
+    .s-closed { background: color-mix(in oklab,var(--fg) 8%,transparent); color: var(--muted); }
+    .s-triaged{ background: color-mix(in oklab,var(--warn) 14%,transparent); color: var(--warn); }
+
+    /* ── confidence badge ── */
+    .conf {
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .conf-high   { background: color-mix(in oklab,var(--success) 12%,transparent); color: var(--success); }
+    .conf-medium { background: color-mix(in oklab,var(--warn) 14%,transparent); color: var(--warn); }
+    .conf-none   { background: color-mix(in oklab,var(--danger) 10%,transparent); color: var(--danger); }
+
+    /* ── tickets table ── */
+    .tickets-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .tickets-table {
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+    }
+    .t-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 130px 120px 100px 80px;
+      gap: 0;
+      align-items: center;
+      border-bottom: 1px solid var(--border-soft);
+      padding: 0 20px;
+    }
+    .t-row:last-child { border-bottom: none; }
+    .t-head {
+      background: var(--surface);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--meta);
+    }
+    .t-head .t-cell { padding: 10px 0; }
+    .t-cell { padding: 14px 0; font-size: var(--text-sm); color: var(--fg); }
+    .t-cell.id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+    .t-cell.subject { font-weight: 500; }
+    .t-cell.subject span { font-size: 11px; color: var(--muted); font-weight: 400; display: block; margin-top: 2px; }
+    .t-row.data-row { cursor: pointer; transition: background var(--tf) var(--ease); }
+    .t-row.data-row:hover { background: var(--surface-warm); }
+
+    /* ── submit form ── */
+    .form-card {
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      padding: 32px;
+      max-width: 680px;
+    }
+    .form-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .form-desc { font-size: var(--text-sm); color: var(--muted); margin-bottom: 28px; }
+
+    .field-group { margin-bottom: 20px; }
+    .field-label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); margin-bottom: 6px; }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: var(--text-base); color: var(--fg);
+      outline: none;
+      transition: border-color var(--tf) var(--ease), box-shadow var(--tf) var(--ease);
+      -webkit-appearance: none;
+    }
+    .field-input, .field-select { height: 44px; padding: 0 14px; }
+    .field-textarea { padding: 12px 14px; resize: vertical; min-height: 100px; }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: var(--accent); box-shadow: var(--focus-ring); background: var(--bg);
+    }
+    .field-input::placeholder, .field-textarea::placeholder { color: var(--meta); }
+
+    /* ── agent flow ── */
+    .agent-flow-wrap {
+      margin-top: 32px;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      padding: 24px;
+      display: none;
+    }
+    .agent-flow-wrap.visible { display: block; }
+    .af-title {
+      font-size: var(--text-sm); font-weight: 700; color: var(--meta);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .af-steps { display: flex; flex-direction: column; gap: 0; }
+    .af-step {
+      display: flex; gap: 16px; position: relative;
+    }
+    .af-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px; top: 32px;
+      width: 2px; height: calc(100% - 8px);
+      background: var(--border-soft);
+    }
+    .af-step.done::after { background: var(--accent); }
+    .af-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      font-size: 11px; font-weight: 700; color: var(--meta);
+      z-index: 1;
+      transition: background var(--t) var(--ease), border-color var(--t) var(--ease);
+    }
+    .af-step.done .af-dot {
+      background: var(--accent); border-color: var(--accent); color: var(--accent-on);
+    }
+    .af-step.active .af-dot {
+      border-color: var(--accent); color: var(--accent);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 color-mix(in oklab,var(--accent) 40%,transparent); }
+      50%      { box-shadow: 0 0 0 6px color-mix(in oklab,var(--accent) 0%,transparent); }
+    }
+    .af-content { padding: 4px 0 24px; flex: 1; }
+    .af-label { font-size: var(--text-sm); font-weight: 600; color: var(--fg); margin-bottom: 3px; }
+    .af-sub { font-size: 12px; color: var(--muted); }
+    .af-result {
+      margin-top: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: var(--text-sm);
+      display: none;
+    }
+    .af-result.show { display: block; }
+    .af-result .hand-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .hand-1 { color: var(--success); }
+    .hand-2 { color: var(--warn); }
+    .hand-3 { color: var(--accent); }
+
+    /* ── ticket detail ── */
+    .detail-wrap { max-width: 780px; }
+    .detail-header {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+    }
+    .detail-meta {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .detail-id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+    .detail-subject { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 10px; }
+    .detail-info-row {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      font-size: var(--text-sm); color: var(--muted);
+    }
+    .detail-info-row strong { color: var(--fg-2); }
+
+    /* agent resolution card */
+    .resolution-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .rc-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .rc-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .rc-icon svg { width: 16px; height: 16px; }
+    .rc-hand { font-size: var(--text-sm); font-weight: 700; }
+    .rc-desc { font-size: 12px; color: var(--muted); }
+    .rc-body { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.6; }
+    .rc-body ul { padding-left: 18px; margin-top: 6px; }
+    .rc-body li { margin-bottom: 4px; }
+    .h1-card { background: color-mix(in oklab,var(--success) 6%,var(--bg)); }
+    .h1-card .rc-icon { background: color-mix(in oklab,var(--success) 14%,transparent); color: var(--success); }
+    .h2-card { background: color-mix(in oklab,var(--warn) 6%,var(--bg)); }
+    .h2-card .rc-icon { background: color-mix(in oklab,var(--warn) 14%,transparent); color: var(--warn); }
+    .h3-card { background: color-mix(in oklab,var(--accent) 6%,var(--bg)); }
+    .h3-card .rc-icon { background: color-mix(in oklab,var(--accent) 14%,transparent); color: var(--accent); }
+
+    /* comments */
+    .comments-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .comments-hdr {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: var(--text-sm); font-weight: 700; color: var(--fg-2);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .comment-list { padding: 0 24px; }
+    .comment {
+      display: flex; gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .comment:last-child { border-bottom: none; }
+    .comment .av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .av-user { background: var(--accent); color: var(--accent-on); }
+    .av-agent { background: color-mix(in oklab,var(--success) 18%,transparent); color: var(--success); }
+    .comment-body { flex: 1; }
+    .comment-meta { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .comment-meta strong { color: var(--fg); }
+    .comment-text { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.55; }
+
+    .comment-input-wrap {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-soft);
+      display: flex; gap: 10px; align-items: flex-end;
+    }
+    .comment-input {
+      flex: 1;
+      min-height: 44px; max-height: 120px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: var(--text-sm); color: var(--fg);
+      resize: none; outline: none;
+    }
+    .comment-input:focus { border-color: var(--accent); box-shadow: var(--focus-ring); }
+    .closed-note {
+      padding: 14px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border-soft);
+      font-size: 12px; color: var(--muted); text-align: center;
+    }
+    .closed-note a { color: var(--accent); text-decoration: none; cursor: pointer; }
+
+    /* ── summary stats ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+    }
+    .stat-val { font-family: var(--font-mono); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+    .stat-label { font-size: var(--text-sm); color: var(--muted); margin-top: 3px; }
+    .stat-delta { font-size: 11px; margin-top: 4px; }
+    .stat-delta.up { color: var(--success); }
+    .stat-delta.down { color: var(--danger); }
+
+    .section-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .section-sub { font-size: var(--text-sm); color: var(--muted); margin-bottom: 20px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--muted); cursor: pointer; margin-bottom: 18px; background: none; border: none; padding: 0; transition: color var(--tf) var(--ease); }
+    .back-btn:hover { color: var(--fg); }
+    .back-btn svg { width: 14px; height: 14px; }
+    .callout {
+      background: color-mix(in oklab,var(--accent) 8%,transparent);
+      border: 1px solid color-mix(in oklab,var(--accent) 25%,transparent);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: var(--text-sm);
+      color: var(--fg-2);
+      margin-top: 14px;
+    }
+    .callout strong { color: var(--accent); }
+
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 100;
+      background: var(--fg); color: var(--bg);
+      padding: 12px 18px; border-radius: var(--radius-md);
+      font-size: var(--text-sm); font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      transform: translateY(20px); opacity: 0;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .t-row { grid-template-columns: 80px 1fr 100px 80px; }
+      .t-row .t-cell:nth-child(5), .t-row .t-cell:nth-child(6) { display: none; }
+      .t-head .t-cell:nth-child(5), .t-head .t-cell:nth-child(6) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-dot">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9-2h2v2h-2V4zm-6 4h14v1.5l-7 4-7-4V8zm0 11v-7.2l7 3.9 7-3.9V19H5z"/></svg>
+    </div>
+    Helpdesk
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Menu</div>
+    <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" id="nav-submit" onclick="showPage('submit')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      Submit Ticket
+    </button>
+    <button class="nav-item" id="nav-mytickets" onclick="showPage('mytickets')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      My Tickets
+      <span class="badge" id="open-count">3</span>
+    </button>
+    <div class="nav-group-label" style="margin-top:12px;">System</div>
+    <button class="nav-item" id="nav-agentflow" onclick="showPage('agentflow')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      Agent Flow Guide
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">JD</div>
+      <div class="user-info">
+        <div class="name">Jane Doe</div>
+        <div class="role">jane.doe@corp.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="showPage('submit')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        New Ticket
+      </button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="page active" id="page-dashboard">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val">12</div><div class="stat-label">Total Tickets</div><div class="stat-delta up">↑ 3 this week</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--accent)">3</div><div class="stat-label">Open</div><div class="stat-delta down">↑ 1 new</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--success)">7</div><div class="stat-label">Resolved</div><div class="stat-delta up">↑ 2 this week</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--muted)">2</div><div class="stat-label">Closed</div><div class="stat-delta" style="color:var(--meta)">No change</div></div>
+    </div>
+    <div class="tickets-header">
+      <div><div class="section-title">Recent Tickets</div><div class="section-sub">Click any row to view details</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('mytickets')">View all</button>
+    </div>
+    <div class="tickets-table">
+      <div class="t-row t-head">
+        <div class="t-cell">ID</div><div class="t-cell">Subject</div><div class="t-cell">Status</div><div class="t-cell">Agent Hand</div><div class="t-cell">Assigned</div><div class="t-cell">Date</div>
+      </div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1041')">
+        <div class="t-cell id">TKT-1041</div>
+        <div class="t-cell subject">Cannot access VPN from home network<span>Network · IT Support</span></div>
+        <div class="t-cell"><span class="badge-status s-open">Open</span></div>
+        <div class="t-cell"><span class="conf conf-high">Hand 1 · High</span></div>
+        <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Jane Doe</div>
+        <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 5</div>
+      </div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1038')">
+        <div class="t-cell id">TKT-1038</div>
+        <div class="t-cell subject">Email client keeps crashing on Outlook 365<span>Software · IT Support</span></div>
+        <div class="t-cell"><span class="badge-status s-resolved">Resolved</span></div>
+        <div class="t-cell"><span class="conf conf-medium">Hand 2 · Medium</span></div>
+        <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">IT Dept</div>
+        <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 3</div>
+      </div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1035')">
+        <div class="t-cell id">TKT-1035</div>
+        <div class="t-cell subject">Printer not responding after macOS update<span>Hardware · Facilities</span></div>
+        <div class="t-cell"><span class="badge-status s-triaged">Open · Triage</span></div>
+        <div class="t-cell"><span class="conf conf-none">Hand 3 · No Match</span></div>
+        <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Triage Team</div>
+        <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 1</div>
+      </div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1030')">
+        <div class="t-cell id">TKT-1030</div>
+        <div class="t-cell subject">Request for additional monitor setup<span>Hardware · IT Support</span></div>
+        <div class="t-cell"><span class="badge-status s-closed">Closed</span></div>
+        <div class="t-cell"><span class="conf conf-high">Hand 1 · High</span></div>
+        <div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Jane Doe</div>
+        <div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">May 28</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBMIT TICKET -->
+  <section class="page" id="page-submit">
+    <div class="form-card">
+      <div class="form-title">Submit a Ticket</div>
+      <div class="form-desc">Describe your issue. Our AI agent will search previous tickets and route it automatically.</div>
+      <div class="field-group">
+        <label class="field-label" for="t-subject">Subject</label>
+        <input class="field-input" id="t-subject" type="text" placeholder="Brief description of the issue" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="t-category">Category</label>
+        <select class="field-select" id="t-category">
+          <option value="">Select category…</option>
+          <option>Network</option><option>Software</option><option>Hardware</option><option>Account / Access</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="t-desc">Description</label>
+        <textarea class="field-textarea" id="t-desc" rows="4" placeholder="Provide full context — what happened, error messages, steps you've tried…"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="t-priority">Priority</label>
+        <select class="field-select" id="t-priority">
+          <option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="simulateSubmit('high')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          Submit Ticket
+        </button>
+        <button class="btn btn-ghost" onclick="simulateSubmit('medium')">Simulate Hand 2</button>
+        <button class="btn btn-ghost" onclick="simulateSubmit('none')">Simulate Hand 3</button>
+      </div>
+
+      <div class="agent-flow-wrap" id="agent-flow">
+        <div class="af-title">AI Agent Processing</div>
+        <div class="af-steps">
+          <div class="af-step" id="af-step-1">
+            <div class="af-dot">1</div>
+            <div class="af-content">
+              <div class="af-label">RAG Search</div>
+              <div class="af-sub">Embedding ticket description and querying knowledge base…</div>
+              <div class="af-result" id="af-r1"><div class="af-body"></div></div>
+            </div>
+          </div>
+          <div class="af-step" id="af-step-2">
+            <div class="af-dot">2</div>
+            <div class="af-content">
+              <div class="af-label">Confidence Evaluation</div>
+              <div class="af-sub">Scoring similarity against previous resolutions…</div>
+              <div class="af-result" id="af-r2"><div class="af-body"></div></div>
+            </div>
+          </div>
+          <div class="af-step" id="af-step-3">
+            <div class="af-dot">3</div>
+            <div class="af-content">
+              <div class="af-label">Routing Decision</div>
+              <div class="af-sub">Determining hand-off based on confidence…</div>
+              <div class="af-result" id="af-r3"><div class="af-body"></div></div>
+            </div>
+          </div>
+          <div class="af-step" id="af-step-4" style="padding-bottom:0">
+            <div class="af-dot" id="af-dot-4">4</div>
+            <div class="af-content">
+              <div class="af-label">Ticket Created</div>
+              <div class="af-sub" id="af-final-sub">Awaiting processing…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY TICKETS -->
+  <section class="page" id="page-mytickets">
+    <div class="section-title">My Tickets</div>
+    <div class="section-sub">All tickets submitted by jane.doe@corp.com</div>
+    <div class="tickets-table">
+      <div class="t-row t-head">
+        <div class="t-cell">ID</div><div class="t-cell">Subject</div><div class="t-cell">Status</div><div class="t-cell">Agent Hand</div><div class="t-cell">Assigned</div><div class="t-cell">Date</div>
+      </div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1041')"><div class="t-cell id">TKT-1041</div><div class="t-cell subject">Cannot access VPN from home network</div><div class="t-cell"><span class="badge-status s-open">Open</span></div><div class="t-cell"><span class="conf conf-high">Hand 1 · High</span></div><div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Jane Doe</div><div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 5</div></div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1038')"><div class="t-cell id">TKT-1038</div><div class="t-cell subject">Email client keeps crashing on Outlook 365</div><div class="t-cell"><span class="badge-status s-resolved">Resolved</span></div><div class="t-cell"><span class="conf conf-medium">Hand 2 · Medium</span></div><div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">IT Dept</div><div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 3</div></div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1035')"><div class="t-cell id">TKT-1035</div><div class="t-cell subject">Printer not responding after macOS update</div><div class="t-cell"><span class="badge-status s-triaged">Open · Triage</span></div><div class="t-cell"><span class="conf conf-none">Hand 3 · No Match</span></div><div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Triage Team</div><div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">Jun 1</div></div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1030')"><div class="t-cell id">TKT-1030</div><div class="t-cell subject">Request for additional monitor setup</div><div class="t-cell"><span class="badge-status s-closed">Closed</span></div><div class="t-cell"><span class="conf conf-high">Hand 1 · High</span></div><div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">Jane Doe</div><div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">May 28</div></div>
+      <div class="t-row data-row" onclick="showDetail('TKT-1022')"><div class="t-cell id">TKT-1022</div><div class="t-cell subject">Slow Wi-Fi in conference room B</div><div class="t-cell"><span class="badge-status s-resolved">Resolved</span></div><div class="t-cell"><span class="conf conf-medium">Hand 2 · Medium</span></div><div class="t-cell" style="font-size:var(--text-sm);color:var(--muted)">IT Dept</div><div class="t-cell" style="font-size:12px;color:var(--meta);font-family:var(--font-mono)">May 20</div></div>
+    </div>
+  </section>
+
+  <!-- TICKET DETAIL -->
+  <section class="page" id="page-detail">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Back
+    </button>
+    <div class="detail-wrap">
+      <div class="detail-header">
+        <div class="detail-meta">
+          <span class="detail-id" id="d-id"></span>
+          <span id="d-status-badge"></span>
+          <span id="d-conf-badge"></span>
+        </div>
+        <div class="detail-subject" id="d-subject"></div>
+        <div class="detail-info-row">
+          <span><strong>Assigned to:</strong> <span id="d-assigned"></span></span>
+          <span><strong>Submitted:</strong> <span id="d-date"></span></span>
+          <span><strong>Category:</strong> IT Support</span>
+        </div>
+      </div>
+      <div id="d-resolution"></div>
+      <div id="d-lifecycle-note"></div>
+      <div class="comments-card">
+        <div class="comments-hdr">
+          <span>Activity &amp; Comments</span>
+          <span id="d-comment-count" style="font-size:11px;color:var(--muted);font-weight:400"></span>
+        </div>
+        <div class="comment-list" id="d-comment-list"></div>
+        <div id="d-comment-input-area"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENT FLOW GUIDE -->
+  <section class="page" id="page-agentflow">
+    <div class="section-title">3-Hand RAG Agent Flow</div>
+    <div class="section-sub">How the AI routes every ticket from submission to resolution</div>
+    <div style="max-width:680px;display:flex;flex-direction:column;gap:14px;">
+
+      <div class="resolution-card h1-card">
+        <div class="rc-header">
+          <div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg></div>
+          <div><div class="rc-hand hand-1">Hand 1 — High Confidence Match</div><div class="rc-desc">RAG similarity score ≥ 0.85</div></div>
+          <span class="conf conf-high" style="margin-left:auto">Auto-Resolved</span>
+        </div>
+        <div class="rc-body">The agent found an exact or near-exact match in the knowledge base.
+          <ul>
+            <li>Resolution copied from matched ticket, posted as comment</li>
+            <li>Status set to <strong>Resolved</strong> immediately</li>
+            <li>Assigned back to the submitting user (<em>user_id</em>)</li>
+            <li>User can still comment if the resolution doesn't work</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="resolution-card h2-card">
+        <div class="rc-header">
+          <div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+          <div><div class="rc-hand hand-2">Hand 2 — Medium Confidence Match</div><div class="rc-desc">RAG similarity score 0.50–0.84</div></div>
+          <span class="conf conf-medium" style="margin-left:auto">Dept Assigned</span>
+        </div>
+        <div class="rc-body">A related but not identical issue was found.
+          <ul>
+            <li>High-level resolution steps from similar ticket posted as comment</li>
+            <li>Status remains <strong>Open</strong></li>
+            <li>Assigned to the <strong>same department</strong> as the matched ticket</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="resolution-card h3-card">
+        <div class="rc-header">
+          <div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+          <div><div class="rc-hand hand-3">Hand 3 — No Match Found</div><div class="rc-desc">RAG similarity score &lt; 0.50</div></div>
+          <span class="conf conf-none" style="margin-left:auto">Triage</span>
+        </div>
+        <div class="rc-body">No similar issue in the knowledge base.
+          <ul>
+            <li>LLM-generated guidance posted as comment (clearly labelled AI-generated, unverified)</li>
+            <li>Note: <em>"No previous issues found — this resolution is LLM-based"</em></li>
+            <li>Assigned to <strong>Triage Team</strong></li>
+          </ul>
+        </div>
+        <div class="callout"><strong>What happens next?</strong> The Triage team assigns the ticket back to you requesting more information. You can then <a href="#" onclick="showPage('submit');return false;">submit a new ticket</a> with the additional details — the same 3-hand flow runs again.</div>
+      </div>
+
+      <div style="background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:20px 24px;">
+        <div style="font-size:var(--text-sm);font-weight:700;color:var(--fg-2);margin-bottom:14px;">Ticket Status Lifecycle</div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          <span class="badge-status s-open">Open</span>
+          <span style="color:var(--meta);font-size:12px">→ resolved →</span>
+          <span class="badge-status s-resolved">Resolved</span>
+          <span style="color:var(--meta);font-size:12px">→ confirmed →</span>
+          <span class="badge-status s-closed">Closed</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:var(--text-sm);display:flex;gap:8px;align-items:flex-start;"><span class="badge-status s-open" style="flex-shrink:0">Open</span><span style="color:var(--muted)">Processing or awaiting dept action. Comments allowed.</span></div>
+          <div style="font-size:var(--text-sm);display:flex;gap:8px;align-items:flex-start;"><span class="badge-status s-resolved" style="flex-shrink:0">Resolved</span><span style="color:var(--muted)">Solution provided. User can still comment if fix doesn't work.</span></div>
+          <div style="font-size:var(--text-sm);display:flex;gap:8px;align-items:flex-start;"><span class="badge-status s-closed" style="flex-shrink:0">Closed</span><span style="color:var(--muted)">Issue confirmed resolved. <strong>Comments disabled.</strong> Submit a new ticket for further issues.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let _prevPage = 'dashboard';
+
+  const TICKETS = {
+    'TKT-1041': { id:'TKT-1041', subject:'Cannot access VPN from home network', status:'open', hand:'hand1', assigned:'Jane Doe', date:'June 5, 2026',
+      comments:[
+        { author:'AI Agent (Hand 1)', role:'agent', time:'Jun 5, 09:14', text:'High-confidence match found (score: 0.92). Resolution from TKT-0887:\n\n1. Ensure VPN client is updated to v4.3 or later.\n2. Check firewall — port 1194 (UDP) must be open.\n3. Try connecting via "Split Tunnel" mode in VPN settings.\n4. Flush DNS with `ipconfig /flushdns` and retry.\n\nTicket auto-resolved. Comment below if the issue persists.' },
+        { author:'Jane Doe', role:'user', time:'Jun 5, 10:02', text:'Step 3 worked! Split tunnel mode fixed it. Thank you.' }
+      ]},
+    'TKT-1038': { id:'TKT-1038', subject:'Email client keeps crashing on Outlook 365', status:'resolved', hand:'hand2', assigned:'IT Dept', date:'June 3, 2026',
+      comments:[
+        { author:'AI Agent (Hand 2)', role:'agent', time:'Jun 3, 11:05', text:'Medium-confidence match (score: 0.67) from TKT-0912.\n\nHigh-level steps:\n• Disable all Outlook add-ins and re-enable one by one\n• Run "Repair" from Windows Apps settings\n• Clear Outlook cache (%localappdata%\\Microsoft\\Outlook)\n\nAssigned to IT Dept for review.' },
+        { author:'IT Support', role:'agent', time:'Jun 3, 14:30', text:'Found the issue — Zoom Plugin v5.9.1 was causing crashes. Removed and reinstalled v5.9.3. Resolved.' }
+      ]},
+    'TKT-1035': { id:'TKT-1035', subject:'Printer not responding after macOS update', status:'open', hand:'hand3', assigned:'Triage Team', date:'June 1, 2026',
+      comments:[
+        { author:'AI Agent (Hand 3)', role:'agent', time:'Jun 1, 08:45', text:'⚠️ No previous tickets matched (score: 0.31). LLM-generated guidance — unverified:\n\n• macOS updates can reset printer drivers. Remove and re-add the printer in System Settings → Printers.\n• Download latest driver from manufacturer\'s site.\n• If network printer, check the IP hasn\'t changed.\n\n📌 No previous issues found for this scenario. Assigned to Triage Team.' },
+        { author:'Triage Team', role:'agent', time:'Jun 1, 10:00', text:'We\'re reviewing this. Could you share your macOS version and printer model so we can route to the correct team?' }
+      ]},
+    'TKT-1030': { id:'TKT-1030', subject:'Request for additional monitor setup', status:'closed', hand:'hand1', assigned:'Jane Doe', date:'May 28, 2026',
+      comments:[
+        { author:'AI Agent (Hand 1)', role:'agent', time:'May 28, 09:00', text:'High-confidence match (score: 0.95) from TKT-0760.\n\nMonitor request approved per standard hardware policy. IT will deliver and set up within 2 business days. Ensure your desk has a free DisplayPort or HDMI port.' },
+        { author:'IT Support', role:'agent', time:'May 30, 11:20', text:'Monitor delivered and set up. Ticket closed.' }
+      ]},
+    'TKT-1022': { id:'TKT-1022', subject:'Slow Wi-Fi in conference room B', status:'resolved', hand:'hand2', assigned:'IT Dept', date:'May 20, 2026',
+      comments:[
+        { author:'AI Agent (Hand 2)', role:'agent', time:'May 20, 14:00', text:'Medium-confidence match (score: 0.72) from TKT-0844.\n\nSuggested steps:\n• Check channel congestion\n• Reboot the access point\n• Switch to channel 11 or 1 if channel 6 is congested' },
+        { author:'IT Dept', role:'agent', time:'May 21, 09:10', text:'AP was overloaded — 22 devices. Upgraded to dual-band AP. Speed confirmed normal.' }
+      ]}
+  };
+
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    const nav = document.getElementById('nav-' + name);
+    if (nav) nav.classList.add('active');
+    const titles = { dashboard:'Dashboard', submit:'Submit Ticket', mytickets:'My Tickets', detail:'Ticket Detail', agentflow:'Agent Flow Guide' };
+    document.getElementById('topbar-title').textContent = titles[name] || '';
+    if (name !== 'detail') _prevPage = name;
+  }
+
+  function goBack() { showPage(_prevPage); }
+
+  function showDetail(id) {
+    const data = TICKETS[id];
+    if (!data) return;
+    document.getElementById('d-id').textContent = id;
+    document.getElementById('d-subject').textContent = data.subject;
+    document.getElementById('d-assigned').textContent = data.assigned;
+    document.getElementById('d-date').textContent = data.date;
+
+    const sMap = { open:'s-open', resolved:'s-resolved', closed:'s-closed' };
+    const sLabel = { open:'Open', resolved:'Resolved', closed:'Closed' };
+    const sKey = data.hand === 'hand3' && data.status === 'open' ? 'triaged' : data.status;
+    document.getElementById('d-status-badge').innerHTML = `<span class="badge-status ${data.hand === 'hand3' && data.status === 'open' ? 's-triaged' : sMap[data.status] || 's-open'}">${data.hand === 'hand3' && data.status === 'open' ? 'Open · Triage' : sLabel[data.status]}</span>`;
+
+    const cMap = { hand1:['conf-high','Hand 1 · High Confidence'], hand2:['conf-medium','Hand 2 · Medium Confidence'], hand3:['conf-none','Hand 3 · No Match'] };
+    const [cls, lbl] = cMap[data.hand] || ['conf-none','Unknown'];
+    document.getElementById('d-conf-badge').innerHTML = `<span class="conf ${cls}">${lbl}</span>`;
+
+    const resCards = {
+      hand1:`<div class="resolution-card h1-card" style="margin-bottom:16px"><div class="rc-header"><div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg></div><div><div class="rc-hand hand-1">Hand 1 — Auto-Resolved</div><div class="rc-desc">RAG high-confidence match (≥ 0.85) — ticket auto-resolved and assigned to user</div></div></div></div>`,
+      hand2:`<div class="resolution-card h2-card" style="margin-bottom:16px"><div class="rc-header"><div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div><div><div class="rc-hand hand-2">Hand 2 — Dept Assigned</div><div class="rc-desc">RAG partial match (0.50–0.84) — steps provided, routed to same dept</div></div></div></div>`,
+      hand3:`<div class="resolution-card h3-card" style="margin-bottom:16px"><div class="rc-header"><div class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div><div><div class="rc-hand hand-3">Hand 3 — Triage</div><div class="rc-desc">No RAG match (&lt; 0.50) — LLM guidance provided, assigned to Triage Team</div></div></div><div class="callout"><strong>Next step:</strong> The Triage team will assign this ticket back to you requesting more details. Submit a new ticket with the additional information and the agent will re-process it.</div></div>`
+    };
+    document.getElementById('d-resolution').innerHTML = resCards[data.hand] || '';
+
+    const ln = document.getElementById('d-lifecycle-note');
+    ln.innerHTML = data.status === 'resolved' ? `<div class="callout" style="margin-bottom:16px"><strong>Status: Resolved</strong> — If this resolution didn't fix your issue, add a comment below and the ticket will be re-opened.</div>` : '';
+
+    const cl = document.getElementById('d-comment-list');
+    cl.innerHTML = data.comments.map(c => `
+      <div class="comment">
+        <div class="av ${c.role === 'user' ? 'av-user' : 'av-agent'}">${c.author.slice(0,2).toUpperCase()}</div>
+        <div class="comment-body">
+          <div class="comment-meta"><strong>${c.author}</strong> · ${c.time}</div>
+          <div class="comment-text">${c.text.replace(/\n/g,'<br>')}</div>
+        </div>
+      </div>`).join('');
+    document.getElementById('d-comment-count').textContent = data.comments.length + ' comment' + (data.comments.length !== 1 ? 's' : '');
+
+    const ia = document.getElementById('d-comment-input-area');
+    ia.innerHTML = data.status === 'closed'
+      ? `<div class="closed-note">This ticket is <strong>closed</strong> — comments are disabled. <a onclick="showPage('submit');return false;">Submit a new ticket</a> for further issues.</div>`
+      : `<div class="comment-input-wrap"><textarea class="comment-input" id="new-comment-input" placeholder="Add a comment…" rows="2"></textarea><button class="btn btn-primary btn-sm" onclick="addComment('${id}')">Send</button></div>`;
+
+    showPage('detail');
+    document.getElementById('topbar-title').textContent = id;
+  }
+
+  function addComment(id) {
+    const input = document.getElementById('new-comment-input');
+    const text = input.value.trim();
+    if (!text) return;
+    TICKETS[id].comments.push({ author:'Jane Doe', role:'user', time:'Just now', text });
+    const cl = document.getElementById('d-comment-list');
+    cl.innerHTML = TICKETS[id].comments.map(c => `
+      <div class="comment">
+        <div class="av ${c.role === 'user' ? 'av-user' : 'av-agent'}">${c.author.slice(0,2).toUpperCase()}</div>
+        <div class="comment-body">
+          <div class="comment-meta"><strong>${c.author}</strong> · ${c.time}</div>
+          <div class="comment-text">${c.text.replace(/\n/g,'<br>')}</div>
+        </div>
+      </div>`).join('');
+    document.getElementById('d-comment-count').textContent = TICKETS[id].comments.length + ' comments';
+    input.value = '';
+    showToast('Comment added');
+  }
+
+  function simulateSubmit(conf) {
+    const subj = document.getElementById('t-subject').value.trim();
+    if (!subj) { showToast('Please enter a subject first'); return; }
+    const flow = document.getElementById('agent-flow');
+    flow.classList.add('visible');
+    flow.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    [1,2,3,4].forEach(i => {
+      const s = document.getElementById('af-step-' + i);
+      s.classList.remove('done','active');
+      const r = document.getElementById('af-r' + i);
+      if (r) { r.classList.remove('show'); r.querySelector('.af-body').innerHTML = ''; }
+    });
+    document.getElementById('af-final-sub').textContent = 'Awaiting processing…';
+    document.getElementById('af-dot-4').textContent = '4';
+
+    const steps = [
+      { delay:600, step:1, result:`Queried vector store with "${subj}" — retrieved top 5 matches` },
+      { delay:1400, step:2, result: conf==='high' ? 'Similarity score: <strong>0.92</strong> — High confidence match found'
+          : conf==='medium' ? 'Similarity score: <strong>0.67</strong> — Partial match, no exact resolution'
+          : 'Similarity score: <strong>0.29</strong> — No relevant match in knowledge base' },
+      { delay:2200, step:3, result: conf==='high'
+          ? '<span class="hand-label hand-1">✦ Hand 1 Activated</span>Resolution copied from matched ticket. Status → Resolved. Assigned to user.'
+          : conf==='medium'
+          ? '<span class="hand-label hand-2">✦ Hand 2 Activated</span>High-level steps extracted. Assigned to same dept.'
+          : '<span class="hand-label hand-3">✦ Hand 3 Activated</span>LLM generating first-response guidance. Flagged as AI-generated. Routing to Triage.' }
+    ];
+    const finalSub = conf==='high' ? 'Ticket auto-resolved and assigned to you · Status: Resolved'
+      : conf==='medium' ? 'Ticket assigned to IT Dept with suggested steps · Status: Open'
+      : 'Ticket routed to Triage Team with LLM guidance · Status: Open';
+
+    steps.forEach(({ delay, step, result }) => {
+      setTimeout(() => document.getElementById('af-step-' + step).classList.add('active'), delay - 400);
+      setTimeout(() => {
+        const s = document.getElementById('af-step-' + step);
+        s.classList.remove('active'); s.classList.add('done');
+        const r = document.getElementById('af-r' + step);
+        r.querySelector('.af-body').innerHTML = result; r.classList.add('show');
+      }, delay);
+    });
+    setTimeout(() => {
+      const s4 = document.getElementById('af-step-4');
+      s4.classList.add('done');
+      document.getElementById('af-dot-4').textContent = '✓';
+      document.getElementById('af-final-sub').textContent = finalSub;
+      showToast('Ticket submitted — ' + (conf==='high' ? 'auto-resolved' : conf==='medium' ? 'routed to dept' : 'sent to triage'));
+    }, 2800);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>

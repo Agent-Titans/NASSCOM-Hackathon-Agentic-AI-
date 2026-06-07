@@ -1,0 +1,625 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Support Portal · Helpdesk</title>
+<style>
+:root {
+  --bg: #ffffff; --surface: #f5f5f7; --surface-warm: #fbfbfd;
+  --fg: #1d1d1f; --fg-2: #424245; --muted: #6e6e73; --meta: #86868b;
+  --border: #d2d2d7; --border-soft: #e8e8ed;
+  --accent: #0071e3; --accent-on: #ffffff; --accent-hover: #0077ed; --accent-active: #0066cc;
+  --success: #16a34a; --warn: #d97706; --danger: #dc2626;
+  --font-display: "SF Pro Display","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-body: "SF Pro Text","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-mono: "SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+  --text-xs:12px;--text-sm:14px;--text-base:17px;--text-lg:21px;--text-xl:28px;--text-2xl:40px;
+  --leading-body:1.47;--leading-tight:1.05;--tracking-display:-0.015em;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-pill:980px;
+  --elev-raised:0 12px 32px rgba(0,0,0,0.08);
+  --focus-ring:0 0 0 4px color-mix(in oklab,var(--accent),transparent 65%);
+  --ease:cubic-bezier(0.28,0,0.22,1);--t:220ms;--tf:150ms;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--fg);background:var(--surface);-webkit-font-smoothing:antialiased;line-height:var(--leading-body)}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hover)}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,textarea,select{font-family:inherit;font-size:var(--text-sm)}
+.page{display:none}.page.active{display:block}
+
+/* LOGIN */
+#page-login{display:flex;align-items:center;justify-content:center;min-height:100dvh;background:var(--bg)}
+.login-wrap{width:100%;max-width:400px;padding:var(--space-6)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:var(--space-8)}
+.login-logo-mark{width:36px;height:36px;background:var(--fg);border-radius:var(--radius-sm);display:grid;place-items:center;flex-shrink:0}
+.login-logo-mark svg{width:20px;height:20px;fill:white}
+.login-logo-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:var(--tracking-display)}
+.login-heading{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;letter-spacing:var(--tracking-display);line-height:var(--leading-tight);margin-bottom:var(--space-2)}
+.login-sub{font-size:var(--text-sm);color:var(--muted);margin-bottom:var(--space-8)}
+.field{margin-bottom:var(--space-5)}
+.field label{display:block;font-size:var(--text-sm);font-weight:600;color:var(--fg-2);margin-bottom:var(--space-2)}
+.field input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg);font-size:var(--text-sm);transition:border-color var(--tf) var(--ease),box-shadow var(--tf) var(--ease);outline:none}
+.field input:hover{border-color:var(--meta)}.field input:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.field-hint{font-size:12px;color:var(--meta);margin-top:var(--space-1)}
+.field-row{display:flex;justify-content:space-between;align-items:center}
+.btn-primary{width:100%;padding:11px 18px;background:var(--accent);color:var(--accent-on);border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:600;transition:background var(--tf) var(--ease);outline:none}
+.btn-primary:hover{background:var(--accent-hover)}.btn-primary:active{background:var(--accent-active)}
+.login-divider{display:flex;align-items:center;gap:var(--space-3);margin:var(--space-5) 0}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border-soft)}
+.login-divider span{font-size:12px;color:var(--meta)}
+.btn-outline{width:100%;padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg-2);font-size:var(--text-sm);font-weight:500;display:flex;align-items:center;justify-content:center;gap:var(--space-2);transition:background var(--tf) var(--ease),border-color var(--tf) var(--ease)}
+.btn-outline:hover{background:var(--surface);border-color:var(--meta)}
+.login-footer{margin-top:var(--space-6);text-align:center;font-size:var(--text-sm);color:var(--muted)}
+
+/* APP SHELL */
+#app-shell{display:none;min-height:100dvh}
+#app-shell.active{display:flex}
+.sidebar{width:240px;min-height:100dvh;background:var(--bg);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:20;transition:transform var(--t) var(--ease)}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:20px 20px 16px;font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;letter-spacing:var(--tracking-display);color:var(--fg);border-bottom:1px solid var(--border-soft)}
+.brand-dot{width:28px;height:28px;background:var(--fg);border-radius:var(--radius-sm);display:grid;place-items:center;flex-shrink:0}
+.brand-dot svg{width:16px;height:16px;fill:white}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-group-label{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--meta);padding:4px 10px 6px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:500;color:var(--fg-2);transition:background var(--tf) var(--ease),color var(--tf) var(--ease);margin-bottom:2px}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;fill:currentColor}
+.nav-item:hover{background:var(--surface);color:var(--fg)}
+.nav-item.active{background:color-mix(in oklab,var(--accent) 10%,transparent);color:var(--accent);font-weight:600}
+.nav-badge{margin-left:auto;background:var(--accent);color:var(--accent-on);font-size:11px;font-weight:700;padding:1px 6px;border-radius:var(--radius-pill);min-width:18px;text-align:center}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border-soft)}
+.user-row{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--fg);color:white;font-size:12px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+.user-info .name{font-size:var(--text-sm);font-weight:600}.user-info .role{font-size:12px;color:var(--muted)}
+.main{margin-left:240px;flex:1;min-height:100dvh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,0.85);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--border-soft);padding:0 var(--space-6);height:52px;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.topbar-left{display:flex;align-items:center;gap:var(--space-4)}.topbar-right{display:flex;align-items:center;gap:var(--space-3)}
+.topbar-title{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:var(--tracking-display)}
+.search-bar{display:flex;align-items:center;gap:var(--space-2);background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:6px 12px;width:220px;transition:width var(--t) var(--ease),border-color var(--tf) var(--ease)}
+.search-bar:focus-within{border-color:var(--accent);width:280px}
+.search-bar svg{width:14px;height:14px;fill:var(--meta);flex-shrink:0}
+.search-bar input{background:none;border:none;outline:none;font-size:var(--text-sm);color:var(--fg);width:100%}
+.search-bar input::placeholder{color:var(--meta)}
+.icon-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:grid;place-items:center;color:var(--muted);transition:background var(--tf) var(--ease),color var(--tf) var(--ease)}
+.icon-btn:hover{background:var(--surface);color:var(--fg)}.icon-btn svg{width:17px;height:17px;fill:currentColor}
+.content{padding:var(--space-8) var(--space-6);max-width:1200px;flex:1}
+.mobile-nav-btn{display:none;padding:var(--space-2);color:var(--fg)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:15}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:var(--space-6)}
+.page-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;letter-spacing:var(--tracking-display);margin-bottom:4px}
+.page-sub{font-size:var(--text-sm);color:var(--muted)}
+
+/* FILTER ROW */
+.filter-row{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);flex-wrap:wrap}
+.filter-chip{padding:6px 14px;border-radius:var(--radius-pill);font-size:var(--text-sm);font-weight:500;border:1px solid var(--border);background:var(--bg);color:var(--fg-2);transition:all var(--tf) var(--ease)}
+.filter-chip:hover{border-color:var(--meta);color:var(--fg)}
+.filter-chip.active{background:var(--fg);color:white;border-color:var(--fg)}
+.filter-right{margin-left:auto;display:flex;gap:var(--space-2)}
+.btn-sm{padding:6px 14px;border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:500}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--fg-2)}.btn-ghost:hover{background:var(--surface);border-color:var(--meta)}
+
+/* TICKETS TABLE */
+.tickets-table{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden}
+.t-head{display:grid;grid-template-columns:100px 1fr 110px 120px 130px 90px;background:var(--surface);border-bottom:1px solid var(--border-soft);padding:0 var(--space-5)}
+.t-row-data{display:grid;grid-template-columns:100px 1fr 110px 120px 130px 90px;padding:0 var(--space-5);border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background var(--tf) var(--ease)}
+.t-row-data:last-child{border-bottom:none}.t-row-data:hover{background:color-mix(in oklab,var(--accent) 4%,var(--bg))}
+.t-cell{padding:13px var(--space-3);font-size:var(--text-sm);display:flex;align-items:center}
+.t-head .t-cell{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;padding:10px var(--space-3)}
+.t-id{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.t-subject{flex-direction:column;align-items:flex-start;gap:2px}
+.t-subject .sub-name{font-weight:500;color:var(--fg)}.t-subject .sub-tag{font-size:12px;color:var(--meta)}
+.badge-status{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--radius-pill)}
+.badge-status::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.s-open{background:color-mix(in oklab,var(--accent) 12%,transparent);color:var(--accent-active)}.s-open::before{background:var(--accent)}
+.s-pending{background:color-mix(in oklab,var(--warn) 12%,transparent);color:#92400e}.s-pending::before{background:var(--warn)}
+.s-resolved{background:color-mix(in oklab,var(--success) 12%,transparent);color:#15803d}.s-resolved::before{background:var(--success)}
+.s-closed{background:color-mix(in oklab,var(--meta) 15%,transparent);color:var(--muted)}.s-closed::before{background:var(--meta)}
+.priority-badge{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--radius-pill)}
+.p-high{background:color-mix(in oklab,#dc2626 10%,transparent);color:#b91c1c}
+.p-medium{background:color-mix(in oklab,var(--warn) 12%,transparent);color:#92400e}
+.p-low{background:color-mix(in oklab,var(--success) 10%,transparent);color:#15803d}
+.p-critical{background:color-mix(in oklab,#dc2626 18%,transparent);color:#991b1b}
+.assignee-cell{display:flex;align-items:center;gap:6px;font-size:var(--text-sm);color:var(--muted)}
+.assignee-cell .a-dot{width:22px;height:22px;border-radius:50%;background:var(--fg);color:white;font-size:9px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+.t-date{font-family:var(--font-mono);font-size:12px;color:var(--meta)}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6)}
+.kpi-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:var(--space-5)}
+.kpi-label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--space-2)}
+.kpi-val{font-family:var(--font-display);font-size:32px;font-weight:600;letter-spacing:var(--tracking-display);line-height:1;margin-bottom:var(--space-2);font-variant-numeric:tabular-nums}
+.kpi-delta{font-size:12px;font-weight:500}.kpi-delta.up{color:var(--success)}.kpi-delta.down{color:var(--danger)}.kpi-delta.neutral{color:var(--muted)}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5);margin-bottom:var(--space-5)}
+.chart-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:var(--space-5)}
+.chart-title{font-size:var(--text-sm);font-weight:700;color:var(--fg-2);margin-bottom:var(--space-4)}
+.bar-chart-wrap{width:100%;overflow:hidden}
+.donut-wrap{display:flex;align-items:center;gap:var(--space-6)}
+.donut-legend{flex:1}.legend-item{display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-2);font-size:var(--text-sm)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* AGENT TABLE */
+.agent-table-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden}
+.agent-table-header{padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.agent-table-title{font-size:var(--text-sm);font-weight:700;color:var(--fg-2)}
+.a-head,.a-row{display:grid;grid-template-columns:180px 1fr 80px 80px 100px;padding:0 var(--space-5);border-bottom:1px solid var(--border-soft)}
+.a-row:last-child{border-bottom:none}
+.a-head .a-cell{font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--meta);padding:10px var(--space-2)}
+.a-cell{padding:12px var(--space-2);font-size:var(--text-sm);display:flex;align-items:center}
+.agent-name-cell{display:flex;align-items:center;gap:var(--space-2)}
+.a-avatar{width:26px;height:26px;border-radius:50%;color:white;font-size:10px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+.a-name{font-weight:500}.a-email{font-size:12px;color:var(--muted)}
+.bar-mini{height:6px;border-radius:var(--radius-pill);background:var(--surface);overflow:hidden;flex:1;min-width:60px;margin-right:var(--space-2)}
+.bar-mini-fill{height:100%;border-radius:var(--radius-pill);background:var(--accent)}
+.a-num{font-variant-numeric:tabular-nums;font-weight:600}
+.online-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.online{background:var(--success)}.offline{background:var(--meta)}.busy{background:var(--warn)}
+.status-label{font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;color:var(--fg-2)}
+
+/* DETAIL */
+.detail-grid{display:grid;grid-template-columns:1fr 320px;gap:var(--space-5);align-items:start}
+.detail-main-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden}
+.detail-header-block{padding:var(--space-6);border-bottom:1px solid var(--border-soft)}
+.detail-id{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:var(--space-2)}
+.detail-title{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:var(--tracking-display);margin-bottom:var(--space-4);line-height:1.3}
+.detail-meta-row{display:flex;gap:var(--space-5);flex-wrap:wrap;font-size:var(--text-sm)}
+.detail-meta-item{display:flex;flex-direction:column;gap:2px}
+.detail-meta-label{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--meta)}
+.detail-meta-val{color:var(--fg-2);font-weight:500}
+.timeline{padding:var(--space-5) var(--space-6)}
+.timeline-heading{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--space-4)}
+.tl-item{display:flex;gap:var(--space-4);margin-bottom:var(--space-5);position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:-16px;width:1px;background:var(--border-soft)}
+.tl-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:11px;font-weight:700;color:white;z-index:1}
+.tl-avatar.sys{background:var(--surface);color:var(--muted);border:1px solid var(--border-soft)}
+.tl-avatar.agent{background:var(--accent)}.tl-avatar.user{background:var(--fg)}
+.tl-body{flex:1;padding-top:6px}
+.tl-meta{font-size:12px;color:var(--meta);margin-bottom:var(--space-1)}.tl-meta strong{color:var(--fg-2)}
+.tl-bubble{background:var(--surface);border-radius:0 var(--radius-md) var(--radius-md) var(--radius-md);padding:12px 14px;font-size:var(--text-sm);color:var(--fg-2);line-height:1.6;margin-top:var(--space-2)}
+.tl-bubble.agent-bubble{background:color-mix(in oklab,var(--accent) 8%,transparent);border-radius:var(--radius-md) 0 var(--radius-md) var(--radius-md)}
+.tl-system{font-size:var(--text-sm);color:var(--muted);font-style:italic}
+.reply-box{padding:var(--space-5) var(--space-6);border-top:1px solid var(--border-soft)}
+.reply-label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--space-3)}
+.reply-textarea{width:100%;min-height:90px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--fg);font-size:var(--text-sm);resize:vertical;outline:none;line-height:1.6;transition:border-color var(--tf) var(--ease),box-shadow var(--tf) var(--ease)}
+.reply-textarea:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.reply-actions{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-3)}
+.reply-actions-left{display:flex;gap:var(--space-2)}
+.btn-reply{padding:8px 18px;background:var(--accent);color:var(--accent-on);border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:600;transition:background var(--tf) var(--ease)}
+.btn-reply:hover{background:var(--accent-hover)}
+.btn-action-sm{padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:500;color:var(--fg-2);background:var(--bg);transition:background var(--tf) var(--ease),border-color var(--tf) var(--ease)}
+.btn-action-sm:hover{background:var(--surface);border-color:var(--meta)}
+.btn-resolve{border-color:color-mix(in oklab,var(--success) 50%,transparent);color:var(--success)}
+.btn-resolve:hover{background:color-mix(in oklab,var(--success) 8%,transparent);border-color:var(--success)}
+.detail-sidebar-card{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden;position:sticky;top:72px}
+.sidebar-card-section{padding:var(--space-5);border-bottom:1px solid var(--border-soft)}.sidebar-card-section:last-child{border-bottom:none}
+.sc-label{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--meta);margin-bottom:var(--space-3)}
+.sc-row{display:flex;justify-content:space-between;align-items:center;font-size:var(--text-sm);margin-bottom:var(--space-2)}.sc-row:last-child{margin-bottom:0}
+.sc-key{color:var(--muted)}.sc-val{color:var(--fg-2);font-weight:500}
+.sc-tag{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius-pill);font-size:12px;padding:2px 8px;color:var(--fg-2)}
+.sc-tags{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+.sc-action-btn{width:100%;padding:9px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:500;color:var(--fg-2);background:var(--bg);margin-bottom:var(--space-2);transition:background var(--tf) var(--ease)}
+.sc-action-btn:hover{background:var(--surface)}.sc-action-btn:last-child{margin-bottom:0}
+.back-btn{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--muted);margin-bottom:var(--space-4);transition:color var(--tf) var(--ease)}
+.back-btn:hover{color:var(--fg)}.back-btn svg{width:14px;height:14px;fill:currentColor}
+
+/* TOAST */
+#toast{position:fixed;bottom:28px;right:28px;z-index:100;background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.18);transform:translateY(20px);opacity:0;transition:opacity 0.25s var(--ease),transform 0.25s var(--ease);pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.detail-sidebar-card{position:static}}
+@media(max-width:820px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.mobile-nav-btn{display:block}.sidebar-overlay.open{display:block}
+  .t-head{grid-template-columns:90px 1fr 100px 90px}.t-row-data{grid-template-columns:90px 1fr 100px 90px}
+  .t-cell:nth-child(4),.t-head .t-cell:nth-child(4),.t-cell:nth-child(5),.t-head .t-cell:nth-child(5),.t-cell:nth-child(6),.t-head .t-cell:nth-child(6){display:none}
+  .a-head,.a-row{grid-template-columns:140px 1fr 70px 100px}
+  .a-head .a-cell:nth-child(4),.a-row .a-cell:nth-child(4),.a-head .a-cell:nth-child(5),.a-row .a-cell:nth-child(5){display:none}
+}
+@media(max-width:520px){.content{padding:var(--space-5) var(--space-4)}.kpi-grid{grid-template-columns:1fr 1fr}.topbar{padding:0 var(--space-4)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="page-login" class="page active">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-logo-mark"><svg viewBox="0 0 24 24"><path d="M20 6h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9-2h2v2h-2V4zm-6 4h14v1.6l-7 3.9-7-3.9V8zm0 11v-7.2l7 3.9 7-3.9V19H5z"/></svg></div>
+      <span class="login-logo-name">Helpdesk</span>
+    </div>
+    <h1 class="login-heading">Welcome back</h1>
+    <p class="login-sub">Sign in to your support agent account.</p>
+    <form onsubmit="handleLogin(event)">
+      <div class="field">
+        <label for="email">Work email</label>
+        <input id="email" type="email" value="jane.doe@corp.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <div class="field-row"><label for="password">Password</label><a href="#" style="font-size:12px">Forgot password?</a></div>
+        <input id="password" type="password" value="password"/>
+        <div class="field-hint">Use your SSO credentials if your org has configured them.</div>
+      </div>
+      <button type="submit" class="btn-primary" id="login-btn">Sign in</button>
+    </form>
+    <div class="login-divider"><span>or</span></div>
+    <button class="btn-outline" onclick="handleLogin(event)">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="login-footer">Don't have an account? <a href="#">Contact your admin</a></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app-shell">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M20 6h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9-2h2v2h-2V4zm-6 4h14v1.6l-7 3.9-7-3.9V8zm0 11v-7.2l7 3.9 7-3.9V19H5z"/></svg></div>
+      Helpdesk
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Support</div>
+      <button class="nav-item" id="nav-dashboard" onclick="navigate('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard
+      </button>
+      <button class="nav-item" id="nav-tickets" onclick="navigate('tickets')">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>My Tickets<span class="nav-badge">3</span>
+      </button>
+      <div class="nav-group-label" style="margin-top:8px">Team</div>
+      <button class="nav-item" id="nav-team" onclick="navigate('team')">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Team View
+      </button>
+      <div class="nav-group-label" style="margin-top:8px">Account</div>
+      <button class="nav-item" onclick="showToast('Settings coming soon')">
+        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="avatar">JD</div>
+        <div class="user-info"><div class="name">Jane Doe</div><div class="role">Support Agent</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-nav-btn icon-btn" onclick="openSidebar()" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+        <div id="topbar-title" class="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" placeholder="Search tickets…" oninput="filterTickets(this.value)"/>
+        </div>
+        <button class="icon-btn" onclick="showToast('No new notifications')" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        </button>
+        <div class="avatar" style="cursor:pointer" onclick="showToast('Signed in as Jane Doe')">JD</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div class="page-title">Good morning, Jane 👋</div>
+          <div class="page-sub">Sunday, June 7, 2026 · Helpdesk — Customer Support Team</div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Open Tickets</div><div class="kpi-val" style="color:var(--accent)">12</div><div class="kpi-delta up">↑ 3 from yesterday</div></div>
+          <div class="kpi-card"><div class="kpi-label">Resolved Today</div><div class="kpi-val" style="color:var(--success)">7</div><div class="kpi-delta up">↑ 2 vs last week</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg. Response</div><div class="kpi-val">1.4<span style="font-size:18px;color:var(--muted)">h</span></div><div class="kpi-delta down">↓ 12 min slower</div></div>
+          <div class="kpi-card"><div class="kpi-label">CSAT Score</div><div class="kpi-val" style="color:var(--success)">94<span style="font-size:18px;color:var(--muted)">%</span></div><div class="kpi-delta up">↑ 2% this week</div></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">Weekly Ticket Volume — last 7 days</div>
+            <svg class="bar-chart-wrap" viewBox="0 0 400 160" preserveAspectRatio="none" style="height:160px">
+              <line x1="0" y1="30" x2="400" y2="30" stroke="#e8e8ed" stroke-width="1"/>
+              <line x1="0" y1="70" x2="400" y2="70" stroke="#e8e8ed" stroke-width="1"/>
+              <line x1="0" y1="110" x2="400" y2="110" stroke="#e8e8ed" stroke-width="1"/>
+              <text x="2" y="28" font-size="9" fill="#86868b">20</text><text x="2" y="68" font-size="9" fill="#86868b">10</text><text x="2" y="108" font-size="9" fill="#86868b">5</text>
+              <g transform="translate(20,0)">
+                <rect x="0" y="110" width="38" height="30" rx="4" fill="#0071e3" opacity="0.7"/>
+                <rect x="52" y="62" width="38" height="78" rx="4" fill="#0071e3"/>
+                <rect x="104" y="80" width="38" height="60" rx="4" fill="#0071e3" opacity="0.8"/>
+                <rect x="156" y="30" width="38" height="110" rx="4" fill="#0071e3"/>
+                <rect x="208" y="68" width="38" height="72" rx="4" fill="#0071e3" opacity="0.85"/>
+                <rect x="260" y="100" width="38" height="40" rx="4" fill="#0071e3" opacity="0.65"/>
+                <rect x="312" y="74" width="38" height="66" rx="4" fill="#0071e3" opacity="0.9"/>
+                <text x="19" y="152" font-size="10" fill="#86868b" text-anchor="middle">Mon</text>
+                <text x="71" y="152" font-size="10" fill="#86868b" text-anchor="middle">Tue</text>
+                <text x="123" y="152" font-size="10" fill="#86868b" text-anchor="middle">Wed</text>
+                <text x="175" y="152" font-size="10" fill="#86868b" text-anchor="middle">Thu</text>
+                <text x="227" y="152" font-size="10" fill="#86868b" text-anchor="middle">Fri</text>
+                <text x="279" y="152" font-size="10" fill="#86868b" text-anchor="middle">Sat</text>
+                <text x="331" y="152" font-size="10" fill="#1d1d1f" text-anchor="middle" font-weight="700">Sun</text>
+              </g>
+            </svg>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Tickets by Status</div>
+            <div class="donut-wrap">
+              <svg viewBox="0 0 120 120" width="120" height="120" style="flex-shrink:0">
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#e8e8ed" stroke-width="18"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#0071e3" stroke-width="18" stroke-dasharray="110 179" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#d97706" stroke-width="18" stroke-dasharray="58 231" stroke-dashoffset="-110" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#16a34a" stroke-width="18" stroke-dasharray="92 197" stroke-dashoffset="-168" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#86868b" stroke-width="18" stroke-dasharray="29 260" stroke-dashoffset="-260" transform="rotate(-90 60 60)"/>
+                <text x="60" y="56" text-anchor="middle" font-size="18" font-weight="700" fill="#1d1d1f">38</text>
+                <text x="60" y="70" text-anchor="middle" font-size="10" fill="#86868b">tickets</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span><span style="flex:1">Open</span><strong>12</strong></div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--warn)"></span><span style="flex:1">Pending</span><strong>8</strong></div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--success)"></span><span style="flex:1">Resolved</span><strong>13</strong></div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--meta)"></span><span style="flex:1">Closed</span><strong>5</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="agent-table-card">
+          <div class="agent-table-header"><div class="agent-table-title">Team Performance · This Week</div><button class="btn-ghost btn-sm" onclick="navigate('team')">View team →</button></div>
+          <div class="a-head"><div class="a-cell">Agent</div><div class="a-cell">Tickets Handled</div><div class="a-cell">Resolved</div><div class="a-cell">Open</div><div class="a-cell">Status</div></div>
+          <div class="a-row">
+            <div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#0071e3">JD</div><div><div class="a-name">Jane Doe</div><div class="a-email">jane.doe@corp.com</div></div></div></div>
+            <div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:80%"></div></div><span class="a-num">16</span></div>
+            <div class="a-cell a-num" style="color:var(--success)">11</div><div class="a-cell a-num" style="color:var(--accent)">5</div>
+            <div class="a-cell"><span class="status-label"><span class="online-dot online"></span>Online</span></div>
+          </div>
+          <div class="a-row">
+            <div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#5856d6">MS</div><div><div class="a-name">Marcus Singh</div><div class="a-email">m.singh@corp.com</div></div></div></div>
+            <div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:60%"></div></div><span class="a-num">12</span></div>
+            <div class="a-cell a-num" style="color:var(--success)">9</div><div class="a-cell a-num" style="color:var(--accent)">3</div>
+            <div class="a-cell"><span class="status-label"><span class="online-dot busy"></span>In call</span></div>
+          </div>
+          <div class="a-row">
+            <div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#30d158">AL</div><div><div class="a-name">Aisha Lowe</div><div class="a-email">a.lowe@corp.com</div></div></div></div>
+            <div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:45%"></div></div><span class="a-num">9</span></div>
+            <div class="a-cell a-num" style="color:var(--success)">7</div><div class="a-cell a-num" style="color:var(--accent)">2</div>
+            <div class="a-cell"><span class="status-label"><span class="online-dot online"></span>Online</span></div>
+          </div>
+          <div class="a-row">
+            <div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#ff9500">TC</div><div><div class="a-name">Tom Chen</div><div class="a-email">t.chen@corp.com</div></div></div></div>
+            <div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:30%"></div></div><span class="a-num">6</span></div>
+            <div class="a-cell a-num" style="color:var(--success)">4</div><div class="a-cell a-num" style="color:var(--accent)">2</div>
+            <div class="a-cell"><span class="status-label"><span class="online-dot offline"></span>Away</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TICKETS LIST -->
+      <section id="page-tickets" class="page">
+        <div class="page-header"><div class="page-title">My Tickets</div><div class="page-sub">All tickets assigned to you</div></div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="setFilter(this,'all')">All</button>
+          <button class="filter-chip" onclick="setFilter(this,'open')">Open</button>
+          <button class="filter-chip" onclick="setFilter(this,'pending')">Pending</button>
+          <button class="filter-chip" onclick="setFilter(this,'resolved')">Resolved</button>
+          <button class="filter-chip" onclick="setFilter(this,'closed')">Closed</button>
+          <div class="filter-right">
+            <button class="btn-ghost btn-sm" onclick="showToast('Export ready')">Export CSV</button>
+            <button class="btn-primary btn-sm" style="width:auto;padding:6px 16px" onclick="showToast('New ticket form coming soon')">+ New Ticket</button>
+          </div>
+        </div>
+        <div class="tickets-table" id="tickets-table">
+          <div class="t-head">
+            <div class="t-cell">Ticket ID</div><div class="t-cell">Subject</div><div class="t-cell">Status</div><div class="t-cell">Priority</div><div class="t-cell">Assignee</div><div class="t-cell">Date</div>
+          </div>
+          <div class="t-row-data" onclick="openTicket('TKT-1041')">
+            <div class="t-cell t-id">TKT-1041</div>
+            <div class="t-cell t-subject"><span class="sub-name">Cannot access VPN from home network</span><span class="sub-tag">Network · IT Support</span></div>
+            <div class="t-cell"><span class="badge-status s-open">Open</span></div>
+            <div class="t-cell"><span class="priority-badge p-high">High</span></div>
+            <div class="t-cell"><div class="assignee-cell"><div class="a-dot">JD</div>Jane Doe</div></div>
+            <div class="t-cell t-date">Jun 5</div>
+          </div>
+          <div class="t-row-data" onclick="openTicket('TKT-1038')">
+            <div class="t-cell t-id">TKT-1038</div>
+            <div class="t-cell t-subject"><span class="sub-name">Email client keeps crashing on Outlook 365</span><span class="sub-tag">Software · IT Support</span></div>
+            <div class="t-cell"><span class="badge-status s-resolved">Resolved</span></div>
+            <div class="t-cell"><span class="priority-badge p-medium">Medium</span></div>
+            <div class="t-cell"><div class="assignee-cell"><div class="a-dot">IT</div>IT Dept</div></div>
+            <div class="t-cell t-date">Jun 3</div>
+          </div>
+          <div class="t-row-data" onclick="showToast('TKT-1035 — Printer issue, pending')">
+            <div class="t-cell t-id">TKT-1035</div>
+            <div class="t-cell t-subject"><span class="sub-name">Printer not responding after macOS update</span><span class="sub-tag">Hardware · Facilities</span></div>
+            <div class="t-cell"><span class="badge-status s-pending">Pending</span></div>
+            <div class="t-cell"><span class="priority-badge p-medium">Medium</span></div>
+            <div class="t-cell"><div class="assignee-cell"><div class="a-dot">TT</div>Triage Team</div></div>
+            <div class="t-cell t-date">Jun 1</div>
+          </div>
+          <div class="t-row-data" onclick="showToast('TKT-1030 — Closed')">
+            <div class="t-cell t-id">TKT-1030</div>
+            <div class="t-cell t-subject"><span class="sub-name">Request for additional monitor setup</span><span class="sub-tag">Hardware · IT Support</span></div>
+            <div class="t-cell"><span class="badge-status s-closed">Closed</span></div>
+            <div class="t-cell"><span class="priority-badge p-low">Low</span></div>
+            <div class="t-cell"><div class="assignee-cell"><div class="a-dot">JD</div>Jane Doe</div></div>
+            <div class="t-cell t-date">May 28</div>
+          </div>
+          <div class="t-row-data" onclick="showToast('TKT-1024 — Critical: 2FA issue')">
+            <div class="t-cell t-id">TKT-1024</div>
+            <div class="t-cell t-subject"><span class="sub-name">2FA not working on company portal</span><span class="sub-tag">Account / Access · Security</span></div>
+            <div class="t-cell"><span class="badge-status s-open">Open</span></div>
+            <div class="t-cell"><span class="priority-badge p-critical">Critical</span></div>
+            <div class="t-cell"><div class="assignee-cell"><div class="a-dot">MS</div>Marcus Singh</div></div>
+            <div class="t-cell t-date">May 23</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TICKET DETAIL -->
+      <section id="page-detail" class="page">
+        <button class="back-btn" onclick="navigate('tickets')">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Back to My Tickets
+        </button>
+        <div class="detail-grid">
+          <div class="detail-main-card">
+            <div class="detail-header-block">
+              <div class="detail-id">TKT-1041</div>
+              <div class="detail-title">Cannot access VPN from home network</div>
+              <div class="detail-meta-row">
+                <div class="detail-meta-item"><div class="detail-meta-label">Status</div><div class="detail-meta-val"><span class="badge-status s-open">Open</span></div></div>
+                <div class="detail-meta-item"><div class="detail-meta-label">Priority</div><div class="detail-meta-val"><span class="priority-badge p-high">High</span></div></div>
+                <div class="detail-meta-item"><div class="detail-meta-label">Category</div><div class="detail-meta-val">Network · IT Support</div></div>
+                <div class="detail-meta-item"><div class="detail-meta-label">Opened</div><div class="detail-meta-val">Jun 5, 2026</div></div>
+              </div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-heading">Conversation</div>
+              <div class="tl-item">
+                <div class="tl-avatar user">RK</div>
+                <div class="tl-body">
+                  <div class="tl-meta"><strong>Raj Kumar</strong> · Jun 5, 9:14 AM</div>
+                  <div class="tl-bubble">Hi, I've been trying to connect to the company VPN from my home network since Friday but keep getting "Authentication failed". My credentials are correct — I can log in on the office network fine. I'm using the GlobalProtect client on macOS Sequoia.</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-avatar sys"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg></div>
+                <div class="tl-body">
+                  <div class="tl-meta"><strong>System</strong> · Jun 5, 9:15 AM · Auto-triaged</div>
+                  <div class="tl-system">Ticket assigned to Jane Doe · Priority set to High · Category: Network</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-avatar agent">JD</div>
+                <div class="tl-body">
+                  <div class="tl-meta"><strong>Jane Doe</strong> (you) · Jun 5, 10:02 AM</div>
+                  <div class="tl-bubble agent-bubble">Hi Raj — thanks for reaching out! A few quick things to try:<br><br>1. Make sure you're on GlobalProtect 6.2.x (Help → About)<br>2. Clear saved credentials: Settings → Clear Saved Passwords<br>3. If your ISP uses CGNAT, try connecting via mobile hotspot as a test<br><br>Let me know how it goes and I'll escalate to the network team if needed.</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-avatar user">RK</div>
+                <div class="tl-body">
+                  <div class="tl-meta"><strong>Raj Kumar</strong> · Jun 6, 8:40 AM</div>
+                  <div class="tl-bubble">Thanks Jane. I tried all three steps. Hotspot connects fine! So it does seem to be a CGNAT issue with my ISP. Not sure how to fix that from my end though.</div>
+                </div>
+              </div>
+            </div>
+            <div class="reply-box">
+              <div class="reply-label">Reply</div>
+              <textarea class="reply-textarea" id="reply-input" placeholder="Write your reply… Use @mention to loop in a teammate"></textarea>
+              <div class="reply-actions">
+                <div class="reply-actions-left">
+                  <button class="btn-reply" onclick="sendReply()">Send Reply</button>
+                  <button class="btn-action-sm btn-resolve" onclick="showToast('Ticket marked as Resolved')">✓ Resolve</button>
+                </div>
+                <button class="btn-action-sm" onclick="showToast('Escalated to Network Team')">Escalate</button>
+              </div>
+            </div>
+          </div>
+          <div class="detail-sidebar-card">
+            <div class="sidebar-card-section">
+              <div class="sc-label">Ticket Details</div>
+              <div class="sc-row"><span class="sc-key">Ticket ID</span><span class="sc-val" style="font-family:var(--font-mono);font-size:12px">TKT-1041</span></div>
+              <div class="sc-row"><span class="sc-key">Created</span><span class="sc-val">Jun 5, 2026</span></div>
+              <div class="sc-row"><span class="sc-key">Last update</span><span class="sc-val">Jun 6, 8:40 AM</span></div>
+              <div class="sc-row"><span class="sc-key">Source</span><span class="sc-val">Email</span></div>
+              <div class="sc-row"><span class="sc-key">SLA</span><span class="sc-val" style="color:var(--warn)">3h 20m left</span></div>
+            </div>
+            <div class="sidebar-card-section">
+              <div class="sc-label">People</div>
+              <div class="sc-row"><span class="sc-key">Requester</span><span class="sc-val">Raj Kumar</span></div>
+              <div class="sc-row"><span class="sc-key">Assigned to</span><span class="sc-val" style="color:var(--accent)">Jane Doe</span></div>
+              <div class="sc-row"><span class="sc-key">Team</span><span class="sc-val">IT Support</span></div>
+            </div>
+            <div class="sidebar-card-section">
+              <div class="sc-label">Tags</div>
+              <div class="sc-tags"><span class="sc-tag">vpn</span><span class="sc-tag">network</span><span class="sc-tag">cgnat</span><span class="sc-tag">globalprotect</span></div>
+            </div>
+            <div class="sidebar-card-section">
+              <div class="sc-label">Actions</div>
+              <button class="sc-action-btn" onclick="showToast('Ticket reassigned')">Reassign Ticket</button>
+              <button class="sc-action-btn" onclick="showToast('Ticket merged')">Merge Ticket</button>
+              <button class="sc-action-btn" onclick="showToast('Ticket closed')">Close Ticket</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM VIEW -->
+      <section id="page-team" class="page">
+        <div class="page-header"><div class="page-title">Team View</div><div class="page-sub">Full team KPIs and capacity — this week</div></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Team Open</div><div class="kpi-val" style="color:var(--accent)">38</div><div class="kpi-delta down">↑ 8 from last week</div></div>
+          <div class="kpi-card"><div class="kpi-label">Resolved This Week</div><div class="kpi-val" style="color:var(--success)">43</div><div class="kpi-delta up">↑ 6 vs prior week</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg Handle Time</div><div class="kpi-val">2.1<span style="font-size:18px;color:var(--muted)">h</span></div><div class="kpi-delta up">↓ 0.3h improved</div></div>
+          <div class="kpi-card"><div class="kpi-label">Team CSAT</div><div class="kpi-val" style="color:var(--success)">91<span style="font-size:18px;color:var(--muted)">%</span></div><div class="kpi-delta neutral">— unchanged</div></div>
+        </div>
+        <div class="agent-table-card">
+          <div class="agent-table-header"><div class="agent-table-title">Agent Breakdown</div><button class="btn-ghost btn-sm" onclick="showToast('Report exported')">Export</button></div>
+          <div class="a-head"><div class="a-cell">Agent</div><div class="a-cell">Tickets Handled</div><div class="a-cell">Resolved</div><div class="a-cell">Open</div><div class="a-cell">Status</div></div>
+          <div class="a-row"><div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#0071e3">JD</div><div><div class="a-name">Jane Doe</div><div class="a-email">jane.doe@corp.com</div></div></div></div><div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:80%"></div></div><span class="a-num">16</span></div><div class="a-cell a-num" style="color:var(--success)">11</div><div class="a-cell a-num" style="color:var(--accent)">5</div><div class="a-cell"><span class="status-label"><span class="online-dot online"></span>Online</span></div></div>
+          <div class="a-row"><div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#5856d6">MS</div><div><div class="a-name">Marcus Singh</div><div class="a-email">m.singh@corp.com</div></div></div></div><div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:60%"></div></div><span class="a-num">12</span></div><div class="a-cell a-num" style="color:var(--success)">9</div><div class="a-cell a-num" style="color:var(--accent)">3</div><div class="a-cell"><span class="status-label"><span class="online-dot busy"></span>In call</span></div></div>
+          <div class="a-row"><div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#30d158">AL</div><div><div class="a-name">Aisha Lowe</div><div class="a-email">a.lowe@corp.com</div></div></div></div><div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:45%"></div></div><span class="a-num">9</span></div><div class="a-cell a-num" style="color:var(--success)">7</div><div class="a-cell a-num" style="color:var(--accent)">2</div><div class="a-cell"><span class="status-label"><span class="online-dot online"></span>Online</span></div></div>
+          <div class="a-row"><div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#ff9500">TC</div><div><div class="a-name">Tom Chen</div><div class="a-email">t.chen@corp.com</div></div></div></div><div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:30%"></div></div><span class="a-num">6</span></div><div class="a-cell a-num" style="color:var(--success)">4</div><div class="a-cell a-num" style="color:var(--accent)">2</div><div class="a-cell"><span class="status-label"><span class="online-dot offline"></span>Away</span></div></div>
+          <div class="a-row"><div class="a-cell"><div class="agent-name-cell"><div class="a-avatar" style="background:#ff3b30">PM</div><div><div class="a-name">Priya Mehta</div><div class="a-email">p.mehta@corp.com</div></div></div></div><div class="a-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:100%"></div></div><span class="a-num">20</span></div><div class="a-cell a-num" style="color:var(--success)">15</div><div class="a-cell a-num" style="color:var(--accent)">5</div><div class="a-cell"><span class="status-label"><span class="online-dot busy"></span>Busy</span></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let currentFilter='all';
+function handleLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById('login-btn');
+  btn.textContent='Signing in…';btn.disabled=true;
+  setTimeout(()=>{
+    document.getElementById('page-login').style.display='none';
+    document.getElementById('app-shell').style.display='flex';
+    navigate('dashboard');
+  },800);
+}
+function navigate(page){
+  document.querySelectorAll('#app-shell .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('nav-'+page);if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard',tickets:'My Tickets',detail:'Ticket Detail',team:'Team View'};
+  document.getElementById('topbar-title').textContent=titles[page]||'Helpdesk';
+  closeSidebar();
+}
+function openTicket(){navigate('detail')}
+function setFilter(btn,filter){
+  currentFilter=filter;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');filterTickets('');
+}
+function filterTickets(q){
+  const map={open:'s-open',pending:'s-pending',resolved:'s-resolved',closed:'s-closed'};
+  document.querySelectorAll('#tickets-table .t-row-data').forEach(r=>{
+    const text=r.textContent.toLowerCase();
+    const hasQ=!q||text.includes(q.toLowerCase());
+    const badge=r.querySelector('.badge-status');
+    const hasS=currentFilter==='all'||(badge&&badge.classList.contains(map[currentFilter]));
+    r.style.display=hasQ&&hasS?'':'none';
+  });
+}
+function sendReply(){
+  const ta=document.getElementById('reply-input');
+  if(!ta.value.trim()){showToast('Please write a reply first');return;}
+  showToast('Reply sent to Raj Kumar');ta.value='';
+}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open')}
+let tt;function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2800)}
+document.getElementById('app-shell').style.display='none';
+</script>
+</body>
+</html>
