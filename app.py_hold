@@ -1,0 +1,444 @@
+"""
+<<<<<<< HEAD
+Streamlit UI for IT Ticket Agent System
+"""
+import streamlit as st
+from Agents.classifier import ClassifierAgent
+from Agents.router import RouterAgent
+from Agents.resolver import ResolverAgent
+from Agents.supervisor import SupervisorAgent
+
+# Page configuration
+st.set_page_config(
+    page_title="IT Ticket Agent System",
+    page_icon="🎫",
+    layout="wide"
+)
+
+# Title and description
+st.title("🎫 IT Ticket Agent System")
+st.markdown("### Multi-Agent Workflow for IT Support Ticket Resolution")
+st.markdown("---")
+
+# Initialize agents
+@st.cache_resource
+def get_agents():
+    return {
+        'classifier': ClassifierAgent(),
+        'router': RouterAgent(),
+        'resolver': ResolverAgent(),
+        'supervisor': SupervisorAgent()
+    }
+
+agents = get_agents()
+
+# Session state initialization
+if 'processing' not in st.session_state:
+    st.session_state.processing = False
+if 'results' not in st.session_state:
+    st.session_state.results = None
+
+# Ticket input form
+with st.form("ticket_form"):
+    st.subheader("📝 Submit IT Support Ticket")
+
+    ticket_description = st.text_area(
+        "Describe the IT issue you're experiencing:",
+        placeholder="e.g., My printer is not working and showing error code 0x00000709",
+        height=100
+    )
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+        urgency = st.selectbox(
+            "Urgency Level:",
+            options=["Low", "Medium", "High", "Critical"],
+            index=2  # Default to Medium
+        )
+
+    with col2:
+        st.write("")  # Spacer
+        submit_button = st.form_submit_button(
+            "🚀 Process Ticket",
+            type="primary",
+            use_container_width=True
+        )
+
+# Process ticket when submitted
+if submit_button and ticket_description.strip():
+    st.session_state.processing = True
+    st.session_state.results = None
+
+    # Create progress containers
+    progress_container = st.container()
+    results_container = st.container()
+
+    with progress_container:
+        st.subheader("⚙️ Processing Ticket Through Agent Workflow")
+
+        # Progress bar
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+
+        # Step 1: Classification
+        status_text.text("Step 1/4: Classifying ticket...")
+        progress_bar.progress(25)
+        classification = agents['classifier'].classify(ticket_description)
+
+        # Step 2: Routing
+        status_text.text("Step 2/4: Routing to appropriate department...")
+        progress_bar.progress(50)
+        routing = agents['router'].route(classification, urgency)
+
+        # Step 3: Resolution
+        status_text.text("Step 3/4: Generating resolution steps...")
+        progress_bar.progress(75)
+        resolution = agents['resolver'].resolve(classification, ticket_description)
+
+        # Step 4: Supervision
+        status_text.text("Step 4/4: Final review and confidence assessment...")
+        progress_bar.progress(100)
+        results = agents['supervisor'].supervise(classification, routing, resolution)
+
+        status_text.text("✅ Processing complete!")
+        progress_bar.progress(100)
+
+        # Store results
+        st.session_state.results = results
+        st.session_state.processing = False
+
+# Display results
+if st.session_state.results and not st.session_state.processing:
+    results = st.session_state.results
+
+    with results_container:
+        st.subheader("📊 Ticket Processing Results")
+
+        # Confidence and escalation info
+        col1, col2, col3 = st.columns([2, 1, 1])
+
+        with col1:
+            confidence = results['confidence']
+            if confidence >= 0.75:
+                st.success(f"🎯 Confidence Score: {confidence:.0%}")
+            elif confidence >= 0.5:
+                st.warning(f"⚠️ Confidence Score: {confidence:.0%}")
+            else:
+                st.error(f"❌ Confidence Score: {confidence:.0%}")
+
+        with col2:
+            if results['escalate']:
+                st.error("🚨 **ESCALATION REQUIRED**")
+            else:
+                st.info("✅ Auto-resolution possible")
+
+        with col3:
+            st.metric("SLA Hours", f"{results['sla_hours']}h")
+
+        # Escalation reason if applicable
+        if results['escalate']:
+            st.error(f"**Reason:** {results['escalation_reason']}")
+
+        # Ticket details in expandable sections
+        with st.expander("🔍 Classification Details", expanded=True):
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"**Category:** {results['category']}")
+                st.write(f"**Subcategory:** {results['subcategory']}")
+            with col2:
+                st.write(f"**Priority:** {results['priority']}")
+                st.write(f"**Department:** {results['department']}")
+                st.write(f"**Team:** {results['team']}")
+            st.caption(f"*{results['classifier_notes']}*")
+
+        with st.expander("🛠️ Resolution Steps", expanded=True):
+            st.write(f"**Estimated Resolution Time:** {results['estimated_time']}")
+            st.write("**Recommended Actions:**")
+            for i, step in enumerate(results['resolution_steps'], 1):
+                st.write(f"{i}. {step}")
+
+        with st.expander("📋 Processing Notes", expanded=False):
+            st.write(f"**Router Notes:** {results['router_notes']}")
+            st.write(f"**Supervisor Notes:** {results['supervisor_notes']}")
+
+            if results['similar_tickets']:
+                st.write("**Similar Past Tickets:**")
+                for ticket in results['similar_tickets']:
+                    st.write(f"• {ticket}")
+
+        # Action buttons
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 2])
+
+        with col1:
+            if st.button("📋 New Ticket", type="secondary"):
+                st.session_state.processing = False
+                st.session_state.results = None
+                st.rerun()
+
+        with col2:
+            if st.button("📄 Export Results", type="secondary"):
+                # Create exportable text
+                export_text = f"""
+IT Ticket Processing Results
+===========================
+Ticket Description: {ticket_description}
+Category: {results['category']}
+Subcategory: {results['subcategory']}
+Department: {results['department']}
+Team: {results['team']}
+Priority: {results['priority']}
+Confidence: {confidence:.0%}
+Escalation Required: {'Yes' if results['escalate'] else 'No'}
+Escalation Reason: {results['escalation_reason']}
+Estimated Resolution Time: {results['estimated_time']}
+SLA Hours: {results['sla_hours']}h
+
+Resolution Steps:
+{chr(10).join([f"{i+1}. {step}" for i, step in enumerate(results['resolution_steps'])])}
+
+Processing Notes:
+- Router: {results['router_notes']}
+- Supervisor: {results['supervisor_notes']}
+                """
+                st.download_button(
+                    label="💾 Download Results",
+                    data=export_text,
+                    file_name="ticket_results.txt",
+                    mime="text/plain"
+                )
+
+# Footer
+st.markdown("---")
+st.markdown(
+    "<div style='text-align: center; color: #666;'>"
+    "IT Ticket Agent System • Powered by CrewAI & Streamlit"
+    "</div>",
+    unsafe_allow_html=True
+)
+=======
+Main Streamlit Application for IT Ticket Routing System
+"""
+import streamlit as st
+import json
+from datetime import datetime
+from agents.classifier import ClassifierAgent
+from agents.router import RouterAgent
+from agents.resolver import ResolverAgent
+from agents.supervisor import SupervisorAgent
+
+
+def initialize_session_state():
+    """Initialize Streamlit session state variables"""
+    if "tickets" not in st.session_state:
+        st.session_state.tickets = []
+    if "last_result" not in st.session_state:
+        st.session_state.last_result = None
+
+
+def display_header():
+    """Display application header"""
+    st.set_page_config(page_title="IT Ticket Router", layout="wide")
+    st.title("🎫 Intelligent IT Ticket Routing System")
+    st.markdown("**Agent Titans** | NASSCOM Agentic AI Hackathon 2026")
+    st.markdown("---")
+
+
+def display_ticket_submission():
+    """Display ticket submission form"""
+    st.header("📝 Submit IT Ticket")
+    
+    with st.form("ticket_form"):
+        ticket_description = st.text_area(
+            "Ticket Description",
+            placeholder="Describe the IT issue...",
+            height=150
+        )
+        
+        reporter_name = st.text_input("Reporter Name", placeholder="Your name")
+        reporter_email = st.text_input("Email", placeholder="your.email@company.com")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            user_department = st.selectbox(
+                "Your Department",
+                ["Sales", "Engineering", "HR", "Finance", "Operations", "Other"]
+            )
+        with col2:
+            urgency = st.selectbox(
+                "Perceived Urgency",
+                ["Low", "Medium", "High", "Critical"]
+            )
+        
+        submit_button = st.form_submit_button("🚀 Process Ticket")
+        
+        if submit_button:
+            if ticket_description.strip():
+                process_ticket(
+                    ticket_description,
+                    reporter_name,
+                    reporter_email,
+                    user_department,
+                    urgency
+                )
+            else:
+                st.error("Please enter a ticket description.")
+
+
+def process_ticket(description, name, email, dept, urgency):
+    """Process ticket through multi-agent system"""
+    st.header("⚙️ Processing Ticket...")
+    
+    progress_bar = st.progress(0)
+    status_placeholder = st.empty()
+    
+    try:
+        # Step 1: Classification
+        status_placeholder.info("🤖 Step 1/4: Analyzing ticket category...")
+        progress_bar.progress(25)
+        classifier = ClassifierAgent()
+        classification = classifier.classify(description)
+        
+        # Step 2: Routing
+        status_placeholder.info("🤖 Step 2/4: Determining department and priority...")
+        progress_bar.progress(50)
+        router = RouterAgent()
+        routing = router.route(classification, urgency)
+        
+        # Step 3: Resolution
+        status_placeholder.info("🤖 Step 3/4: Generating resolution steps...")
+        progress_bar.progress(75)
+        resolver = ResolverAgent()
+        resolution = resolver.resolve(classification, description)
+        
+        # Step 4: Supervision
+        status_placeholder.info("🤖 Step 4/4: Final review and confidence assessment...")
+        progress_bar.progress(90)
+        supervisor = SupervisorAgent()
+        final_result = supervisor.supervise(
+            classification, routing, resolution
+        )
+        progress_bar.progress(100)
+        
+        st.session_state.last_result = final_result
+        st.success("✅ Ticket processed successfully!")
+        
+        # Store ticket
+        st.session_state.tickets.append({
+            "timestamp": datetime.now().isoformat(),
+            "description": description,
+            "reporter": name,
+            "email": email,
+            "result": final_result
+        })
+        
+        display_results(final_result)
+        
+    except Exception as e:
+        st.error(f"❌ Error processing ticket: {str(e)}")
+
+
+def display_results(result):
+    """Display ticket processing results"""
+    st.header("📊 Ticket Analysis Results")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Category", result.get("category", "N/A"))
+    with col2:
+        st.metric("Priority", result.get("priority", "N/A"))
+    with col3:
+        confidence = result.get("confidence", 0)
+        st.metric("Confidence", f"{confidence:.0%}")
+    with col4:
+        escalation = "Yes" if result.get("escalate", False) else "No"
+        st.metric("Escalate?", escalation)
+    
+    st.markdown("---")
+    
+    # Department & Team Info
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("🏢 Department Assignment")
+        st.write(f"**Department:** {result.get('department', 'N/A')}")
+        st.write(f"**Team:** {result.get('team', 'N/A')}")
+    
+    with col2:
+        st.subheader("📋 Classification Details")
+        st.write(f"**Main Category:** {result.get('category', 'N/A')}")
+        st.write(f"**Sub-Category:** {result.get('subcategory', 'N/A')}")
+    
+    st.markdown("---")
+    
+    # Resolution Steps
+    st.subheader("✅ Recommended Resolution Steps")
+    steps = result.get("resolution_steps", [])
+    if steps:
+        for i, step in enumerate(steps, 1):
+            st.write(f"{i}. {step}")
+    else:
+        st.info("No specific resolution steps available. Escalation recommended.")
+    
+    st.markdown("---")
+    
+    # Reasoning & Explanation
+    with st.expander("🔍 Agent Reasoning & Explanation"):
+        st.write("**Classifier Analysis:**")
+        st.write(result.get("classifier_notes", "N/A"))
+        
+        st.write("\n**Router Reasoning:**")
+        st.write(result.get("router_notes", "N/A"))
+        
+        st.write("\n**Supervisor Assessment:**")
+        st.write(result.get("supervisor_notes", "N/A"))
+    
+    # Escalation Reason (if applicable)
+    if result.get("escalate"):
+        st.warning(f"⚠️ **Escalation Reason:** {result.get('escalation_reason', 'Review needed')}")
+    
+    # Similar Past Tickets
+    with st.expander("📚 Similar Past Tickets (RAG)"):
+        similar = result.get("similar_tickets", [])
+        if similar:
+            for ticket in similar:
+                st.write(f"- {ticket}")
+        else:
+            st.info("No similar tickets found in knowledge base.")
+
+
+def display_history():
+    """Display ticket history"""
+    st.header("📜 Ticket History")
+    
+    if st.session_state.tickets:
+        for i, ticket in enumerate(reversed(st.session_state.tickets), 1):
+            with st.expander(f"Ticket #{i} - {ticket['timestamp'][:10]}"):
+                st.write(f"**Reporter:** {ticket['reporter']} ({ticket['email']})")
+                st.write(f"**Description:** {ticket['description'][:100]}...")
+                if ticket['result']:
+                    st.write(f"**Category:** {ticket['result'].get('category', 'N/A')}")
+                    st.write(f"**Confidence:** {ticket['result'].get('confidence', 0):.0%}")
+    else:
+        st.info("No tickets processed yet.")
+
+
+def main():
+    """Main application flow"""
+    initialize_session_state()
+    display_header()
+    
+    # Navigation tabs
+    tab1, tab2 = st.tabs(["Submit Ticket", "History"])
+    
+    with tab1:
+        display_ticket_submission()
+    
+    with tab2:
+        display_history()
+
+
+if __name__ == "__main__":
+    main()
+>>>>>>> 7ebb77d4905d095578f64dbcd925ea0b53fbb124
