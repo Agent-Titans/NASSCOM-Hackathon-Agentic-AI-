@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artificial intelligence — IT ticket routing — Low-level design</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #fff;
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --body: #424245;
+      --line: #e8e8ed;
+      --accent: #0071e3;
+      --accent-bg: #e8f4fd;
+      --sidebar: 268px;
+      --r: 16px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--body);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; width: var(--sidebar);
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-right: 1px solid var(--line);
+      padding: 22px 14px 28px;
+      overflow-y: auto;
+      z-index: 50;
+    }
+    .brand-tag {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted); margin: 0 0 6px 10px;
+    }
+    .brand-title {
+      font-size: 15px; font-weight: 600; color: var(--text);
+      margin: 0 0 22px 10px; line-height: 1.35; letter-spacing: -.01em;
+    }
+    .nav-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .05em; color: var(--muted); margin: 0 0 8px 10px;
+    }
+    .side-nav ul { list-style: none; margin: 0; padding: 0; }
+    .side-nav li.nav-child a { padding-left: 22px; font-size: 12px; color: var(--muted); }
+    .side-nav a {
+      display: block; padding: 7px 10px; border-radius: 8px;
+      color: var(--body); text-decoration: none; font-size: 13px; line-height: 1.35;
+    }
+    .side-nav a:hover { background: var(--line); color: var(--text); }
+    .side-nav a.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+    main {
+      margin-left: var(--sidebar); max-width: 880px;
+      padding: 48px 56px 96px;
+    }
+    .hero {
+      margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line);
+    }
+    .hero .lede-quote { margin-top: 16px; margin-bottom: 0; }
+    .hero h1 {
+      margin: 0 0 12px; font-size: 40px; font-weight: 600;
+      letter-spacing: -.03em; line-height: 1.08; color: var(--text);
+    }
+    .hero .subtitle { margin: 0 0 10px; font-size: 18px; color: var(--muted); max-width: 46rem; }
+    .hero .meta-line {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 46rem;
+      line-height: 1.5;
+    }
+    .doc-section {
+      margin-top: 36px; scroll-margin-top: 28px;
+      padding-top: 4px;
+    }
+    .doc-section > h2 {
+      font-size: 24px; font-weight: 600; letter-spacing: -.02em;
+      color: var(--text); margin: 0 0 20px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--line);
+    }
+    h3 {
+      font-size: 17px; font-weight: 600; color: var(--text);
+      margin: 24px 0 10px; scroll-margin-top: 28px;
+      padding-top: 8px;
+    }
+    h3[id] { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px; }
+    .doc-section > h2 + h3[id] { border-top: none; margin-top: 14px; padding-top: 0; }
+    h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+    p { margin: 0 0 14px; max-width: 40rem; }
+    main > p { margin-bottom: 12px; }
+    main > p.lede-quote { margin-bottom: 12px; }
+    ul, ol { margin: 0 0 16px; padding-left: 1.25rem; max-width: 40rem; }
+    li { margin-bottom: 6px; }
+    .lede-quote {
+      border-left: 3px solid var(--accent); padding: 12px 16px; margin: 0 0 18px;
+      background: var(--accent-bg); border-radius: 0 12px 12px 0; font-size: 15px;
+      max-width: 46rem;
+    }
+    .diagram-card {
+      background: var(--surface); border-radius: var(--r); padding: 24px 20px;
+      margin: 16px 0 28px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      overflow-x: auto; border: 1px solid var(--line);
+    }
+    .diagram-card .mermaid { display: flex; justify-content: center; min-height: 80px; }
+  pre.code-block {
+      background: #1d1d1f; color: #f5f5f7; border-radius: 12px;
+      padding: 16px 18px; overflow-x: auto; font-size: 13px; line-height: 1.5;
+      margin: 12px 0 20px;
+    }
+    pre.code-block code { font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+    code {
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: .875em; background: var(--line); padding: .12em .35em;
+      border-radius: 4px; color: var(--text);
+    }
+    .table-wrap {
+      overflow-x: auto; margin: 14px 0 22px; border-radius: var(--r);
+      background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table.data th, table.data td {
+      text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line);
+    }
+    table.data th {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+      color: var(--muted); font-weight: 600; background: #fafafa;
+    }
+    table.data tr:last-child td { border-bottom: none; }
+    .page-footer {
+      margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+      font-size: 14px; color: var(--muted);
+    }
+    .fab {
+      display: none; position: fixed; bottom: 20px; right: 20px; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: var(--accent); color: #fff; font-size: 20px;
+      box-shadow: 0 4px 20px rgba(0,113,227,.35); cursor: pointer;
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); transition: transform .25s ease; }
+      .sidebar.open { transform: translateX(0); }
+      main { margin-left: 0; padding: 28px 20px 72px; }
+      .hero h1 { font-size: 28px; }
+      .fab { display: block; }
+    }
+    @media print { .sidebar, .fab { display: none; } main { margin-left: 0; max-width: none; } }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <p class="brand-tag">Low-level design</p>
+    <p class="brand-title">Artificial intelligence — IT ticket routing</p>
+    <nav class="side-nav" aria-label="Document sections">
+<p class="nav-label">On this page</p>
+<ul>
+<li class=""><a href="#overview" data-section="overview">Overview</a></li>
+<li class=""><a href="#architecture-diagram" data-section="architecture-diagram">Architecture</a></li>
+<li class=""><a href="#application-data-flow" data-section="application-data-flow">Data flow</a></li>
+<li class=""><a href="#ui-ux-layer" data-section="ui-ux-layer">UI / UX</a></li>
+<li class=""><a href="#three-hands-integration" data-section="three-hands-integration">3 Hands</a></li>
+<li class=""><a href="#ai-agent-integration" data-section="ai-agent-integration">AI agents</a></li>
+<li class="nav-child"><a href="#agent-pipeline" data-section="agent-pipeline">Agent pipeline</a></li>
+<li class="nav-child"><a href="#guardrail-agent" data-section="guardrail-agent">Guardrail</a></li>
+<li class="nav-child"><a href="#classifier-agent" data-section="classifier-agent">Classifier</a></li>
+<li class="nav-child"><a href="#router-agent" data-section="router-agent">Router</a></li>
+<li class="nav-child"><a href="#resolver-agent" data-section="resolver-agent">Resolver</a></li>
+<li class="nav-child"><a href="#supervisor-agent" data-section="supervisor-agent">Supervisor</a></li>
+<li class=""><a href="#core-modules" data-section="core-modules">Core modules</a></li>
+<li class=""><a href="#database-schema" data-section="database-schema">Database schema</a></li>
+<li class=""><a href="#database-persistence" data-section="database-persistence">ER &amp; state</a></li>
+<li class=""><a href="#user-flows" data-section="user-flows">User flows</a></li>
+<li class=""><a href="#transactions" data-section="transactions">Transactions</a></li>
+<li class=""><a href="#error-handling" data-section="error-handling">Error handling</a></li>
+<li class=""><a href="#performance" data-section="performance">Performance</a></li>
+<li class=""><a href="#security" data-section="security">Security</a></li>
+<li class=""><a href="#evaluation-intent" data-section="evaluation-intent">Evaluation</a></li>
+<li class=""><a href="#future" data-section="future">Future</a></li>
+</ul></nav>
+  </aside>
+  <main>
+    <header class="hero" id="overview">
+      <h1>Low-level design</h1>
+      <p class="subtitle">Five AI agents, Three Hands, Gemini RAG, SQLite + ChromaDB — the full technical blueprint for ticket routing and resolution.</p>
+      <p class="lede-quote">Differentiator: governance-first agentic design — five specialized AI agents, Supervisor-controlled confidence routing into Three Hands, RAG-grounded resolution, and explicit guardrail + audit controls for responsible AI.</p>
+      <p class="meta-line">Companion docs: <strong>Architecture flow.html</strong> · <strong>Open source tools and libraries.html</strong></p>
+    </header>
+    <p>This LLD is a diagram-first, end-to-end technical design for the application architecture: Streamlit UI plus an in-process AI agent pipeline (Guardrail -&gt; Classifier -&gt; Router -&gt; Resolver -&gt; Supervisor), with Gemini RAG generation and ChromaDB retrieval. Transactional state lives in <strong>SQLite</strong> (SQLAlchemy); vectors and similar-ticket search live in <strong>ChromaDB</strong>. Notifications execute the chosen Hand.</p>
+<p class="lede-quote">Design note: Diagrams are the star. Text is dense, concise, and method-signature focused.</p>
+<p>This is a Round 2 blueprint for evaluation; production hardening (high concurrency, distributed services, and enterprise observability) is a Round 3 track.</p>
+<section class="doc-section" id="architecture-diagram"><h2>Architecture</h2>
+<h3 id="core-logic">Core logic</h3>
+<p>The system is anchored by <code>SupervisorAgent.process_ticket()</code> and <code>GuardrailAgent.apply_guardrails()</code>.</p>
+<pre class="code-block"><code class="language-python">class SupervisorAgent:
+    def process_ticket(self, ticket_id: str, classification: ClassificationResult, similarity: float, sentiment: float, history: float) -&gt; SupervisorDecision:
+        pass</code></pre>
+<pre class="code-block"><code class="language-python">class GuardrailAgent:
+    def apply_guardrails(self, raw_text: str) -&gt; SanitizedText:
+        pass</code></pre>
+<h3 id="supervisor-decision-matrix">Supervisor decision matrix</h3>
+<p>The decision matrix is based on weighted confidence <code>c_total</code>.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>c_total</th><th>Path</th><th>Engine</th><th>Notes</th></tr></thead><tbody><tr><td><code>&gt;= 0.80</code></td><td>Hand 1</td><td>Resolver AI agent + notification service</td><td>High similarity, direct self-help message with embedded success/failure track buttons</td></tr><tr><td><code>0.60 - 0.79</code></td><td>Hand 2</td><td>Router AI agent + department queues</td><td>Route to department with suggested steps and SLA</td></tr><tr><td><code>&lt; 0.60</code></td><td>Hand 3</td><td>Low confidence or policy triggers human review</td></tr></tbody></table></div>
+<h3 id="path-definitions">Path definitions</h3>
+<ul>
+<li><strong>Hand 1</strong>: <code>Resolver AI agent</code> returns candidate resolution steps from Gemini RAG, and the notification service sends the first self-help message.</li>
+<li><strong>Hand 2</strong>: <code>Router AI agent</code> assigns the ticket to the correct department queue (with SLA) and the UI displays suggested steps and references.</li>
+<li><strong>Hand 3</strong>: <code>Supervisor AI agent</code> escalates to a human queue and the notification service triggers an escalation notice.</li>
+</ul>
+<pre class="code-block"><code class="language-python">def supervise(self, similarity: float, sentiment: float, historical_success: float) -&gt; float:
+    return (similarity * 0.6) + (sentiment * 0.2) + (historical_success * 0.2)</code></pre>
+<h3 id="figure-6-ai-agent-pipeline-diagram-five-ai-agents">Figure 6 — AI Agent Pipeline Diagram (five AI agents)</h3>
+<p>Fixed order for every ticket. Canonical pipeline across architecture and LLD.</p>
+<div class="diagram-card"><pre class="mermaid">flowchart LR
+  T[Ticket arrives] --&gt; A1[1 Guardrail AI agent]
+  A1 --&gt; A2[2 Classifier AI agent\nGemini]
+  A2 --&gt; A3[3 Router AI agent]
+  A3 --&gt; A4[4 Resolver AI agent\nChromaDB + Gemini RAG]
+  A4 --&gt; A5[5 Supervisor AI agent\nc_total + Hand]
+  A5 --&gt; H1[Hand 1: Self-help]
+  A5 --&gt; H2[Hand 2: Routed assist]
+  A5 --&gt; H3[Hand 3: Human escalation]
+  H1 --&gt; F[Feedback loop]
+  H2 --&gt; F
+  H3 --&gt; F</pre></div>
+<h3 id="figure-7-three-hands-decision-diagram">Figure 7 — Three Hands Decision Diagram</h3>
+<div class="diagram-card"><pre class="mermaid">flowchart TD
+  S[Supervisor AI agent] --&gt; B{c_total + policy}
+  B --&gt;|&quot;&gt;= 0.80&quot;| H1[Hand 1]
+  B --&gt;|&quot;0.60 - 0.79&quot;| H2[Hand 2]
+  B --&gt;|&quot;&lt; 0.60 or policy&quot;| H3[Hand 3]</pre></div>
+</section>
+<section class="doc-section" id="application-data-flow"><h2>Application: Data Flow &amp; Engineering</h2>
+<h3 id="figure-2-data-flow-diagram-dfd-level-1">Figure 2 — Data Flow Diagram (DFD Level 1)</h3>
+<p>Shows all five AI agents and external systems—no compression of Classifier or Router.</p>
+<div class="diagram-card"><pre class="mermaid">flowchart TD
+  subgraph Users
+    R[Requester]
+    IT[Assignee]
+  end
+  UI[Streamlit UI]
+  O[TicketService orchestrator]
+  G[Guardrail AI agent]
+  C[Classifier AI agent\nGemini]
+  RT[Router AI agent]
+  RV[Resolver AI agent]
+  S[Supervisor AI agent]
+  DB[(SQLite)]
+  CH[(ChromaDB)]
+  GEM[Gemini API]
+  N[Notification service]
+
+  R --&gt; UI
+  IT --&gt; UI
+  UI --&gt; O
+  O --&gt; G --&gt; C --&gt; RT --&gt; RV --&gt; S
+  C &lt;--&gt; GEM
+  RV &lt;--&gt; CH
+  RV &lt;--&gt; GEM
+  O &lt;--&gt; DB
+  S --&gt; O
+  O --&gt; N
+  N --&gt; R
+  N --&gt; IT</pre></div>
+<h3 id="data-sources-round-2-requirement-8">Data sources (Round 2 requirement #8)</h3>
+<ol>
+<li><strong>Internal Ticketing CSVs</strong> — historical issue definitions and resolution templates.</li>
+<li><strong>Live System Logs</strong> — long-context operational logs for Gemini analysis and RCA.</li>
+<li><strong>User Feedback Metadata</strong> — feedback events, ratings, and outcome labels.</li>
+</ol>
+<h3 id="data-engineering-steps-round-2-requirement-3">Data engineering steps (Round 2 requirement #3)</h3>
+<ul>
+<li><strong>Chunking</strong>: <code>GeminiChunker.split_into_chunks(long_text)</code> creates 512-token semantic blocks.</li>
+<li><strong>Embedding</strong>: <code>GeminiEmbedder.embed_chunks(chunks)</code> produces dense vectors.</li>
+<li><strong>Vector storage</strong>: <code>ChromaDB.upsert_vectors(metadata, vectors)</code> persists embeddings and ticket affinity.</li>
+<li><strong>Retrieval</strong>: <code>ChromaDB.query_similar(query_vector, top_k=8)</code> returns relevant candidate chunks.</li>
+</ul>
+<pre class="code-block"><code class="language-python">class GeminiPipeline:
+    def embed(self, text: str) -&gt; Vector:
+        pass
+
+    def retrieve(self, vector: Vector) -&gt; List[Chunk]:
+        pass</code></pre>
+</section>
+<section class="doc-section" id="ui-ux-layer"><h2>UI/UX Layer</h2>
+<p>The UI is the surface for the chosen Hand outcome; it does not expose internal agent math.</p>
+<h3 id="requester-flow-role-based-streamlit">Requester flow (role-based, Streamlit)</h3>
+<ol>
+<li><strong>Home</strong>: <code>My tickets</code> list shows <code>status</code> and selected <code>Hand</code> (1/2/3).</li>
+<li><strong>New ticket</strong>: create ticket with description + urgency.</li>
+<li><strong>Ticket detail</strong>:</li>
+</ol>
+<ul>
+<li>human-readable <code>confidence</code> line derived from internal <code>c_total</code></li>
+<li><code>Hand 1</code>: ordered self-help steps + feedback controls</li>
+<li><code>Hand 2</code>: routing notice + expected response time + references</li>
+<li><code>Hand 3</code>: escalation status + audit context summary</li>
+</ul>
+<h3 id="assignee-flow-it-support-teams">Assignee flow (IT/support teams)</h3>
+<ol>
+<li><strong>Queue</strong>: department queue filtered by priority and SLA remaining.</li>
+<li><strong>Ticket detail</strong>:</li>
+</ol>
+<ul>
+<li>grounded suggestions when available</li>
+<li>similar past tickets for fast triage</li>
+<li>escalation flags + SLA clock</li>
+</ul>
+<h3 id="where-the-3-hands-appear-in-the-ui">Where the 3 Hands appear in the UI</h3>
+<div class="table-wrap"><table class="data"><thead><tr><th>Hand</th><th>Requester experience</th><th>Assignee experience</th></tr></thead><tbody><tr><td>Hand 1</td><td>Steps + success/failure feedback controls</td><td>Similar cases for confirmation</td></tr><tr><td>Hand 2</td><td>Routed-to-team notice + SLA</td><td>Suggested resolution + citations</td></tr><tr><td>Hand 3</td><td>Human escalation status</td><td>Specialist queue + audit context</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="three-hands-integration"><h2>3 Hands integration</h2>
+<p>The chosen Hand is always produced by <code>Supervisor AI agent</code> after the five-step pipeline finishes.</p>
+<h3 id="hand-1-self-help-high-trust">Hand 1: Self-help (high trust)</h3>
+<ul>
+<li><code>Guardrail AI agent</code> sanitizes for safe prompts/logs</li>
+<li><code>Classifier AI agent</code> identifies the technical domain</li>
+<li><code>Resolver AI agent</code> (Gemini RAG) generates ordered steps + citations</li>
+<li><code>Supervisor AI agent</code> selects Hand 1 based on <code>c_total</code> band</li>
+<li>Persistence stores the resolution artifacts for the UI</li>
+<li>Notification service executes Hand 1 messaging (including success/failure track buttons)</li>
+</ul>
+<h3 id="hand-2-routed-assist-medium-trust">Hand 2: Routed assist (medium trust)</h3>
+<ul>
+<li>Same pipeline order as Hand 1</li>
+<li><code>Router AI agent</code> assigns the department queue + SLA</li>
+<li><code>Supervisor AI agent</code> selects Hand 2</li>
+<li>Persistence attaches suggested steps + reference tickets for assignees</li>
+<li>Notification service executes Hand 2 routing messaging and SLA expectations</li>
+</ul>
+<h3 id="hand-3-human-escalation-low-trust-or-policy">Hand 3: Human escalation (low trust or policy)</h3>
+<ul>
+<li>Triggered when retrieval grounding is weak or policy requires a person</li>
+<li>Requester sees a straightforward escalation status (no forced auto-steps)</li>
+<li>Assignee sees audit context and any assistive artifacts marked as &quot;assist&quot;</li>
+</ul>
+</section>
+<section class="doc-section" id="ai-agent-integration"><h2>AI agent integration</h2>
+<h3 id="agent-pipeline">Agent Pipeline</h3>
+<p>Fixed order: <code>Guardrail AI agent</code> -&gt; <code>Classifier AI agent</code> -&gt; <code>Router AI agent</code> -&gt; <code>Resolver AI agent</code> -&gt; <code>Supervisor AI agent</code></p>
+<p>Intermediate artifacts:</p>
+<ul>
+<li><code>SanitizedText</code></li>
+<li><code>ClassificationResult</code> (<code>use_case_category</code>, <code>subcategory</code>, <code>confidence_hint</code>)</li>
+<li><code>RoutingResult</code> (<code>department_queue</code>, <code>priority</code>, <code>sla_hours</code>)</li>
+<li><code>ResolutionResult</code> (ordered steps, citations, <code>low_grounding</code>)</li>
+<li><code>SupervisorDecision</code> (<code>Hand</code>, <code>c_total_band</code>, <code>escalation_required</code>, UI status)</li>
+</ul>
+<p>Orchestrator boundary (single entry point):</p>
+<pre class="code-block"><code class="language-python">class TicketService:
+    def process_ticket(self, payload: TicketPayload) -&gt; TicketResult:
+        # 1) short transaction: create Ticket row + AgentRun row
+        # 2) run 5 AI agents (no long locks)
+        # 3) short transactions: persist artifacts + update final Ticket status
+        # 4) execute notifications based on SupervisorDecision
+        raise NotImplementedError</code></pre>
+<h3 id="guardrail-agent">Guardrail AI agent</h3>
+<p>Purpose: sanitize raw ticket text so downstream embedding, retrieval, and Gemini prompts never receive unsafe content.</p>
+<p>Implementation (core rules):</p>
+<ol>
+<li>PII scrubbing: emails/phone numbers/ID-like strings -&gt; redacted placeholders</li>
+<li>Secrets scrubbing: token/key/password-like patterns -&gt; redacted placeholders</li>
+<li>Prompt-injection hardening: treat instruction-like phrasing inside ticket text as data</li>
+</ol>
+<p>Error handling: If sanitization cannot guarantee safety, the system routes to Hand 3 (human queue).</p>
+<h3 id="classifier-agent">4.4.1 Classifier Agent</h3>
+<p>Purpose: Categorize a ticket into predefined technical categories (and subtypes).</p>
+<p>Implementation: Primary: <strong>Google Gemini</strong> returns strict JSON (<code>use_case_category</code>, <code>subcategory</code>, <code>confidence_hint</code>).</p>
+<p>Categories (from ticket language):</p>
+<ul>
+<li>Network issue</li>
+<li>Database issue</li>
+<li>Data issue</li>
+<li>Server issue</li>
+<li>Hardware issue</li>
+<li>Software issue</li>
+<li>Access Management issue</li>
+<li>Security issue</li>
+</ul>
+<p>Mapping to app 7 domains:</p>
+<ul>
+<li>Network -&gt; Network</li>
+<li>Server/Hardware -&gt; Infrastructure</li>
+<li>Software -&gt; Application</li>
+<li>Database -&gt; Database</li>
+<li>Data -&gt; Storage</li>
+<li>Security/Access -&gt; Security / Access Management</li>
+</ul>
+<p>Fallback (always available):</p>
+<ul>
+<li>regex tokenization</li>
+<li>keyword sets per category/subcategory</li>
+<li>TF-IDF-like scoring (either with <code>sklearn</code> or a lightweight custom scorer)</li>
+<li>default behavior: pick the first category only when no matches exist</li>
+</ul>
+<p>API parameters (example, Gemini):</p>
+<ul>
+<li><code>max_output_tokens=100</code></li>
+<li><code>temperature=0.5</code></li>
+</ul>
+<p>Error handling: If the Gemini call fails or JSON schema parsing fails, immediately run fallback keyword matching (no second LLM provider).</p>
+<h3 id="router-agent">4.4.2 Router Agent</h3>
+<p>Purpose: Assign to a department queue (and SLA) using classification + urgency.</p>
+<p>Implementation: Deterministic rules:</p>
+<ol>
+<li><code>use_case_category</code> -&gt; department queue list</li>
+<li>urgency mapping -&gt; priority (P0/P1/P2) -&gt; <code>sla_hours</code></li>
+<li>policy overrides (Security and Access Management prioritize specialists)</li>
+</ol>
+<p>Error handling: If a category has no routing rule, <code>Supervisor AI agent</code> selects Hand 3.</p>
+<h3 id="resolver-agent">4.4.3 Resolver Agent</h3>
+<p>Purpose: Generate suggested resolution steps grounded in past tickets and KB chunks.</p>
+<p>Implementation (Gemini RAG):</p>
+<ol>
+<li>Create embedding from <code>SanitizedText</code></li>
+<li>Query ChromaDB for <code>top_k</code> similar chunks (filter by category when available)</li>
+<li>Build one prompt: ticket + retrieved snippets + configured policy text</li>
+<li>Call Gemini to generate ordered steps + citations/references</li>
+<li>Output <code>ResolutionResult</code> with <code>low_grounding</code> flag if retrieval is weak</li>
+</ol>
+<p>Error handling:</p>
+<ul>
+<li>Gemini timeouts -&gt; mark <code>low_grounding=true</code></li>
+<li>Empty/weak retrieval -&gt; mark <code>low_grounding=true</code> (Supervisor avoids confident auto-close)</li>
+</ul>
+<h3 id="supervisor-agent">4.4.4 Supervisor Agent</h3>
+<p>Purpose: Quality validation and final Hand/status selection.</p>
+<p>Decision logic: <code>c_total = (similarity * 0.6) + (sentiment * 0.2) + (historical_success * 0.2)</code></p>
+<p>Bands:</p>
+<ul>
+<li><code>c_total &gt;= 0.80</code> -&gt; Hand 1</li>
+<li><code>0.60 &lt;= c_total &lt; 0.79</code> -&gt; Hand 2</li>
+<li><code>c_total &lt; 0.60</code> -&gt; Hand 3</li>
+</ul>
+<p>Additionally:</p>
+<ul>
+<li>if <code>low_grounding=true</code> OR policy requires human review -&gt; Hand 3</li>
+</ul>
+<p>Persist:</p>
+<ul>
+<li>selected Hand</li>
+<li><code>c_total_band</code></li>
+<li><code>escalation_required</code></li>
+</ul>
+</section>
+<section class="doc-section" id="core-modules"><h2>Core Modules</h2>
+<p>Module responsibilities (class boundaries):</p>
+<h3 id="agents-pure-logic">Agents (pure logic)</h3>
+<pre class="code-block"><code class="language-python">class GuardrailAI:
+    def apply_guardrails(self, raw_text: str) -&gt; SanitizedText: ...
+
+class ClassifierAI:
+    def classify(self, text: SanitizedText) -&gt; ClassificationResult: ...
+
+class RouterAI:
+    def route(self, classification: ClassificationResult, urgency: str) -&gt; RoutingResult: ...
+
+class ResolverAI:
+    def resolve(self, sanitized: SanitizedText, routing: RoutingResult) -&gt; ResolutionResult: ...
+
+class SupervisorAI:
+    def decide(self, classification: ClassificationResult, resolution: ResolutionResult, similarity: float, sentiment: float, history: float) -&gt; SupervisorDecision: ...</code></pre>
+<h3 id="services-gates-side-effects">Services / gates (side effects)</h3>
+<pre class="code-block"><code class="language-python">class TicketStore:
+    def create(self, payload: TicketPayload) -&gt; TicketRow: ...
+    def update_status(self, ticket_id: str, status: str, hand: str | None = None) -&gt; None: ...
+
+class AuditLogStore:
+    def record(self, event: AuditEvent) -&gt; None: ...
+
+class VectorStoreClient:  # Chroma wrapper
+    def embed_and_query(self, text: str, top_k: int, filters: dict) -&gt; list[Chunk]: ...
+
+class GeminiClient:
+    def generate_resolution(self, prompt: str) -&gt; ResolutionDraft: ...
+
+class NotificationService:
+    def send_hand_message(self, ticket_id: str, hand: str, payload: dict) -&gt; None: ...</code></pre>
+</section>
+<section class="doc-section" id="database-schema"><h2>Database Schema</h2>
+<p>Canonical workflow state lives in SQLite; agent outputs persist in normalized tables.</p>
+<p>Example SQLAlchemy-style models (field-level design):</p>
+<pre class="code-block"><code class="language-python">class Ticket(Base):
+    __tablename__ = &quot;tickets&quot;
+    ticket_id = Column(String, primary_key=True)
+    requester_id = Column(String, index=True, nullable=False)
+    category = Column(String, nullable=False)
+    subcategory = Column(String, nullable=True)
+    urgency = Column(String, nullable=False)  # e.g. low/medium/high
+    priority = Column(String, nullable=True)  # P0/P1/P2
+    sla_hours = Column(Integer, nullable=True)
+    status = Column(String, nullable=False)   # RECEIVED/RESOLVED/ESCALATED
+    hand = Column(String, nullable=True)      # Hand1/Hand2/Hand3
+    confidence_band = Column(String, nullable=True)  # High/Medium/Low
+    created_at = Column(DateTime, nullable=False)
+
+class AgentRun(Base):
+    __tablename__ = &quot;agent_runs&quot;
+    run_id = Column(String, primary_key=True)
+    ticket_id = Column(String, index=True, nullable=False)
+    guardrail_ok = Column(Boolean, nullable=False, default=False)
+    classification_ok = Column(Boolean, nullable=False, default=False)
+    routing_ok = Column(Boolean, nullable=False, default=False)
+    resolver_ok = Column(Boolean, nullable=False, default=False)
+    supervisor_ok = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, nullable=False)
+
+class ResolutionArtifact(Base):
+    __tablename__ = &quot;resolution_artifacts&quot;
+    artifact_id = Column(String, primary_key=True)
+    ticket_id = Column(String, index=True, nullable=False)
+    hand = Column(String, nullable=False)
+    steps_json = Column(Text, nullable=False)   # ordered steps + fields
+    citations_json = Column(Text, nullable=True) # references to retrieved chunks
+    low_grounding = Column(Boolean, nullable=False, default=False)
+
+class AuditLog(Base):
+    __tablename__ = &quot;audit_log&quot;
+    audit_id = Column(String, primary_key=True)
+    ticket_id = Column(String, index=True, nullable=False)
+    event_type = Column(String, nullable=False)
+    details_json = Column(Text, nullable=False)  # compact JSON event
+    timestamp = Column(DateTime, nullable=False)</code></pre>
+</section>
+<section class="doc-section" id="user-flows"><h2>User Flows</h2>
+<h3 id="figure-4-sequence-diagram-ticket-submit-hand-assignment">Figure 4 — Sequence Diagram (ticket submit → Hand assignment)</h3>
+<div class="diagram-card"><pre class="mermaid">sequenceDiagram
+    participant U as Requester
+    participant UI as Streamlit UI
+    participant S as TicketService (Orchestrator)
+    participant G as Guardrail
+    participant C as Classifier
+    participant RT as Router
+    participant RV as Resolver
+    participant Sup as Supervisor AI agent
+    participant N as NotificationService
+
+    U-&gt;&gt;UI: Submit ticket
+    UI-&gt;&gt;S: process_ticket(payload)
+    S-&gt;&gt;G: sanitize ticket
+    G--&gt;&gt;S: SanitizedText
+    S-&gt;&gt;C: classify
+    C--&gt;&gt;S: ClassificationResult
+    S-&gt;&gt;RT: route
+    RT--&gt;&gt;S: RoutingResult
+    S-&gt;&gt;RV: retrieve + generate
+    RV--&gt;&gt;S: ResolutionResult
+    S-&gt;&gt;Sup: decide + persist artifacts
+    Sup--&gt;&gt;S: SupervisorDecision (Hand 1/2/3)
+    S-&gt;&gt;N: send_hand_message(ticket_id, hand)
+    N--&gt;&gt;U: status + steps (Hand-dependent)</pre></div>
+</section>
+<section class="doc-section" id="transactions"><h2>Transactions</h2>
+<p>Transaction boundaries focus on keeping DB locks short:</p>
+<ol>
+<li><strong>Ticket create transaction (short)</strong></li>
+</ol>
+<p>- insert <code>Ticket</code> - insert <code>AgentRun</code> row with defaults - commit</p>
+<ol>
+<li><strong>AI pipeline execution (no long locks)</strong></li>
+</ol>
+<p>- run 5 AI agents in memory</p>
+<ol>
+<li><strong>Artifact persist transactions (short per artifact group)</strong></li>
+</ol>
+<p>- persist classification, routing, resolution steps, audit events</p>
+<ol>
+<li><strong>Final status transaction (short)</strong></li>
+</ol>
+<p>- update <code>Ticket.status</code>, <code>Ticket.hand</code>, <code>confidence_band</code> - commit</p>
+<p>Idempotency:</p>
+<ul>
+<li>each <code>AgentRun</code> is keyed by <code>run_id</code> and <code>ticket_id</code></li>
+<li>retries on AI timeouts never duplicate final status without matching <code>run_id</code></li>
+</ul>
+</section>
+<section class="doc-section" id="error-handling"><h2>Error handling</h2>
+<p>Unified error strategy:</p>
+<ul>
+<li>Agent-level errors are converted into safe fallback outcomes</li>
+<li>Supervisor chooses the safe Hand when critical artifacts are missing</li>
+</ul>
+<p>Typical cases:</p>
+<ol>
+<li><strong>Classifier output invalid JSON</strong> -&gt; fallback keyword classifier -&gt; set <code>confidence_hint=low</code> if still uncertain</li>
+<li><strong>Chroma retrieval empty</strong> -&gt; Resolver marks <code>low_grounding=true</code></li>
+<li><strong>Gemini timeout</strong> -&gt; Resolver marks <code>low_grounding=true</code></li>
+<li><strong>Guardrail safety failure</strong> -&gt; route to Hand 3 immediately</li>
+</ol>
+</section>
+<section class="doc-section" id="performance"><h2>Performance</h2>
+<p>Time-saving mechanisms (what reduces end-to-end delay):</p>
+<ul>
+<li>embeddings + retrieval done once in Resolver, not repeatedly</li>
+<li>caching embeddings for identical/near-identical sanitized tickets</li>
+<li><code>top_k</code> kept small (e.g., 8) to reduce Gemini prompt size</li>
+<li>async notifications after final Hand selection</li>
+</ul>
+<p>Practical performance targets:</p>
+<ul>
+<li>classify+route: &lt; 1.5s typical</li>
+<li>retrieval: &lt; 1.0s typical</li>
+<li>Gemini generation: bounded with timeouts and <code>max_tokens</code></li>
+<li>overall: show a &quot;processing&quot; UI state while pipeline runs</li>
+</ul>
+</section>
+<section class="doc-section" id="security"><h2>Security</h2>
+<p>Implementation-level security controls:</p>
+<ol>
+<li><strong>PII safety first</strong>: Guardrail is the only input allowed into embedding and Gemini prompts</li>
+<li><strong>Prompt injection hardening</strong>: ticket content is treated as data, not instructions</li>
+<li><strong>Auditability</strong>: every critical decision stored as append-only audit events</li>
+<li><strong>Role-based access</strong>: requester sees only their tickets; assignee sees department queues only</li>
+</ol>
+<p><strong>Authentication scope:</strong> Round 2 covers baseline role-based authentication and authorization flows for evaluation. Enterprise SSO, MFA, and hardened session lifecycle controls are a Round 3 hardening track.</p>
+</section>
+<section class="doc-section" id="evaluation-intent"><h2>Evaluation intent</h2>
+<p>Round 2 measurement plan (golden ticket set + audit timestamps):</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Metric</th><th>How we measure (design)</th><th>Round 2 target</th></tr></thead><tbody><tr><td>Classification accuracy</td><td>15-ticket golden set vs expected Use Case 1 domain</td><td>≥ 85%</td></tr><tr><td>Routing correctness</td><td>Expected queue + priority vs Router output</td><td>≥ 85%</td></tr><tr><td>Escalation appropriateness</td><td>Security / ambiguous → Hand 3; high-similarity repeats → not Hand 3</td><td>100% on policy cases</td></tr><tr><td>Resolution usefulness</td><td>Worked / Did not work + assignee outcome; repeat Hand 1 rate for same pattern</td><td>≥ 70% positive on Hand 1 demos</td></tr><tr><td>End-to-end latency</td><td>Submit → Hand visible in UI; per-agent audit timestamps</td><td>&lt; 15 s typical (demo env)</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="future"><h2>Future</h2>
+<p>Next engineering steps (beyond core delivery):</p>
+<ul>
+<li>adaptive sentiment and feedback-driven threshold updates</li>
+<li>ticket clustering and trend alerts for operations</li>
+<li>additional specialist policies for specific issue types</li>
+<li>optional multi-region persistence and stronger compliance logging</li>
+</ul>
+</section>
+<section class="doc-section" id="database-persistence"><h2>Database &amp; persistence</h2>
+<h3 id="figure-3-entity-relationship-diagram-erd">Figure 3 — Entity Relationship Diagram (ERD)</h3>
+<div class="diagram-card"><pre class="mermaid">erDiagram
+  USER ||--o{ TICKET : creates
+  TICKET ||--o{ AUDIT_LOG : logs
+  TICKET ||--o{ VECTOR_METADATA : stores
+  TICKET ||--o{ FEEDBACK : receives
+
+  USER {
+    string user_id PK
+    string role
+    string email
+  }
+  TICKET {
+    string ticket_id PK
+    string user_id FK
+    string category
+    string subcategory
+    string status
+    float confidence
+    datetime created_at
+  }
+  AUDIT_LOG {
+    string audit_id PK
+    string ticket_id FK
+    string event_type
+    string details
+    datetime timestamp
+  }
+  VECTOR_METADATA {
+    string vector_id PK
+    string ticket_id FK
+    string chunk_id
+    string source
+    float similarity_score
+    string tags
+  }
+  FEEDBACK {
+    string feedback_id PK
+    string ticket_id FK
+    string outcome
+    int rating
+    string comments
+    datetime submitted_at
+  }</pre></div>
+<h3 id="figure-5-state-transition-diagram-ticket-lifecycle">Figure 5 — State Transition Diagram (ticket lifecycle)</h3>
+<div class="diagram-card"><pre class="mermaid">stateDiagram-v2
+  [*] --&gt; Open
+  Open --&gt; Redacting : receive_ticket()
+  Redacting --&gt; Analyzing : apply_guardrails()
+  Analyzing --&gt; Pending_Feedback : send_email()/route()
+  Pending_Feedback --&gt; Resolved : feedback_resolved
+  Pending_Feedback --&gt; Human_Review : feedback_failed
+  Human_Review --&gt; Resolved : human_resolves
+  Resolved --&gt; [*]</pre></div>
+<h3 id="persistence-responsibilities">Persistence responsibilities</h3>
+<ul>
+<li><code>TicketStore.save(ticket)</code> persists the canonical source of truth.</li>
+<li><code>AuditLogStore.record(event)</code> records every decision, redaction, and webhook event.</li>
+<li><code>VectorMetadataStore.update_metadata(ticket_id, feedback)</code> adjusts retrieval signals.</li>
+</ul>
+</section>
+<section class="doc-section" id="summary"><h2>Summary</h2>
+<p>This LLD is engineered to be end-to-end understandable: it defines the UI behavior for each of the 3 Hands, the five AI agent contracts (with fallbacks), the core module boundaries and class responsibilities, and the persistence/workflow model (with transactions, errors, performance targets, and security controls).</p>
+</section>
+    <footer class="page-footer">
+      <p>Companion to the proposed architecture document. Agent pipeline and data-flow diagrams in this LLD are the canonical reference for implementation.</p>
+    </footer>
+  </main>
+  <button type="button" class="fab" id="fab" aria-label="Open menu">☰</button>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+    (function () {
+      const links = document.querySelectorAll('.side-nav a[data-section]');
+      const sections = [...links].map(a => document.getElementById(a.dataset.section)).filter(Boolean);
+      const hero = document.querySelector('.hero');
+      if (hero) sections.unshift(hero);
+      function setActive(id) {
+        links.forEach(a => a.classList.toggle('active', a.dataset.section === id));
+      }
+      const obs = new IntersectionObserver(entries => {
+        const vis = entries.filter(e => e.isIntersecting);
+        if (!vis.length) return;
+        vis.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        const id = vis[0].target.id;
+        if (id) setActive(id);
+      }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+      sections.forEach(s => obs.observe(s));
+      document.getElementById('fab')?.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+      });
+      links.forEach(a => a.addEventListener('click', () => {
+        document.getElementById('sidebar')?.classList.remove('open');
+      }));
+    })();
+  </script>
+</body>
+</html>
