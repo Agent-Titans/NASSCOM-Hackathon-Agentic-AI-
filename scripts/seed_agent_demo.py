@@ -165,7 +165,7 @@ DEMO_TICKETS = [
         "james.wu@demo.local",
     ),
     (
-        "Identity",
+        "Access Management",
         "Password reset link expired",
         "New hire cannot complete SSO enrollment — reset token invalid.",
         "2",
@@ -177,7 +177,7 @@ DEMO_TICKETS = [
         "sarah.kim@demo.local",
     ),
     (
-        "Identity",
+        "Access Management",
         "Okta group membership missing",
         "Finance analyst not in required app group after role change.",
         "2",
@@ -185,11 +185,11 @@ DEMO_TICKETS = [
         48,
         "IN_PROGRESS",
         20,
-        "identity@demo.local",
+        "satya@employee",
         "michael.brown@demo.local",
     ),
     (
-        "Identity",
+        "Access Management",
         "MFA device lost — locked out",
         "User replaced phone and cannot authenticate to Okta.",
         "2",
@@ -279,7 +279,7 @@ _CATEGORY_MAP = {
     "Software": "Application",
     "SecOps": "Security",
     "Network": "Network",
-    "Identity": "Access Management",
+    "Access Management": "Access Management",
     "DBA": "Database",
     "Storage": "Storage",
 }

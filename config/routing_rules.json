@@ -6,7 +6,7 @@
     "Database": "DBA",
     "Storage": "Storage",
     "Network": "Network",
-    "Access Management": "Identity"
+    "Access Management": "Access Management"
   },
   "urgency_to_priority": {
     "low": { "priority": "P2", "sla_hours": 48 },

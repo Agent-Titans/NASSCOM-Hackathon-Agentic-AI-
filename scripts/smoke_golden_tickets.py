@@ -39,7 +39,7 @@ _CASES = [
         ),
         "expect_category": "Access Management",
         "expect_hand": "2",
-        "expect_queue": "Identity",
+        "expect_queue": "Access Management",
     },
     {
         "name": "Chrome cache H1 enterprise",

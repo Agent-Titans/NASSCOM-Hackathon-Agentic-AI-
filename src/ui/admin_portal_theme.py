@@ -31,7 +31,7 @@ def admin_portal_css() -> str:
       background: transparent !important;
     }}
 
-    /* Fixed top bar — ClearHand brand always visible (Employee / Agent parity) */
+    /* Fixed top bar — IntelliQ brand always visible (Employee / Agent parity) */
     {s} .admin-topnav {{
       position: fixed;
       top: 0;
@@ -245,7 +245,7 @@ def admin_portal_css() -> str:
 
     {s} .admin-team-grid {{
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 1rem;
       margin-bottom: 1.25rem;
     }}
@@ -305,8 +305,28 @@ def admin_portal_css() -> str:
       color: #64748B;
       margin: 0.35rem 0 0.5rem;
     }}
+    {s} .admin-table-card-head .admin-filter-count {{
+      margin: 0;
+      white-space: nowrap;
+    }}
     {s} .admin-table-card {{
       padding-bottom: 0.25rem !important;
+    }}
+    {s} .admin-table-card-tight {{
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }}
+    {s} .admin-table-card-head {{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0;
+    }}
+    {s} .admin-table-card-head h3 {{
+      margin: 0 !important;
     }}
     {s} .admin-col-filter-title {{
       font-size: 0.72rem;
@@ -316,10 +336,25 @@ def admin_portal_css() -> str:
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_col_hdr_"]) {{
+      margin-bottom: 0 !important;
+      margin-top: -0.35rem !important;
+      gap: 0 !important;
+      background: #FFFFFF !important;
+      border-left: 1px solid #E8ECF1 !important;
+      border-right: 1px solid #E8ECF1 !important;
+      padding: 0 1.1rem !important;
+    }}
     {pp} [class*="st-key-admin_col_hdr_"] {{
       border-bottom: 1px solid #E8ECF1;
       margin-bottom: 0 !important;
-      padding-bottom: 0.15rem;
+      padding-bottom: 0 !important;
+    }}
+    {pp} [class*="st-key-admin_col_hdr_"] [data-testid="stVerticalBlock"] {{
+      gap: 0 !important;
+    }}
+    {pp} [class*="st-key-admin_col_filter_clear_"] {{
+      margin-top: 0.35rem !important;
     }}
     {pp} [class*="st-key-admin_col_hdr_"] [data-testid="stPopoverButton"] button {{
       width: 100% !important;
@@ -366,7 +401,18 @@ def admin_portal_css() -> str:
       overflow-x: auto;
     }}
     {s} .admin-table-wrap-body {{
-      margin-top: -0.35rem;
+      margin-top: 0 !important;
+      border-top: none;
+      background: #FFFFFF;
+      border-left: 1px solid #E8ECF1;
+      border-right: 1px solid #E8ECF1;
+      border-bottom: 1px solid #E8ECF1;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 0 0.35rem 0.35rem;
+    }}
+    {pp} [data-testid="stMarkdownContainer"]:has(.admin-table-wrap-body) {{
+      margin-top: -0.75rem !important;
     }}
     {s} .admin-table-body-only td:first-child {{
       padding-left: 0.5rem;

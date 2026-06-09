@@ -1,9 +1,8 @@
-"""Find similar resolved tickets — ChromaDB BM25 + DB keyword overlap."""
+"""Find similar resolved tickets — Chroma BM25 + stemmed keywords + Gemini embeddings."""
 from __future__ import annotations
 
 import json
 import logging
-import re
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -21,11 +20,11 @@ from src.data.rag_demo_corpus import (
 from src.db.models import ClassificationArtifact, ResolutionArtifact, Ticket
 from src.models.schemas import ClassificationResult, ResolutionResult, SimilarTicketMatch
 from src.config.rag_policy import confidence_hint_from_similarity, is_low_grounding_similarity
+from src.services.semantic_similarity import corpus_semantic_scores, stemmed_jaccard
 from src.stores.chroma_store import ChromaTicketStore
 
 logger = logging.getLogger(__name__)
 
-_TOKEN_RE = re.compile(r"[a-z0-9]{3,}")
 _MIN_SIMILARITY = 0.28
 
 # Seed knowledge when DB is sparse (maps to demo playbooks)
@@ -107,19 +106,13 @@ _DEPT_MAP = {
     "Database": "DBA",
     "Storage": "Storage",
     "Network": "Network",
-    "Access Management": "Identity",
+    "Access Management": "Access Management",
 }
 
 
-def _tokenize(text: str) -> set[str]:
-    return set(_TOKEN_RE.findall(text.lower()))
-
-
 def _keyword_overlap(query: str, candidate: str) -> float:
-    q, c = _tokenize(query), _tokenize(candidate)
-    if not q or not c:
-        return 0.0
-    return len(q & c) / len(q | c)
+    """Stemmed Jaccard overlap — jam/jammed/printing collapse to shared roots."""
+    return stemmed_jaccard(query, candidate)
 
 
 # (id, search_doc, category, steps, citations, hand)
@@ -267,11 +260,17 @@ class TicketRetrievalService:
                     if ticket and ticket.status == "RESOLVED":
                         candidates[tid] = max(candidates.get(tid, 0.0), sim)
 
-        # Corpus — always scored via keyword overlap (works without Chroma)
-        for doc_id, doc, _cat, _steps, _cites, _hand in _all_corpus_rows():
+        corpus_rows = _all_corpus_rows()
+
+        # Corpus — stemmed keyword overlap (works without Chroma or API key)
+        for doc_id, doc, _cat, _steps, _cites, _hand in corpus_rows:
             overlap = _keyword_overlap(text, doc)
             if overlap > 0:
                 candidates[doc_id] = max(candidates.get(doc_id, 0.0), overlap)
+
+        # Corpus — Gemini embedding cosine similarity (semantic: jam ≈ jammed)
+        for doc_id, sim in corpus_semantic_scores(text, corpus_rows).items():
+            candidates[doc_id] = max(candidates.get(doc_id, 0.0), sim)
 
         # DB keyword overlap on resolved tickets (keyword match complement)
         resolved = (

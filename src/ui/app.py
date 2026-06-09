@@ -1,5 +1,5 @@
 """
-ClearHand — SaaS-style Streamlit dashboard.
+IntelliQ — SaaS-style Streamlit dashboard.
 Inspired by production Streamlit patterns (sidebar nav, KPIs, wide layout).
 """
 from __future__ import annotations

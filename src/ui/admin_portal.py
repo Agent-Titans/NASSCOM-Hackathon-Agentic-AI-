@@ -9,6 +9,9 @@ from typing import Any, Optional
 
 import streamlit as st
 
+from src.config.brand import PRODUCT_NAME
+from src.config.departments import display_department
+from src.config.demo_profiles import demo_person_name
 from src.db.models import AuditLog, Ticket, User
 from src.services.admin_stats_service import AdminDashboardStats, get_admin_dashboard_stats
 from src.ui.admin_portal_theme import admin_portal_css
@@ -21,25 +24,6 @@ _NAV_ITEMS = (
     ("settings", "SYSTEM", "Settings", None),
     ("audit", "SYSTEM", "Audit Log", None),
 )
-
-_REQUESTER_NAMES = {
-    "requester@demo.local": "Karan Joshi",
-    "emily.reed@demo.local": "Emily Reed",
-    "james.wu@demo.local": "James Wu",
-    "sarah.kim@demo.local": "Sarah Kim",
-    "michael.brown@demo.local": "Michael Brown",
-}
-
-_AGENT_NAMES = {
-    "hardware@demo.local": "Alex Chen",
-    "software@demo.local": "Marcus Lee",
-    "network@demo.local": "Priya Nair",
-    "secops@demo.local": "Sam Ortiz",
-    "identity@demo.local": "Jordan Kim",
-    "dba@demo.local": "Riley Park",
-    "storage@demo.local": "Casey Morgan",
-}
-
 
 def _wrap(inner: str) -> str:
     return f'<div class="premium-admin-scope">{inner}</div>'
@@ -57,11 +41,7 @@ def _person_name(user_id: Optional[str], emails: dict[str, str]) -> str:
     if not user_id:
         return "—"
     email = emails.get(user_id, "")
-    if email in _REQUESTER_NAMES:
-        return _REQUESTER_NAMES[email]
-    if email in _AGENT_NAMES:
-        return _AGENT_NAMES[email]
-    return email.split("@")[0].replace(".", " ").title() if email else "—"
+    return demo_person_name(email) if email else "—"
 
 
 def _ticket_inc(ticket: Ticket) -> str:
@@ -134,7 +114,9 @@ def _ticket_row_data(ticket: Ticket, stats: AdminDashboardStats) -> dict[str, An
         "subject": ticket.title,
         "status": _status_label(ticket.status),
         "hand": f"Hand {ticket.hand}" if ticket.hand else "—",
-        "department": ticket.department_queue or "—",
+        "department": display_department(ticket.department_queue)
+        if ticket.department_queue
+        else "—",
         "priority": ticket.priority or "—",
         "assignee": _person_name(ticket.assignee_id, stats.assignee_emails),
         "submitter": _person_name(ticket.user_id, stats.requester_emails),
@@ -280,6 +262,23 @@ def _render_column_header_filters(
     return list_filters, text_filters
 
 
+def _read_column_filter_state(
+    table_key: str,
+    column_specs: list[tuple[str, str, str]],
+) -> tuple[dict[str, list[str]], dict[str, str]]:
+    list_filters: dict[str, list[str]] = {}
+    text_filters: dict[str, str] = {}
+    for field, _, kind in column_specs:
+        state_key = _filter_state_key(table_key, field)
+        if kind == "text":
+            val = st.session_state.get(state_key, "")
+            text_filters[field] = val if isinstance(val, str) else ""
+        else:
+            val = st.session_state.get(state_key, [])
+            list_filters[field] = val if isinstance(val, list) else []
+    return list_filters, text_filters
+
+
 def _render_filterable_table_shell(
     title: str,
     table_key: str,
@@ -287,28 +286,24 @@ def _render_filterable_table_shell(
     column_specs: list[tuple[str, str, str]],
     col_widths: list[float],
 ) -> list[dict[str, Any]]:
-    st.markdown(
-        _wrap(
-            f'<div class="admin-card admin-table-card"><h3 style="margin-bottom:0.5rem">'
-            f"{html.escape(title)}</h3>"
-        ),
-        unsafe_allow_html=True,
+    preview_list, preview_text = _read_column_filter_state(table_key, column_specs)
+    preview = _apply_row_filters(
+        rows, list_filters=preview_list, text_filters=preview_text
     )
 
-    list_filters, text_filters = _render_column_header_filters(
-        table_key, rows, column_specs, col_widths
-    )
-    filtered = _apply_row_filters(rows, list_filters=list_filters, text_filters=text_filters)
-
-    c1, c2 = st.columns([4, 1])
-    with c1:
+    head_l, head_r = st.columns([5.5, 1])
+    with head_l:
         st.markdown(
             _wrap(
-                f'<p class="admin-filter-count">Showing {len(filtered)} of {len(rows)} rows</p>'
+                f'<div class="admin-card admin-table-card admin-table-card-tight">'
+                f'<div class="admin-table-card-head">'
+                f"<h3>{html.escape(title)}</h3>"
+                f'<span class="admin-filter-count">Showing {len(preview)} of {len(rows)} rows</span>'
+                f"</div>"
             ),
             unsafe_allow_html=True,
         )
-    with c2:
+    with head_r:
         if st.button(
             "Clear filters",
             key=f"admin_col_filter_clear_{table_key}",
@@ -318,7 +313,10 @@ def _render_filterable_table_shell(
             _clear_column_filters(table_key, column_specs)
             st.rerun()
 
-    return filtered
+    list_filters, text_filters = _render_column_header_filters(
+        table_key, rows, column_specs, col_widths
+    )
+    return _apply_row_filters(rows, list_filters=list_filters, text_filters=text_filters)
 
 
 def _tickets_csv(tickets: list[Ticket], emails: dict[str, str]) -> str:
@@ -357,7 +355,7 @@ def _render_topnav(user: User) -> None:
     st.markdown(
         _wrap(
             '<header class="admin-topnav">'
-            '<p class="portal-brand">ClearHand.</p>'
+            f'<p class="portal-brand">{html.escape(PRODUCT_NAME)}.</p>'
             f'<span class="admin-topnav-meta">{html.escape(display)} · Admin Console</span>'
             "</header>"
         ),
@@ -494,7 +492,7 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
     )
 
     team_cards = []
-    for team in stats.team_loads[:3]:
+    for team in stats.team_loads:
         cap_cls = "cap-ok"
         if team.capacity_pct >= 80:
             cap_cls = "cap-danger"
@@ -508,12 +506,6 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
             f'<div class="admin-cap-track"><div class="admin-cap-fill {cap_cls}" '
             f'style="width:{team.capacity_pct}%"></div></div>'
             f'<p class="admin-cap-label">{team.capacity_pct}% capacity</p></div>'
-        )
-    while len(team_cards) < 3:
-        team_cards.append(
-            '<div class="admin-card admin-team-card">'
-            "<h4>—</h4><p class='open-count'>0 open</p>"
-            "<p class='meta'>No load data</p></div>"
         )
 
     st.markdown(

@@ -1,6 +1,7 @@
 """Product name and copy — single place for UI strings."""
 
-PRODUCT_NAME = "ClearHand"
+PRODUCT_NAME = "IntelliQ"
+ORG_NAME = "IntelliQ Systems"
 TAGLINE = "IT support, routed with confidence"
 DESCRIPTION = "One ticket. Five agents. The right level of help—immediately."
 

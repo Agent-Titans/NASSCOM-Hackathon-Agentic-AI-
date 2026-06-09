@@ -8,6 +8,8 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from src.config.departments import DEPARTMENT_QUEUES, canonical_department, display_department
+from src.config.demo_profiles import AGENT_QUEUE_LABELS
 from src.db.models import Ticket, User
 
 _CLOSED = frozenset({"RESOLVED", "CLOSED"})
@@ -114,15 +116,12 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
         .all()
     )
     users = {u.user_id: u.email for u in session.query(User).all()}
-    assignees = (
-        session.query(User)
-        .filter(User.role == "assignee")
-        .all()
-    )
+    # Use the canonical demo roster — not every legacy assignee row in SQLite.
     agents_by_dept: dict[str, int] = defaultdict(int)
-    for agent in assignees:
-        dept = agent.department or "General"
-        agents_by_dept[dept] += 1
+    for email, dept in AGENT_QUEUE_LABELS.items():
+        if email == "admin@employee":
+            continue
+        agents_by_dept[canonical_department(dept)] += 1
 
     stats = AdminDashboardStats()
     stats.all_tickets = tickets
@@ -196,25 +195,16 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
 
     dept_open: Counter[str] = Counter()
     for t in open_tickets:
-        dept = t.department_queue or "Unassigned"
+        raw = t.department_queue or "Unassigned"
+        dept = canonical_department(raw) if raw != "Unassigned" else raw
         dept_open[dept] += 1
-
-    it_depts = ("Software", "Hardware", "Identity", "DBA", "Storage")
-    it_open = sum(dept_open.get(d, 0) for d in it_depts)
-    it_agents = sum(agents_by_dept.get(d, 0) for d in it_depts) or 1
-
-    network_open = dept_open.get("Network", 0)
-    network_agents = max(agents_by_dept.get("Network", 0), 1)
 
     unassigned_triage = sum(
         1 for t in stats.triage_tickets if not t.assignee_id and t.status not in _CLOSED
     )
-    triage_agents = max(
-        sum(1 for a in assignees if a.department in ("SecOps", "Software")),
-        1,
-    )
+    triage_agents = max(agents_by_dept.get("SecOps", 0) + agents_by_dept.get("Software", 0), 1)
 
-    def _append_team(name: str, open_count: int, agents: int, triage: bool = False) -> None:
+    def _append_team(name: str, open_count: int, agents: int, *, triage: bool = False) -> None:
         if triage:
             cap = min(100, int(open_count / max(agents * 5, 1) * 100))
             note = (
@@ -232,9 +222,24 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
             stats.near_capacity_teams += 1
         stats.team_loads.append(TeamLoad(name, open_count, agents, cap, note))
 
-    _append_team("IT Department", it_open, it_agents)
-    _append_team("Network Team", network_open, network_agents)
-    _append_team("Triage Team", unassigned_triage, triage_agents, triage=True)
+    known_depts = set(DEPARTMENT_QUEUES) | set(dept_open.keys()) | set(agents_by_dept.keys())
+    known_depts.discard("Unassigned")
+    known_depts.discard("General")
+
+    ordered_depts = sorted(
+        known_depts,
+        key=lambda d: (-dept_open.get(d, 0), display_department(d)),
+    )
+    for dept in ordered_depts:
+        agents = agents_by_dept.get(dept, 0)
+        open_count = dept_open.get(dept, 0)
+        if open_count == 0 and agents == 0:
+            continue
+        label = display_department(dept)
+        team_name = f"{label} Team" if not label.endswith("Team") else label
+        _append_team(team_name, open_count, max(agents, 1))
+
+    _append_team("Triage Queue", unassigned_triage, triage_agents, triage=True)
 
     return stats
 

@@ -5,6 +5,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from src.config.departments import department_queue_aliases
 from src.db.models import Ticket, User
 
 _PRIORITY_ORDER = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -39,10 +40,11 @@ class TicketStore:
         include_resolved: bool = False,
     ) -> list[Ticket]:
         """Assignee queue: Hand 2 and 3 only (Hand 1 stays with requester)."""
+        queues = department_queue_aliases(department)
         q = (
             self.session.query(Ticket)
             .filter(
-                Ticket.department_queue == department,
+                Ticket.department_queue.in_(queues),
                 Ticket.hand.in_(("2", "3")),
             )
         )

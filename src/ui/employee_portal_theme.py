@@ -578,6 +578,32 @@ def employee_portal_css() -> str:
     {pp} [data-testid="stForm"] [data-testid="stCheckbox"] {{
       margin-bottom: 0.25rem !important;
     }}
+    {pp} [data-testid="stForm"] [data-testid="stWidgetLabel"] p {{
+      font-size: 0.82rem !important;
+      font-weight: 700 !important;
+      color: #0F172A !important;
+      margin-bottom: 0.35rem !important;
+    }}
+    {pp} [data-testid="stForm"] [data-testid="stTextInput"] input,
+    {pp} [data-testid="stForm"] [data-testid="stTextArea"] textarea {{
+      border: 1.5px solid #CBD5E1 !important;
+      border-radius: 10px !important;
+      background: #FFFFFF !important;
+      color: #0F172A !important;
+      padding: 0.65rem 0.85rem !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+    }}
+    {pp} [data-testid="stForm"] [data-testid="stTextInput"] input:focus,
+    {pp} [data-testid="stForm"] [data-testid="stTextArea"] textarea:focus {{
+      border-color: #2563EB !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+    }}
+    {pp} [data-testid="stForm"] [data-testid="stTextInput"] > div,
+    {pp} [data-testid="stForm"] [data-testid="stTextArea"] > div {{
+      border: none !important;
+      background: transparent !important;
+    }}
 
     /* Mobile — stack profile + action cards */
     @media (max-width: 768px) {{

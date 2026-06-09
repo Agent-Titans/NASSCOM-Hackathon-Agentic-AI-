@@ -1,4 +1,4 @@
-"""SaaS-style UI building blocks for ClearHand."""
+"""SaaS-style UI building blocks for IntelliQ."""
 from __future__ import annotations
 
 import html

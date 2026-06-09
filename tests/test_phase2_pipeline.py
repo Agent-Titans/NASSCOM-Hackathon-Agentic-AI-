@@ -61,7 +61,7 @@ def test_classifier_uses_rag_when_gemini_unavailable():
             "Access Management", confidence_hint="high", source="rag"
         ),
         resolution=ResolutionResult(steps=["Reset password"], low_grounding=False),
-        department_queue="Identity",
+        department_queue="Access Management",
     )
     agent = ClassifierAgent()
     with patch.object(agent.gemini, "classify_ticket", return_value=None):

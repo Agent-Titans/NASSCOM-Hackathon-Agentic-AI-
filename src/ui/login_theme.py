@@ -1,4 +1,4 @@
-"""ClearHand login — isolated welcome-scope + workspace-scope styles."""
+"""IntelliQ login — welcome, sign-in, and workspace scope styles."""
 from __future__ import annotations
 
 
@@ -58,12 +58,14 @@ def login_css(dark: bool) -> str:
 
     w = '[data-testid="stAppViewContainer"]:has(.welcome-scope)'
     ws = '[data-testid="stAppViewContainer"]:has(.workspace-scope)'
+    ss = '[data-testid="stAppViewContainer"]:has(.signin-scope)'
 
     return f"""
     <style>
     /* —— Shared auth canvas —— */
     [data-testid="stAppViewContainer"]:has(.welcome-scope),
-    [data-testid="stAppViewContainer"]:has(.workspace-scope) {{
+    [data-testid="stAppViewContainer"]:has(.workspace-scope),
+    [data-testid="stAppViewContainer"]:has(.signin-scope) {{
       background: linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%) !important;
       min-height: 100vh;
     }}
@@ -71,7 +73,8 @@ def login_css(dark: bool) -> str:
       background: {bg} !important;
     }}
     [data-testid="stAppViewContainer"]:has(.welcome-scope) [data-testid="stSidebar"],
-    [data-testid="stAppViewContainer"]:has(.workspace-scope) [data-testid="stSidebar"] {{
+    [data-testid="stAppViewContainer"]:has(.workspace-scope) [data-testid="stSidebar"],
+    [data-testid="stAppViewContainer"]:has(.signin-scope) [data-testid="stSidebar"] {{
       display: none !important;
     }}
     [data-testid="stAppViewContainer"]:has(.welcome-scope) [data-testid="stMainBlockContainer"],
@@ -551,6 +554,159 @@ def login_css(dark: bool) -> str:
       font-size: 0.88rem !important;
       color: inherit !important;
       font-weight: 500 !important;
+    }}
+
+    /* —— Sign-in scope (email + password card) —— */
+    {ss} [data-testid="stMainBlockContainer"],
+    {ss} .block-container {{
+      max-width: 100% !important;
+      padding: 0 1rem 2rem !important;
+      background: transparent !important;
+    }}
+    {ss} [data-testid="stColumn"]:nth-child(2) {{
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06) !important;
+      padding: 0 2rem 1.75rem !important;
+      margin: 1.5rem auto 2rem !important;
+      max-width: 420px !important;
+    }}
+    .signin-scope.signin-topbar {{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.25rem 0 0.5rem;
+      color: #0F172A;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }}
+    .signin-scope .signin-topbar-icon {{
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #F1F5F9;
+      color: #334155;
+    }}
+    .signin-scope.signin-card-header {{
+      text-align: center;
+      padding: 0.5rem 0 1.25rem;
+    }}
+    .signin-scope .signin-lock-icon {{
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 1rem;
+      border-radius: 999px;
+      background: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }}
+    .signin-scope .signin-title {{
+      margin: 0;
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.02em;
+    }}
+    .signin-scope .signin-subtitle {{
+      margin: 0.45rem 0 0;
+      font-size: 0.92rem;
+      color: #64748B;
+      line-height: 1.45;
+    }}
+    .signin-scope.signin-error {{
+      color: #DC2626;
+      font-size: 0.85rem;
+      text-align: center;
+      margin: 0 0 0.75rem;
+    }}
+    {ss} label[data-testid="stWidgetLabel"] p {{
+      font-size: 0.82rem !important;
+      font-weight: 700 !important;
+      color: #0F172A !important;
+    }}
+  /* Single border on BaseWeb wrapper — fixes password field (eye icon) clipping */
+    {ss} [data-testid="stTextInput"] [data-baseweb="input"] {{
+      border: 1.5px solid #94A3B8 !important;
+      border-radius: 10px !important;
+      background: #FFFFFF !important;
+      min-height: 2.75rem !important;
+      box-shadow: none !important;
+    }}
+    {ss} [data-testid="stTextInput"] input {{
+      border: none !important;
+      background: transparent !important;
+      color: #0F172A !important;
+      box-shadow: none !important;
+    }}
+    {ss} [data-testid="stTextInput"] [data-baseweb="input"]:focus-within {{
+      border-color: #2563EB !important;
+      outline: none !important;
+    }}
+    {ss} [data-testid="stTextInput"] [data-baseweb="input"] button {{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }}
+    {ss} button[data-testid="stBaseButton-primary"] {{
+      background: #2563EB !important;
+      color: #FFFFFF !important;
+      border-radius: 10px !important;
+      border: none !important;
+      font-weight: 700 !important;
+      min-height: 2.75rem !important;
+      box-shadow: none !important;
+    }}
+    {ss} button[data-testid="stBaseButton-primary"]:hover {{
+      background: #1D4ED8 !important;
+    }}
+    {ss} button[data-testid="stBaseButton-secondary"][class*="st-key-signin_create"] {{
+      background: #FFFFFF !important;
+      color: #2563EB !important;
+      border: 1.5px solid #2563EB !important;
+      border-radius: 10px !important;
+      font-weight: 700 !important;
+      min-height: 2.75rem !important;
+    }}
+    .signin-scope.signin-divider {{
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      color: #94A3B8;
+      font-size: 0.82rem;
+    }}
+    .signin-scope.signin-divider::before,
+    .signin-scope.signin-divider::after {{
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #E2E8F0;
+    }}
+    .signin-scope.signin-legal {{
+      text-align: center;
+      font-size: 0.75rem;
+      color: #94A3B8;
+      line-height: 1.5;
+      margin-top: 1.25rem;
+    }}
+    .signin-scope .signin-link {{
+      color: #2563EB;
+      text-decoration: none;
+      font-weight: 600;
+    }}
+    {ss} button[kind="tertiary"][class*="st-key-signin_forgot"] {{
+      color: #2563EB !important;
+      font-size: 0.82rem !important;
+      font-weight: 600 !important;
+      width: auto !important;
+      margin-left: auto !important;
+      padding: 0 !important;
     }}
     </style>
     """

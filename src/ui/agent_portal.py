@@ -7,7 +7,9 @@ from typing import Optional
 
 import streamlit as st
 
-from src.config.brand import HAND_DISPLAY
+from src.config.brand import HAND_DISPLAY, ORG_NAME, PRODUCT_NAME
+from src.config.departments import departments_match, display_department
+from src.config.demo_profiles import demo_person_name
 from src.services.resolution_steps_codec import decode_steps
 from src.db.models import (
     AuditLog,
@@ -30,29 +32,12 @@ from src.ui.ticket_display import (
     person_name,
 )
 
-_AGENT_DISPLAY_NAMES = {
-    "hardware@demo.local": "Alex Chen",
-    "software@demo.local": "Marcus Lee",
-    "secops@demo.local": "Sam Ortiz",
-    "network@demo.local": "Priya Nair",
-    "identity@demo.local": "Jordan Kim",
-    "dba@demo.local": "Riley Park",
-    "storage@demo.local": "Casey Morgan",
-}
-
-_REQUESTER_DISPLAY_NAMES = {
-    "requester@demo.local": "Karan Joshi",
-    "emily.reed@demo.local": "Emily Reed",
-    "james.wu@demo.local": "James Wu",
-    "sarah.kim@demo.local": "Sarah Kim",
-    "michael.brown@demo.local": "Michael Brown",
-}
-
 _DEPT_ICONS = {
     "Hardware": "🖥️",
     "Software": "💻",
     "SecOps": "🛡️",
     "Network": "🌐",
+    "Access Management": "🔐",
     "Identity": "🔐",
     "DBA": "🗄️",
     "Storage": "💾",
@@ -64,12 +49,7 @@ _FILTER_OPTIONS = ["All", "Unassigned", "Mine", "SLA at risk"]
 
 
 def _display_name(email: str) -> str:
-    if email in _AGENT_DISPLAY_NAMES:
-        return _AGENT_DISPLAY_NAMES[email]
-    if email in _REQUESTER_DISPLAY_NAMES:
-        return _REQUESTER_DISPLAY_NAMES[email]
-    local = email.split("@")[0]
-    return local.replace(".", " ").replace("_", " ").title()
+    return demo_person_name(email)
 
 
 def _wrap(inner: str) -> str:
@@ -164,7 +144,7 @@ def _filter_tickets(tickets: list[Ticket], filt: str, me: User) -> list[Ticket]:
 def _topnav_html() -> str:
     return _wrap(
         '<header class="portal-topnav">'
-        '<p class="portal-brand">ClearHand.</p>'
+        f'<p class="portal-brand">{html.escape(PRODUCT_NAME)}.</p>'
         '<div class="portal-nav-actions">'
         '<span class="portal-nav-hint">Agent Workspace</span>'
         "</div></header>"
@@ -184,7 +164,7 @@ def _profile_card_html(name: str, email: str, department: str) -> str:
         f'<p class="portal-welcome">Welcome, {html.escape(name)}</p>'
         f'<p class="portal-email">{html.escape(email)}</p>'
         f'<span class="agent-dept-badge">{html.escape(department)} Queue</span>'
-        '<p class="portal-org">ClearHand Support Operations</p>'
+        f'<p class="portal-org">{html.escape(ORG_NAME)} Support Operations</p>'
         "</div>"
     )
 
@@ -266,6 +246,19 @@ def _empty_state_html() -> str:
     )
 
 
+def _agent_toast(message: str, *, icon: str = "✅") -> None:
+    st.session_state["agent_toast"] = message
+    st.session_state["agent_toast_icon"] = icon
+
+
+def _render_agent_toast() -> None:
+    message = st.session_state.pop("agent_toast", None)
+    if not message:
+        return
+    icon = st.session_state.pop("agent_toast_icon", "✅")
+    st.toast(message, icon=icon)
+
+
 def _sign_out() -> None:
     dark = st.session_state.get("dark_mode", False)
     for k in list(st.session_state.keys()):
@@ -284,22 +277,19 @@ def _open_ticket(ticket_id: str) -> None:
 
 def _assign_ticket(session, ticket: Ticket, user: User) -> None:
     TicketStore(session).assign(ticket, user)
-    st.session_state["agent_flash"] = f"INC-{_ticket_key(ticket)} assigned to you."
-    st.session_state["agent_flash_type"] = "success"
+    _agent_toast(f"Ticket INC-{_ticket_key(ticket)} assigned to you.")
     st.rerun()
 
 
 def _release_ticket(session, ticket: Ticket) -> None:
     TicketStore(session).release(ticket)
-    st.session_state["agent_flash"] = f"INC-{_ticket_key(ticket)} released to queue."
-    st.session_state["agent_flash_type"] = "info"
+    _agent_toast(f"Ticket INC-{_ticket_key(ticket)} released to queue.", icon="ℹ️")
     st.rerun()
 
 
 def _resolve_ticket(session, ticket: Ticket) -> None:
     TicketStore(session).resolve(ticket)
-    st.session_state["agent_flash"] = f"INC-{_ticket_key(ticket)} marked resolved."
-    st.session_state["agent_flash_type"] = "success"
+    _agent_toast(f"Ticket INC-{_ticket_key(ticket)} marked resolved.")
     st.session_state["agent_view"] = "home"
     st.rerun()
 
@@ -462,33 +452,24 @@ def _render_resolved_rows(
 
 def render_agent_home(user: User, session) -> None:
     dept = user.department or "Hardware"
+    dept_label = display_department(dept)
     name = _display_name(user.email)
     store = TicketStore(session)
     stats = store.department_stats(dept, user.user_id)
-
-    flash = st.session_state.pop("agent_flash", None)
-    flash_type = st.session_state.pop("agent_flash_type", "success")
 
     _render_topnav("agent_signout")
 
     top_col1, top_col2 = st.columns([1, 1.4], gap="large")
     with top_col1:
-        st.markdown(_profile_card_html(name, user.email, dept), unsafe_allow_html=True)
+        st.markdown(_profile_card_html(name, user.email, dept_label), unsafe_allow_html=True)
     with top_col2:
         st.markdown(
-            _queue_summary_html(dept, stats["total"], stats["mine"]),
+            _queue_summary_html(dept_label, stats["total"], stats["mine"]),
             unsafe_allow_html=True,
         )
 
     st.markdown('<div style="margin-top: 2rem;"></div>', unsafe_allow_html=True)
     st.markdown(_metrics_html(stats), unsafe_allow_html=True)
-
-    if flash:
-        cls = "itsm-banner-ok" if flash_type == "success" else "itsm-banner-info"
-        st.markdown(
-            _wrap(f'<div class="itsm-banner {cls}">{html.escape(flash)}</div>'),
-            unsafe_allow_html=True,
-        )
 
     filt = st.session_state.get("agent_filter", "All")
     st.markdown(
@@ -527,7 +508,8 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
 
     ticket = TicketStore(session).get(ticket_id)
     dept = user.department or "Hardware"
-    if not ticket or ticket.department_queue != dept:
+    dept_label = display_department(dept)
+    if not ticket or not departments_match(ticket.department_queue, dept):
         st.error("Ticket not found or not in your department queue.")
         return
     if ticket.hand not in ("2", "3"):
@@ -561,7 +543,7 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
     banner_head = (
         "Human escalation — specialist review required"
         if ticket.hand == "3"
-        else f"Routed assist — {dept} queue"
+        else f"Routed assist — {dept_label} queue"
     )
     banner_body = (
         "This incident needs specialist review. Check audit context before acting."
@@ -580,7 +562,7 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
             f'<div class="itsm-state-bar">'
             f'<span class="itsm-chip itsm-chip-status">'
             f'{html.escape(_status_short_label(ticket.status))}</span>'
-            f'<span class="itsm-chip itsm-chip-domain">{html.escape(dept)}</span>'
+            f'<span class="itsm-chip itsm-chip-domain">{html.escape(dept_label)}</span>'
             f'<span class="itsm-chip itsm-chip-hand-2">'
             f'{html.escape(hand_routing_label(ticket))}</span>'
             f"</div></div>"
@@ -709,6 +691,7 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
 
 def render_agent_portal(user: User, session) -> None:
     _portal_scope_open()
+    _render_agent_toast()
     if "agent_view" not in st.session_state:
         st.session_state["agent_view"] = "home"
 

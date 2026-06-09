@@ -627,25 +627,25 @@ _CATEGORY_TO_DEPARTMENT: dict[str, str] = {
     "Database": "DBA",
     "Storage": "Storage",
     "Network": "Network",
-    "Access Management": "Identity",
+    "Access Management": "Access Management",
 }
 
 _DEPARTMENT_TO_ASSIGNEE_EMAIL: dict[str, str] = {
-    "Hardware": "hardware@demo.local",
-    "Software": "software@demo.local",
-    "SecOps": "secops@demo.local",
-    "Network": "network@demo.local",
-    "Identity": "identity@demo.local",
-    "DBA": "dba@demo.local",
-    "Storage": "storage@demo.local",
+    "Hardware": "sree@employee",
+    "Software": "subbu@employee",
+    "SecOps": "narsimha@employee",
+    "Network": "shashi@employee",
+    "Access Management": "satya@employee",
+    "DBA": "sagar@employee",
+    "Storage": "sagar@employee",
 }
 
 _REQUESTER_EMAILS: tuple[str, ...] = (
-    "requester@demo.local",
-    "emily.reed@demo.local",
-    "james.wu@demo.local",
-    "sarah.kim@demo.local",
-    "michael.brown@demo.local",
+    "pallavi@user",
+    "gajanan@user",
+    "imran@user",
+    "naveen@user",
+    "santhosh@user",
 )
 
 _SLA_BY_PRIORITY: dict[str, tuple[int, ...]] = {
@@ -660,7 +660,7 @@ def department_for_category(category: str) -> str:
 
 
 def assignee_email_for_department(department: str) -> str:
-    return _DEPARTMENT_TO_ASSIGNEE_EMAIL.get(department, "software@demo.local")
+    return _DEPARTMENT_TO_ASSIGNEE_EMAIL.get(department, "subbu@employee")
 
 
 def demo_ticket_routing(doc_id: str, category: str, hand: str) -> dict[str, object]:

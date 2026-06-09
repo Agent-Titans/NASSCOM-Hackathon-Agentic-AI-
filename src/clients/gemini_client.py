@@ -44,6 +44,35 @@ class GeminiClient:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read().decode())
 
+    def embed_text(self, text: str, *, timeout: int = 15) -> Optional[list[float]]:
+        """Return embedding vector for semantic RAG similarity (gemini-embedding-001)."""
+        if not self.available or not text.strip():
+            return None
+        model = self.settings.gemini_model_embed
+        key = self.settings.google_api_key
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model}:embedContent?key={key}"
+        )
+        body = {
+            "model": f"models/{model}",
+            "content": {"parts": [{"text": text[:8000]}]},
+        }
+        try:
+            data = json.dumps(body).encode("utf-8")
+            req = urllib.request.Request(
+                url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                raw = json.loads(resp.read().decode())
+            values = raw.get("embedding", {}).get("values")
+            if not values:
+                return None
+            return [float(v) for v in values]
+        except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError, KeyError, TypeError) as exc:
+            logger.warning("Gemini embed failed: %s", exc)
+            return None
+
     def scan_prompt_injection(self, ticket_text: str) -> str:
         """
         Layer 2 defensive guardrail — treat ticket body as static untrusted data.

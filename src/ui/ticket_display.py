@@ -5,35 +5,19 @@ import html
 
 from sqlalchemy.orm import Session
 
+from src.config.demo_profiles import demo_person_name
+from src.config.departments import display_department
 from src.db.models import Ticket, User
-
-_DISPLAY_NAMES = {
-    "requester@demo.local": "Karan Joshi",
-    "emily.reed@demo.local": "Emily Reed",
-    "james.wu@demo.local": "James Wu",
-    "sarah.kim@demo.local": "Sarah Kim",
-    "michael.brown@demo.local": "Michael Brown",
-    "hardware@demo.local": "Alex Chen",
-    "software@demo.local": "Marcus Lee",
-    "secops@demo.local": "Sam Ortiz",
-    "network@demo.local": "Priya Nair",
-    "identity@demo.local": "Jordan Kim",
-    "dba@demo.local": "Riley Park",
-    "storage@demo.local": "Casey Morgan",
-}
 
 
 def person_name(email: str) -> str:
-    if email in _DISPLAY_NAMES:
-        return _DISPLAY_NAMES[email]
-    local = email.split("@")[0]
-    return local.replace(".", " ").replace("_", " ").title()
+    return demo_person_name(email)
 
 
 def department_label(ticket: Ticket) -> str:
     """LLD home list: status surface — department queue for routed work."""
     if ticket.department_queue:
-        return ticket.department_queue
+        return display_department(ticket.department_queue)
     hand = ticket.hand or ""
     if hand == "1":
         return "Self-service"

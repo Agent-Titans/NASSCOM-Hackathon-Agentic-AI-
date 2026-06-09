@@ -7,7 +7,8 @@ from typing import Optional
 
 import streamlit as st
 
-from src.config.brand import HAND_DISPLAY
+from src.config.brand import HAND_DISPLAY, ORG_NAME, PRODUCT_NAME
+from src.config.demo_profiles import demo_person_name
 from src.db.models import ClassificationArtifact, Feedback, ResolutionArtifact, Ticket, User
 from src.services.resolution_steps_codec import decode_steps
 from src.services.ticket_service import TicketService
@@ -31,42 +32,17 @@ def _sync_auth_user(user: User) -> None:
     st.session_state["auth_user_id"] = user.user_id
 
 
-_DEMO_DISPLAY_NAMES = {
-    "requester@demo.local": "Karan Joshi",
-    "emily.reed@demo.local": "Emily Reed",
-    "james.wu@demo.local": "James Wu",
-    "sarah.kim@demo.local": "Sarah Kim",
-    "michael.brown@demo.local": "Michael Brown",
+_PRIORITY_OPTIONS: tuple[str, ...] = ("P0", "P1", "P2")
+
+_PRIORITY_TO_URGENCY: dict[str, str] = {
+    "P0": "high",
+    "P1": "medium",
+    "P2": "low",
 }
-
-_URGENCY_OPTIONS: list[tuple[str, str]] = [
-    ("low", "Low"),
-    ("medium", "Medium"),
-    ("high", "High"),
-]
-
-_URGENCY_HINTS = {
-    "low": "P2 · 48h response",
-    "medium": "P1 · 24h response",
-    "high": "P0 · 4h response",
-}
-
-_CATEGORY_OPTIONS = [
-    "Let AI decide",
-    "Hardware",
-    "Software",
-    "Network",
-    "Security",
-    "Access",
-    "Other",
-]
 
 
 def _display_name(email: str) -> str:
-    if email in _DEMO_DISPLAY_NAMES:
-        return _DEMO_DISPLAY_NAMES[email]
-    local = email.split("@")[0]
-    return local.replace(".", " ").replace("_", " ").title()
+    return demo_person_name(email)
 
 
 def _user_tickets(session, user: User) -> list[Ticket]:
@@ -213,7 +189,7 @@ def _wrap(inner: str) -> str:
 def _topnav_html() -> str:
     return _wrap(
         '<header class="portal-topnav">'
-        '<p class="portal-brand">ClearHand.</p>'
+        f'<p class="portal-brand">{html.escape(PRODUCT_NAME)}.</p>'
         '<div class="portal-nav-actions" aria-hidden="true">'
         '<span class="portal-nav-hint">Employee Workspace</span>'
         "</div></header>"
@@ -232,7 +208,7 @@ def _profile_card_html(name: str, email: str) -> str:
         '<div class="portal-avatar">👨‍💻</div>'
         f'<p class="portal-welcome">Welcome, {html.escape(name)}</p>'
         f'<p class="portal-email">{html.escape(email)}</p>'
-        '<p class="portal-org">ClearHand Systems Core</p>'
+        f'<p class="portal-org">{html.escape(ORG_NAME)} Core</p>'
         "</div>"
     )
 
@@ -476,61 +452,12 @@ def render_portal_create(user: User, session) -> None:
         unsafe_allow_html=True,
     )
 
-    urgency_keys = [k for k, _ in _URGENCY_OPTIONS]
-
     with st.form("portal_create_form", border=False):
-        st.markdown(
-            _wrap('<p class="portal-form-section">Contact</p>'),
-            unsafe_allow_html=True,
-        )
-        contact_email = st.text_input(
-            "Contact email",
-            value=user.email,
-            placeholder="you@company.com",
-            help="We will use this email for updates on this request.",
-        )
-
-        st.markdown(
-            _wrap('<p class="portal-form-section">Issue summary</p>'),
-            unsafe_allow_html=True,
-        )
         title = st.text_input(
-            "Issue title",
+            "Issue Title",
             placeholder="e.g. Cannot connect to VPN",
-            label_visibility="collapsed",
         )
 
-        st.markdown(
-            _wrap(
-                '<p class="portal-form-section">Category <span class="portal-optional">(optional)</span></p>'
-            ),
-            unsafe_allow_html=True,
-        )
-        category = st.selectbox(
-            "Category",
-            _CATEGORY_OPTIONS,
-            index=0,
-            label_visibility="collapsed",
-            help="Leave as “Let AI decide” unless you know the area.",
-        )
-
-        st.markdown(
-            _wrap('<p class="portal-form-section">Urgency</p>'),
-            unsafe_allow_html=True,
-        )
-        urgency = st.radio(
-            "Urgency",
-            urgency_keys,
-            index=1,
-            horizontal=True,
-            format_func=lambda k: f"{k.title()} · {_URGENCY_HINTS[k]}",
-            label_visibility="collapsed",
-        )
-
-        st.markdown(
-            _wrap('<p class="portal-form-section">Description</p>'),
-            unsafe_allow_html=True,
-        )
         description = st.text_area(
             "Description",
             height=140,
@@ -538,29 +465,35 @@ def render_portal_create(user: User, session) -> None:
                 "What happened? Include error messages, when it started, "
                 "and anything you already tried."
             ),
-            label_visibility="collapsed",
         )
-        device = st.text_input(
-            "Device or location (optional)",
-            placeholder="MacBook Pro · Building A · NY-042",
+
+        contact_email = st.text_input(
+            "Contact email",
+            value=user.email,
+            placeholder="you@company.com",
+            help="We will use this email for updates on this request.",
         )
+
+        priority = st.radio(
+            "Priority",
+            _PRIORITY_OPTIONS,
+            index=1,
+            horizontal=True,
+        )
+
         submitted = st.form_submit_button("Submit request", type="primary", use_container_width=True)
 
     if not submitted:
         return
     if not title.strip() or not description.strip():
-        st.error("Issue title and description are required.")
+        st.error("Issue Title and Description are required.")
         return
     if not contact_email.strip() or "@" not in contact_email:
         st.error("A valid contact email is required.")
         return
 
-    full_description = description.strip()
-    if category and category != "Let AI decide":
-        full_description = f"[{category}] {full_description}"
-    full_description = f"{full_description}\n\nContact email: {contact_email.strip()}"
-    if device.strip():
-        full_description = f"{full_description}\n\nDevice: {device.strip()}"
+    full_description = f"{description.strip()}\n\nContact email: {contact_email.strip()}"
+    urgency = _PRIORITY_TO_URGENCY[priority]
 
     try:
         ticket = TicketStore(session).create(user, title.strip(), full_description, urgency)

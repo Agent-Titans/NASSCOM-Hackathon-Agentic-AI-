@@ -96,12 +96,13 @@ class TicketService:
             # Hard stop: no Classifier / Router / Resolver / Supervisor LLM work.
             return self._security_halt(ticket, agent_run, exc)
 
+        retrieval_text = f"{ticket.title}\n{sanitized.text}".strip()
         raw_similar = self._timed(
             ticket,
             "retrieval",
             lambda: self.retrieval.find_similar(
                 self.session,
-                sanitized.text,
+                retrieval_text,
                 exclude_ticket_id=ticket.ticket_id,
             ),
         )
