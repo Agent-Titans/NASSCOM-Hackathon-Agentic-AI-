@@ -59,3 +59,5 @@ Models: `gemini-2.5-flash` + `gemini-embedding-001` — run `python scripts/chec
 ## Git sync
 
 Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
+
+Team sync test: change this line and push to verify your machine is connected.
