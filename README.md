@@ -55,3 +55,7 @@ Models: `gemini-2.5-flash` + `gemini-embedding-001` — run `python scripts/chec
 1. `docs/BACKLOG.md` — where we are  
 2. `design/LLD.html` — what we build  
 3. `docs/TEAM.md` — if using Copilot  
+
+## Git sync
+
+Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
