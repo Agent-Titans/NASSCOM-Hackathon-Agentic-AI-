@@ -4,7 +4,7 @@ Supervisor routing policy — loaded from config/routing_rules.json.
 LLD reference: #supervisor-agent, #supervisor-decision-matrix
 
 Modes:
-- strict_lld: pure c_total bands + policy_force_hand3; low_grounding → Hand 2 (team triage)
+- strict_lld: c_total bands + policy_force_hand3; low_grounding → Hand 2; trusted H1 playbook → Hand 1
 - demo: tunable policies for hackathon accuracy (hand1_playbook, low_grounding → Hand 2)
 """
 from __future__ import annotations

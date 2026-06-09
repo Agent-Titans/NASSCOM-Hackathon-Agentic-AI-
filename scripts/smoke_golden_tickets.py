@@ -38,7 +38,7 @@ _CASES = [
             "my corporate password"
         ),
         "expect_category": "Access Management",
-        "expect_hand": "2",
+        "expect_hand": "1",
         "expect_queue": "Access Management",
     },
     {

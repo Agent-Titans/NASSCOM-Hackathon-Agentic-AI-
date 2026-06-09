@@ -21,8 +21,13 @@
         "low_grounding_hand": "2",
         "apply_similarity_hand1_cap": false,
         "policy_hand1_playbook": {
-          "enabled": false,
-          "categories": [],
+          "enabled": true,
+          "categories": [
+            "Application",
+            "Access Management",
+            "Network",
+            "Infrastructure"
+          ],
           "min_source_hand": "1",
           "min_similarity": 0.55
         }

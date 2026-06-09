@@ -225,7 +225,7 @@ def test_supervisor_policy_strict_lld_default():
 
     policy = get_supervisor_policy()
     assert policy.mode == "strict_lld"
-    assert policy.hand1_playbook.enabled is False
+    assert policy.hand1_playbook.enabled is True
     assert policy.low_grounding_hand == "2"
 
 
@@ -238,7 +238,7 @@ def test_strict_lld_low_grounding_routes_hand2(strict_lld_mode):
     assert dec.policy_trigger == "low_grounding"
 
 
-def test_strict_lld_password_reset_hand2_not_playbook(strict_lld_mode):
+def test_strict_lld_password_reset_hand1_playbook(strict_lld_mode):
     from unittest.mock import patch
 
     from src.agents.resolver import ResolverAgent
@@ -271,6 +271,23 @@ def test_strict_lld_password_reset_hand2_not_playbook(strict_lld_mode):
         clf,
         res,
         sentiment=SupervisorAgent().sentiment_from_classification(clf),
+        historical_success=0.65,
+    )
+    assert dec.hand == "1"
+    assert dec.policy_trigger == "hand1_playbook"
+
+
+def test_strict_lld_h2_rag_not_promoted_to_hand1(strict_lld_mode):
+    """Trusted Hand-2 playbook must not trigger hand1_playbook."""
+    dec = SupervisorAgent().decide(
+        ClassificationResult("Database", confidence_hint="high", source="rag"),
+        ResolutionResult(
+            steps=["DBA step"],
+            similarity_score=0.85,
+            low_grounding=False,
+            matched_source_hand="2",
+        ),
+        sentiment=0.85,
         historical_success=0.65,
     )
     assert dec.hand == "2"

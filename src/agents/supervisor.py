@@ -26,6 +26,11 @@ def _cap_hand(hand: str, max_hand: str) -> str:
     return str(min(int(hand), int(max_hand)))
 
 
+def _floor_hand(hand: str, min_hand: str) -> str:
+    """Raise hand when matched playbook tier requires at least min_hand (1 < 2 < 3)."""
+    return str(max(int(hand), int(min_hand)))
+
+
 def _status_for_hand(hand: str, *, escalation: bool) -> str:
     if hand == "1":
         return "SELF_HELP"
@@ -96,7 +101,7 @@ class SupervisorAgent:
         status = _status_for_hand(hand, escalation=escalation)
 
         if policy.apply_similarity_hand1_cap and blocks_hand1_similarity(similarity):
-            hand = _cap_hand(hand, "2")
+            hand = _floor_hand(hand, "2")
             status = "ROUTED"
             escalation = False
 
@@ -104,7 +109,7 @@ class SupervisorAgent:
             is_trusted_rag_match(similarity)
             and resolution.matched_source_hand in ("2", "3")
         ):
-            hand = _cap_hand(hand, resolution.matched_source_hand)
+            hand = _floor_hand(hand, resolution.matched_source_hand)
             status = _status_for_hand(hand, escalation=hand == "3")
             escalation = hand == "3"
 

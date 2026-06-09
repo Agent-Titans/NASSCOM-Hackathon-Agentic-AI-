@@ -60,4 +60,12 @@ Models: `gemini-2.5-flash` + `gemini-embedding-001` — run `python scripts/chec
 
 Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
 
-Team sync test: change this line and push to verify your machine is connected.
+## Local database (simple)
+
+Git shares **code + RAG recipes** (`src/data/*.json`, seed scripts).  
+Each laptop keeps its own **`data/app.db`** (tickets you submit) and **`.env`** (API key).
+
+- Teammates sync code with `git pull` / `git push`
+- Tickets you create in the UI **stay on your machine** — that is normal
+- Re-run `python scripts/seed_rag_demo_tickets.py` after corpus changes
+- Past “worked / failed” feedback in your DB can nudge routing scores — use `scripts/clear_user_tickets.py` for a clean demo slate
