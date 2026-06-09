@@ -1,0 +1,9 @@
+[project]
+name = "it-ticket-routing"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Nascom final round — five agents, three hands"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

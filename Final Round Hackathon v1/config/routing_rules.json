@@ -1,0 +1,17 @@
+{
+  "category_to_department": {
+    "Infrastructure": "Hardware",
+    "Application": "Software",
+    "Security": "SecOps",
+    "Database": "DBA",
+    "Storage": "Storage",
+    "Network": "Network",
+    "Access Management": "Identity"
+  },
+  "urgency_to_priority": {
+    "low": { "priority": "P2", "sla_hours": 48 },
+    "medium": { "priority": "P1", "sla_hours": 24 },
+    "high": { "priority": "P0", "sla_hours": 4 }
+  },
+  "policy_force_hand3_categories": ["Security"]
+}

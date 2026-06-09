@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artificial intelligence — IT ticket routing — Proposed architecture</title>
+  <style>
+:root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-strong: #f8fafc;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #102a43;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --shadow: 0 18px 55px rgba(15, 23, 42, 0.08);
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+    header {
+      margin-bottom: 40px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #1d1d1f;
+    }
+    header .lede {
+      margin: 16px 0 0;
+      font-size: 1.125rem;
+      line-height: 1.5;
+      color: #6e6e73;
+      max-width: 42rem;
+    }
+    section {
+      margin-top: 36px;
+    }
+    h2 {
+      font-size: 1.375rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px;
+      color: #1d1d1f;
+    }
+    h3 {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: #1d1d1f;
+    }
+    p, li {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #424245;
+    }
+    ul, ol {
+      margin: 0.5em 0 0.75em 1.25em;
+      padding: 0;
+    }
+    .card {
+      background: var(--surface-strong);
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      margin-top: 12px;
+    }
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    }
+    .section h2 {
+      margin-top: 0;
+      color: var(--primary-dark);
+      font-size: 1.75rem;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding-bottom: 0.75rem;
+    }
+    .section h3 {
+      margin: 1.75rem 0 0.75rem;
+      color: var(--text);
+      font-size: 1.25rem;
+    }
+    .section p,
+    .section li,
+    .section dd {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .section ul,
+    .section ol {
+      padding-left: 1.3rem;
+      margin: 1rem 0;
+    }
+    .cards {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 1.5rem;
+    }
+    .card h4 {
+      margin: 0 0 0.75rem;
+      color: var(--primary);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--text-muted);
+    }
+    .flow-grid {
+      display: block;
+      overflow-x: hidden;
+      padding-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+    .flow-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .flow-row.flow-branch {
+      justify-content: center;
+    }
+    .flow-branch-box {
+      min-width: 60px;
+      text-align: center;
+      font-size: 2rem;
+      color: var(--primary);
+      padding: 0.5rem 0;
+    }
+    .flow-box {
+      flex: 1 1 180px;
+      min-width: 160px;
+      max-width: 240px;
+      background: var(--surface-strong);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 24px;
+      padding: 1.4rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03);
+    }
+    .flow-box h4 {
+      margin: 0 0 0.75rem;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+    .flow-box p {
+      margin: 0;
+      color: var(--text-muted);
+    }
+    .flow-arrow {
+      font-size: 2rem;
+      color: var(--primary);
+      min-width: 50px;
+      text-align: center;
+    }
+    .flow-note {
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 18px;
+      color: var(--text);
+    }
+    .diagram {
+      margin-top: 16px;
+      padding: 22px;
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .diagram > h3 {
+      margin-bottom: 12px;
+    }
+    .svg-diagram {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 8px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e8e8ed;
+      color: #1d1d1f;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9375rem;
+      margin-top: 8px;
+    }
+    table.data th,
+    table.data td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e8e8ed;
+      color: #424245;
+    }
+    table.data th {
+      font-weight: 600;
+      color: #1d1d1f;
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    table.data tr:last-child td {
+      border-bottom: none;
+    }
+    .muted {
+      color: #86868b;
+      font-size: 0.875rem;
+    }
+    .footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #d2d2d7;
+      font-size: 0.875rem;
+      color: #86868b;
+    }
+    .hand-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 700px) {
+      .hand-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+    .hand-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .hand-card h3 {
+      margin-top: 0;
+    }
+    .hand-card .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #86868b;
+      margin-bottom: 6px;
+    }
+    .agent-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 960px) {
+      .agent-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    @media (min-width: 640px) and (max-width: 959px) {
+      .agent-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 639px) {
+      .agent-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ui-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 640px) {
+      .ui-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .examples-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 900px) {
+      .examples-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+    @media (min-width: 640px) and (max-width: 899px) {
+      .examples-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .agent-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .agent-card h3 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+    .agent-card .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #86868b;
+      margin-bottom: 6px;
+    }
+    .diagram-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem 1rem;
+      margin-top: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      overflow-x: auto;
+    }
+    .diagram-card .caption {
+      margin: 0 0 0.75rem;
+      font-size: 0.875rem;
+      color: #86868b;
+    }
+    .diagram-card .mermaid {
+      display: flex;
+      justify-content: center;
+      min-height: 72px;
+    }
+    .bullet-card ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+    }
+    .bullet-card li {
+      margin-bottom: 0.35rem;
+    }
+    .bullet-card li:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Artificial intelligence — IT ticket routing</h1>
+      <p class="lede"><strong>Proposed solution architecture.</strong> One system, one ticket, one decision: <strong>which Hand takes it from here.</strong></p>
+      <p class="muted" style="margin:10px 0 0;">Companion docs: <strong>low_level_design(LLD).html</strong> · <strong>Open source tools and libraries.html</strong></p>
+    </header>
+
+    <section>
+      <h2>What we are building</h2>
+      <div class="card">
+        <p>We route and resolve IT tickets the moment they arrive — <strong>fast when we are sure</strong>, <strong>assisted when we are partly sure</strong>, <strong>human when we are not.</strong></p>
+        <p class="muted" style="margin-bottom:0;">Less waiting. Less rework. No false confidence.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Architecture flow</h2>
+      <p class="muted" style="margin-top:0;">Agent pipeline diagram (same as LLD Figure 6): five agents in fixed order.</p>
+      <div class="diagram-card">
+        <pre class="mermaid">flowchart LR
+  T[Ticket arrives] --&gt; A1[1 Guardrail AI agent]
+  A1 --&gt; A2[2 Classifier AI agent\nGemini]
+  A2 --&gt; A3[3 Router AI agent]
+  A3 --&gt; A4[4 Resolver AI agent\nChromaDB + Gemini RAG]
+  A4 --&gt; A5[5 Supervisor AI agent\nc_total + Hand]
+  A5 --&gt; H1[Hand 1: Self-help]
+  A5 --&gt; H2[Hand 2: Routed assist]
+  A5 --&gt; H3[Hand 3: Human escalation]
+  H1 --&gt; F[Feedback loop]
+  H2 --&gt; F
+  H3 --&gt; F</pre>
+      </div>
+      <h3 style="margin-top:1.5rem;">Five AI agents</h3>
+      <p class="muted" style="margin-top:0;">Agents <strong>1–4</strong> always run in order; agent <strong>5 (Supervisor)</strong> picks the Hand once their outputs exist.</p>
+      <div class="agent-grid">
+        <div class="agent-card">
+          <div class="tag">Step 1</div>
+          <h3>Guardrail AI agent</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Privacy &amp; safety first</p>
+          <p>Scans the raw ticket for personal data and secrets, masks them, and passes only <strong>safe text</strong> downstream and into logs.</p>
+        </div>
+        <div class="agent-card">
+          <div class="tag">Step 2</div>
+          <h3>Classifier AI agent</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">What kind of issue</p>
+          <p>Picks <strong>one primary issue type</strong> (plus a short sub-label) so routing and search stay consistent.</p>
+        </div>
+        <div class="agent-card">
+          <div class="tag">Step 3</div>
+          <h3>Router AI agent</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Where it goes</p>
+          <p>Maps category + urgency to <strong>department</strong>, <strong>priority</strong>, and <strong>SLA hours</strong> using configured routing rules.</p>
+        </div>
+        <div class="agent-card">
+          <div class="tag">Step 4</div>
+          <h3>Resolver AI agent</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Memory + AI</p>
+          <p>The backend turns safe text into a vector, searches <strong>ChromaDB</strong>, then calls <strong>Gemini</strong> with ticket + matches—the UI only surfaces the finished steps.</p>
+        </div>
+        <div class="agent-card">
+          <div class="tag">Step 5</div>
+          <h3>Supervisor AI agent</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Supervisor AI agent</p>
+          <p>Runs <strong>after</strong> the other four. It reads their outputs, builds one confidence number <strong>c_total</strong> (0–1), picks <strong>Hand 1, 2, or 3</strong>, applies safety rules, and tells the system what to <strong>save</strong> and <strong>notify</strong>. It does not replace them—it <strong>decides the outcome</strong> once the pipeline has spoken.</p>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:12px;margin-bottom:0;"><strong>Classifier output domains (Use Case 1):</strong> Infrastructure · Application · Security · Database · Storage · Network · Access Management.</p>
+      <p class="muted" style="margin-top:12px;margin-bottom:0;">Notifications (email / portal) run <strong>after</strong> the Supervisor AI agent—they carry out its decision; they are not a sixth reasoning AI agent.</p>
+    </section>
+
+    <section>
+      <h2>The Three Hands Solution</h2>
+      <p class="muted" style="margin-top:0;">These are the only outcomes visible in the product. Everything else in the pipeline exists to pick exactly one of them.</p>
+      <div class="hand-grid">
+        <div class="hand-card">
+          <div class="tag">Hand 1</div>
+          <h3>Self-help</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">High trust</p>
+          <p><strong>Numbered steps</strong> from the knowledge base and similar resolved tickets. The requester follows them in the app or email link, then taps <strong>Worked</strong> to close or <strong>Did not work</strong> to route the same ticket onward—no retyping.</p>
+        </div>
+        <div class="hand-card">
+          <div class="tag">Hand 2</div>
+          <h3>Automatic routing</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Medium trust</p>
+          <p>Ticket lands in the <strong>right team queue</strong> with priority and SLA. Assignee sees <strong>suggested steps</strong> and <strong>similar past tickets</strong>. Requester sees who owns it and expected response time.</p>
+        </div>
+        <div class="hand-card">
+          <div class="tag">Hand 3</div>
+          <h3>Human escalation</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Low trust or policy</p>
+          <p><strong>Specialist queue</strong> with escalation flag and audit context. No fake certainty when scores are low, search is weak, or a rule requires a person. The requester sees a straight status until someone resolves it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What people see after login</h2>
+      <p class="muted" style="margin-top:0;">One Streamlit app — role-based home after sign-in.</p>
+      <div class="ui-grid">
+        <div class="hand-card bullet-card">
+          <div class="tag">Requester</div>
+          <h3>After requester login</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Employee who opened the ticket</p>
+          <ul>
+            <li><strong>My tickets</strong> — open and past tickets with status and Hand</li>
+            <li><strong>New ticket</strong> — description, urgency, submit</li>
+            <li><strong>Ticket detail</strong> after submit — team, SLA, escalation flag, confidence readout, suggested steps, history</li>
+            <li><strong>Hand 1 only</strong> — <em>Worked</em> / <em>Did not work</em> on the detail screen</li>
+          </ul>
+        </div>
+        <div class="hand-card bullet-card">
+          <div class="tag">Assignee</div>
+          <h3>After IT staff login</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">IT handler</p>
+          <ul>
+            <li><strong>My queue</strong> — team tickets (Hand 2 and Hand 3) with priority and SLA</li>
+            <li><strong>Ticket detail</strong> — AI suggestions, similar cases, escalation flag, SLA clock, confidence for triage</li>
+            <li><strong>Actions</strong> — notes, resolve, close</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:12px;margin-bottom:0;">Admins (if enabled): audit and configuration; core product is requester + assignee workspaces.</p>
+    </section>
+
+
+    <section>
+      <h2>How we decide — the Supervisor AI agent</h2>
+      <div class="card">
+        <p>The <strong>Supervisor</strong> runs <strong>after</strong> Guardrail → Classifier → Router → Resolver. It reads their outputs and picks exactly one <strong>Hand</strong>, what to persist, and what notifications send.</p>
+        <p><strong>c_total</strong> (0–1) blends retrieval strength, optional tone, and past feedback for similar issues:</p>
+        <ul>
+          <li>≥ 0.80 → <strong>Hand 1</strong> (self-help)</li>
+          <li>0.60–0.79 → <strong>Hand 2</strong> (routed assist)</li>
+          <li>&lt; 0.60 or policy hit → <strong>Hand 3</strong> (human)</li>
+        </ul>
+        <p class="muted" style="margin-bottom:0;">Security-sensitive categories and weak RAG grounding force Hand 3 regardless of score. Formulas and overrides are in the <strong>low-level design</strong>.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How retrieval + Gemini fit (RAG)</h2>
+      <div class="card">
+        <p>The <strong>Resolver AI agent</strong> never runs in the browser. Only the backend Resolver AI agent calls Gemini, and only <strong>after</strong> the Guardrail and Classifier AI agents have finished.</p>
+        <p><strong>Order of operations:</strong></p>
+        <ol>
+          <li>The server turns the safe ticket text into an <strong>embedding</strong> (a numeric fingerprint of “meaning”).</li>
+          <li><strong>ChromaDB</strong> returns the closest past tickets and help snippets.</li>
+          <li>The server builds a single prompt: <strong>ticket + those snippets + configured policy text</strong>.</li>
+          <li><strong>Gemini</strong> returns draft steps; the app stores them and shows them in the UI.</li>
+        </ol>
+        <p class="muted" style="margin-bottom:0;">Memory first (<strong>ChromaDB</strong>), generation second (<strong>Gemini</strong>) through the Resolver AI agent. If search is empty or weak, the Supervisor AI agent steers toward Hand 2 or Hand 3 instead of inventing steps.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Examples — same ticket shape, different Hands</h2>
+      <p class="muted" style="margin-top:0;">Reference scenarios; thresholds are configuration-driven.</p>
+      <div class="examples-grid">
+        <div class="hand-card">
+          <div class="tag">Example · Hand 1</div>
+          <h3>“Locked out — need password reset”</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Strong match to past resets</p>
+          <p>The Classifier and retrieval signals agree on a <strong>known pattern</strong>. The Supervisor AI agent assigns <strong>Hand 1</strong>: the requester sees a short checklist (portal → forgot password → email link). If it fails, one control escalates the <strong>same ticket</strong> to the access team.</p>
+        </div>
+        <div class="hand-card">
+          <div class="tag">Example · Hand 2</div>
+          <h3>“Office printer stops mid-job”</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Clear area, not a one-tap self-close</p>
+          <p>The Classifier AI agent routes to <strong>Infrastructure</strong>; the Resolver AI agent pulls similar printer tickets and draft steps. The Supervisor AI agent assigns <strong>Hand 2</strong>: the ticket sits in the <strong>Hardware</strong> queue with SLA, the assignee sees suggestions and references, the requester sees routing to the hardware team.</p>
+        </div>
+        <div class="hand-card">
+          <div class="tag">Example · Hand 3</div>
+          <h3>“Possible data breach — unusual login activity”</h3>
+          <p class="muted" style="font-size:0.8125rem;margin-top:0;">Security policy or weak grounding — human first</p>
+          <p>The Classifier AI agent maps to <strong>Security</strong>; retrieval is thin or policy forces a person. The Supervisor AI agent assigns <strong>Hand 3</strong>: the requester sees escalation status only—<strong>no automated self-help steps</strong>. The ticket lands in the <strong>SecOps</strong> specialist queue with escalation flag, SLA, and full <strong>audit context</strong> (sanitized ticket, agent trace, similarity score) for the assignee.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feedback loop</h2>
+      <div class="card">
+        <p><strong>Hand 1 (self-help):</strong> after the requester tries the steps, the ticket detail offers <strong>Worked</strong> or <strong>Did not work</strong> (optional note). That outcome is saved on the ticket and feeds the next similar ticket’s internal scoring—so repeat failures do not keep getting the same Hand 1 path.</p>
+        <p><strong>Hand 2 / Hand 3 (same idea, different surface):</strong> we surface <strong>closure confirmation</strong> (“Was this resolved satisfactorily?”) or assignee-entered <strong>resolution + outcome</strong>; the same storage feeds historical success for the Supervisor AI agent. We ship Hand 1 feedback first; the pattern extends to Hand 2 and Hand 3 without a new engine.</p>
+        <p><strong>Logs:</strong> every AI agent step, Hand change, and feedback event is written to <strong>append-only audit logs</strong> (who/what/when + compact JSON). That supports troubleshooting, compliance, and tuning—separate from the ticket timeline in the product.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Supporting layers (infrastructure)</h2>
+      <p class="muted" style="margin-top:0;">Placed here because they sit <strong>under</strong> the pipeline and UI above: they are not “another product screen,” but the services that make the architecture safe, durable, and operable.</p>
+      <div class="card">
+        <p><strong>Identity &amp; access</strong> — Who may create tickets, who may see queues, and session handling (e.g. JWT, HTTP-only cookies, rate limits on login). Stops cross-tenant reads and supports audit “who did this.”</p>
+        <p><strong>Persistence</strong> — Single source of truth in <strong>SQLite</strong> (via SQLAlchemy): tickets, classifications, routings, resolutions, feedback, and audit rows. Every Hand transition and SLA clock lives here so the UI is always reading the same state.</p>
+        <p><strong>Vector memory</strong> — <strong>ChromaDB</strong> stores embeddings and similar-ticket retrieval context for the Resolver AI agent. It supports RAG and does not replace SQLite as the transactional system of record.</p>
+        <p><strong>Operational interfaces</strong> — Beyond Streamlit: email/notifications, future webhooks, exports. Anything that <strong>reacts</strong> to a stored state change (new ticket, Hand change, SLA breach) without duplicating business rules in the channel.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Demonstration data — where tickets come from</h2>
+      <p class="muted" style="margin-top:0;">Two data paths: <strong>tickets the application creates and routes during a walkthrough</strong> and <strong>historical text the RAG layer retrieves</strong>.</p>
+      <div class="card">
+        <p><strong>Live tickets (primary demonstration path):</strong> we create tickets through the normal <strong>New ticket</strong> form. They persist in <strong>SQLite</strong> and appear under <strong>My tickets</strong> or <strong>My queue</strong>.</p>
+        <p><strong>Corpus for ChromaDB and “similar tickets”:</strong> we will load a controlled <strong>synthetic CSV or JSON</strong> aligned to our Hand 1/2/3 scenarios through a one-off ingest script. We will optionally import a <strong>public, anonymized IT-helpdesk-style dataset</strong> (for example from <strong>Kaggle</strong> or other open CSVs), map columns, run the same <strong>Guardrail AI agent</strong> rules on ingest, and embed rows into <strong>ChromaDB</strong> so the Resolver AI agent has retrieval depth. We will not mix production employee or customer data into demonstration environments.</p>
+        <p><strong>Provenance:</strong> we will keep synthetic seeds as the default so demonstration paths stay predictable. When we add a broader import, we will document source, filters, and which records are scripted versus imported.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Time resolution — where we save time</h2>
+      <div class="card">
+        <p><strong>What we save:</strong> queue wait for obvious repeats (Hand 1), and <strong>triage minutes</strong> for IT when the ticket arrives with team, priority, draft steps, and similar cases already attached (Hand 2).</p>
+        <p><strong>How:</strong> automation only runs when the Supervisor is comfortable; otherwise time is “spent” on the right human instead of on wrong automation rework.</p>
+        <p><strong>Where it is recorded:</strong> timestamps on the ticket row and in audit logs—<strong>created</strong>, <strong>first response</strong>, <strong>routed</strong>, <strong>resolved</strong>—plus SLA targets from the Router. Reporting can show <strong>time-to-first-meaningful-response</strong> and <strong>time in queue</strong> per Hand without new sensors.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Responsible &amp; ethical AI</h2>
+      <div class="card">
+        <ul>
+          <li>Guardrail AI agent first — no raw PII in prompts or careless logs.</li>
+          <li>Grounded answers — RAG-first Resolver AI agent.</li>
+          <li>Graceful degradation — weak retrieval or low score → Hand 3 from the Supervisor AI agent, not a wrong confident answer.</li>
+          <li>Auditability — every AI agent decision traceable.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Evaluation intent</h2>
+      <p class="muted" style="margin-top:0;">Round 2 design targets—measured against a golden ticket set during build and demo.</p>
+      <div class="card">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>How we measure (design)</th>
+              <th>Round 2 target</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Classification accuracy</td>
+              <td>Golden set of 15 tickets mapped to Use Case 1 domains; compare Classifier output to expected category</td>
+              <td>≥ 85%</td>
+            </tr>
+            <tr>
+              <td>Routing correctness</td>
+              <td>Expected department queue + priority vs Router output on the same golden set</td>
+              <td>≥ 85%</td>
+            </tr>
+            <tr>
+              <td>Escalation appropriateness</td>
+              <td>Security / ambiguous tickets must land Hand 3; high-similarity repeats must not be forced to Hand 3</td>
+              <td>100% on policy cases</td>
+            </tr>
+            <tr>
+              <td>Resolution usefulness</td>
+              <td>Requester feedback (Worked / Did not work) + assignee outcome; proxy: repeat Hand 1 rate drops for same pattern</td>
+              <td>≥ 70% positive on Hand 1 demos</td>
+            </tr>
+            <tr>
+              <td>End-to-end latency</td>
+              <td>Ticket submit → Hand assigned + UI updated; audit timestamps per agent step</td>
+              <td>&lt; 15 s typical (demo env)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin-top:12px;margin-bottom:0;">The low-level design defines audit fields and reporting hooks; Round 3 adds live dashboards and expanded golden sets.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Scope — future features (out of core delivery)</h2>
+      <div class="card">
+        <p class="muted" style="margin-top:0;">Outside the current product backlog; extensions we plan when capacity allows.</p>
+        <ul>
+          <li>Richer sentiment and adaptive thresholds from feedback volume.</li>
+          <li>Ticket clustering / trend alerts for operations.</li>
+          <li>Controlled auto-remediation where policy explicitly allows.</li>
+          <li>Multi-region DB, SSO, and full SOC-style logging.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Design principles</h2>
+      <div class="card">
+        <ul>
+          <li><strong>Human-centered</strong> — the right Hand, immediately.</li>
+          <li><strong>Minimal</strong> — Three Hands, five AI agents, one internal score driving decisions.</li>
+          <li><strong>Honest</strong> — escalation when unsure; confidence on detail, not noise on the home screen.</li>
+          <li><strong>Coherent</strong> — Hands name outcomes; low-level design carries DDL, emails, APIs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>This page is the proposed architecture narrative; see <strong>low_level_design(LLD).html</strong> for schemas/diagrams and <strong>Open source tools and libraries.html</strong> for dependency details.</p>
+      <p class="muted" style="margin-top:8px;">Round 2 submission scope: architecture and technical blueprint; production-scale hardening is planned for Round 3.</p>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClearHand Interactive Demo</title>
+  <style>
+:root {
+  --bg: #eef2f6;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #6366f1;
+  --accent-dark: #4338ca;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --danger: #ef4444;
+  --radius: 18px;
+  --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+}
+* { box-sizing: border-box; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+.container { width: min(1300px, 100% - 2rem); margin: 0 auto; padding: 2rem 0 4rem; }
+.page-shell { display: grid; grid-template-columns: 260px 1fr; gap: 1rem; }
+.sidebar { background: #0f172a; border-radius: var(--radius); padding: 1.5rem; color: #e2e8f0; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 1rem; min-height: 600px; }
+.sidebar h2 { margin: 0 0 0.5rem; font-size: 1.45rem; letter-spacing: -0.04em; }
+.sidebar p { margin: 0.35rem 0 0; color: #94a3b8; font-size: 0.92rem; }
+.sidebar .user-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1rem; margin-top: auto; }
+.sidebar .user-card .name { margin: 0; font-weight: 700; color: #f8fafc; }
+.sidebar .user-card .role { margin: 0.45rem 0 0; color: #cbd5e1; font-size: 0.84rem; }
+.sidebar .nav-button { width: 100%; display: block; padding: 0.95rem 1rem; border-radius: 12px; border: none; background: transparent; color: #cbd5e1; text-align: left; margin-bottom: 0.6rem; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.sidebar .nav-button.active, .sidebar .nav-button:hover { background: rgba(99,102,241,0.18); color: #fff; }
+.main-panel { display: flex; flex-direction: column; gap: 1rem; }
+.hero-card { background: rgba(255,255,255,0.82); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); }
+.hero-card h1 { margin: 0; font-size: clamp(2rem, 2.4vw, 3rem); line-height: 1.05; }
+.hero-card p { margin: 1rem 0 0; color: var(--muted); font-size: 1rem; max-width: 720px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.35rem; box-shadow: var(--shadow); }
+.kpi-card.accent { border-left: 4px solid var(--accent); }
+.kpi-card .label { margin: 0 0 0.45rem; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.kpi-card .value { margin: 0; font-size: 2rem; font-weight: 700; }
+.kpi-card .detail { margin: 0.65rem 0 0; color: var(--muted); font-size: 0.9rem; }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); }
+.panel-title { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 700; }
+.ticket-row { border: 1px solid var(--border); border-radius: 16px; padding: 1rem; display: flex; justify-content: space-between; gap: 1rem; background: #f8fafc; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+.ticket-row:hover { border-color: #c7d2fe; transform: translateY(-1px); }
+.ticket-row .meta { color: var(--muted); font-size: 0.9rem; margin: 0.4rem 0 0; }
+.ticket-row .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.4rem 0.75rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.badge.self { background: #d1fae5; color: #065f46; }
+.badge.team { background: #e0e7ff; color: #3730a3; }
+.badge.specialist { background: #fee2e2; color: #991b1b; }
+.badge.pending { background: #f1f5f9; color: #475569; }
+.status-pill { border-radius: 999px; padding: 0.35rem 0.65rem; display: inline-flex; align-items: center; font-size: 0.78rem; font-weight: 700; }
+.status-ESCALATED { background: #fee2e2; color: #991b1b; }
+.status-RECEIVED { background: #e0f2fe; color: #075985; }
+.status-OPEN { background: #e0f2fe; color: #0f172a; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); }
+.table th { background: #f8fafc; font-weight: 700; }
+.summary-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+.summary-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.3rem; }
+.summary-card h3 { margin: 0 0 0.75rem; font-size: 1rem; }
+.summary-card p { margin: 0.35rem 0 0; color: var(--muted); }
+button.primary { border: none; border-radius: 12px; background: var(--accent); color: #fff; padding: 0.95rem 1.3rem; cursor: pointer; transition: background 0.2s; }
+button.primary:hover { background: var(--accent-dark); }
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.tab { padding: 0.85rem 1.1rem; border-radius: 999px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+.tab.active { border-color: var(--accent); background: rgba(99,102,241,0.14); color: var(--accent-dark); }
+.hidden { display: none; }
+.form-card { display: grid; gap: 1rem; }
+.form-field label { display: block; margin-bottom: 0.4rem; font-weight: 700; }
+.form-field input, .form-field textarea, .form-field select { width: 100%; padding: 0.95rem 1rem; border: 1px solid var(--border); border-radius: 14px; font-size: 0.95rem; }
+.form-field textarea { min-height: 140px; resize: vertical; }
+@media(max-width: 980px) { .page-shell { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: 1fr 1fr; } .summary-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-shell">
+    <aside class="sidebar">
+      <h2>ClearHand</h2>
+      <p>IT support, routed with confidence</p>
+      <button class="nav-button active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+      <button class="nav-button" data-tab="tickets" onclick="switchTab('tickets')">Requests</button>
+      <button class="nav-button" data-tab="benchmark" onclick="switchTab('benchmark')">Benchmark</button>
+      <div class="user-card">
+        <p class="name">Synthetic</p>
+        <p class="role">Employee</p>
+      </div>
+    </aside>
+    <main class="main-panel">
+      <div class="tab-pane" data-tab="overview">
+        <section class="hero-card">
+          <h1>ClearHand Demo</h1>
+          <p>One ticket. Five agents. The right level of help—immediately. — sample interactive executive walkthrough with live ticket data and benchmarked latency/cost estimates.</p>
+        </section>
+        <section class="kpi-grid">
+          <div class="kpi-card accent"><p class="label">Total requests</p><p class="value" id="kpi-total"></p><p class="detail">Requests routed or queued</p></div>
+          <div class="kpi-card"><p class="label">Self-Help</p><p class="value" id="kpi-self"></p><p class="detail">Automated guidance</p></div>
+          <div class="kpi-card"><p class="label">Team Assist</p><p class="value" id="kpi-team"></p><p class="detail">IT team routing</p></div>
+          <div class="kpi-card"><p class="label">Specialist</p><p class="value" id="kpi-specialist"></p><p class="detail">Expert review escalation</p></div>
+        </section>
+        <section class="summary-grid">
+          <div class="summary-card"><h3>Average handling</h3><p><strong id="benchmark-latency"></strong> per ticket, based on benchmarked routing.</p></div>
+          <div class="summary-card"><h3>Estimated cost</h3><p><strong id="benchmark-cost"></strong> per ticket at assumed compute pricing.</p></div>
+        </section>
+        <section class="panel">
+          <p class="panel-title">Why this matters</p>
+          <p>ClearHand routes every ticket through five AI-driven stages: guardrail, classification, routing, resolution, and supervisor. For leadership, that means predictable decision speed, low cost, and consistent escalation control.</p>
+        </section>
+      </div>
+
+      <div class="tab-pane hidden" data-tab="tickets">
+        <section class="panel">
+          <p class="panel-title">Requests overview</p>
+          <div style="display:grid; gap:0.85rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom:1rem;">
+            <select id="filter-status"><option value="all">All statuses</option><option value="ESCALATED">ESCALATED</option><option value="RECEIVED">RECEIVED</option><option value="OPEN">OPEN</option></select>
+            <select id="filter-department"><option value="all">All departments</option><option value="DBA">DBA</option><option value="Hardware">Hardware</option><option value="Identity">Identity</option><option value="Network">Network</option><option value="SecOps">SecOps</option><option value="Software">Software</option><option value="Storage">Storage</option></select>
+            <select id="filter-hand"><option value="all">All paths</option><option value="Self-Help">Self-Help</option><option value="Team Assist">Team Assist</option><option value="Specialist">Specialist</option><option value="Routing">Routing</option></select>
+          </div>
+          <div id="ticket-list"></div>
+        </section>
+        <section class="panel hidden" id="detail-card">
+          <p class="panel-title">Ticket detail</p>
+          <h2 id="detail-title"></h2>
+          <p style="margin:0.5rem 0 1rem;color:var(--muted);">ID <span id="detail-id"></span></p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem; margin-bottom:1rem;">
+            <div><strong>Status</strong><div id="detail-status" class="status-pill"></div></div>
+            <div><strong>Queue</strong><p id="detail-department" style="margin:.45rem 0 0;"></p></div>
+            <div><strong>Path</strong><p id="detail-hand" style="margin:.45rem 0 0;"></p></div>
+            <div><strong>Priority</strong><p id="detail-priority" style="margin:.45rem 0 0;"></p></div>
+          </div>
+          <div><strong>Description</strong><p id="detail-description" style="margin:.75rem 0 0; color: var(--muted);"></p></div>
+          <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap;"><span class="status-pill status-ESCALATED">Escalated workflow</span><span class="status-pill status-RECEIVED">Observed routing</span></div>
+        </section>
+        <section class="panel">
+          <p class="panel-title">Submit a demo request</p>
+          <form id="request-form" class="form-card">
+            <div class="form-field"><label for="new-title">Subject</label><input id="new-title" placeholder="Example: VPN access not working"></div>
+            <div class="form-field"><label for="new-department">Department</label><select id="new-department"><option>Software</option><option>Network</option><option>Hardware</option><option>SecOps</option><option>DBA</option><option>Storage</option><option>Identity</option></select></div>
+            <div class="form-field"><label for="new-urgency">Urgency</label><select id="new-urgency"><option>low</option><option selected>medium</option><option>high</option></select></div>
+            <div class="form-field"><label for="new-description">Details</label><textarea id="new-description" placeholder="Describe what happened and why this matters."></textarea></div>
+            <button type="submit" class="primary">Submit demo request</button>
+            <p id="request-feedback" style="margin:0.75rem 0 0;color:#065f46;font-weight:600;"></p>
+          </form>
+        </section>
+      </div>
+
+      <div class="tab-pane hidden" data-tab="benchmark">
+        <section class="panel">
+          <p class="panel-title">Benchmark summary</p>
+          <p>Based on a recent synthetic workload run through this system, ClearHand processes a customer ticket in a fraction of a second while keeping per-ticket compute cost below <strong>₹0.04</strong> — roughly <strong>3.2 paisa</strong>.</p>
+          <div class="summary-grid" style="margin-top:1rem;">
+            <div class="summary-card"><h3>Average latency</h3><p><strong id="benchmark-latency"></strong></p></div>
+            <div class="summary-card"><h3>Cost per ticket</h3><p><strong id="benchmark-cost"></strong></p></div>
+            <div class="summary-card"><h3>Deflection rate</h3><p><strong id="benchmark-deflection"></strong></p></div>
+            <div class="summary-card"><h3>Dataset size</h3><p><strong>100</strong> tickets benchmarked</p></div>
+          </div>
+        </section>
+        <section class="panel">
+          <p class="panel-title">Executive takeaway</p>
+          <ul style="margin:0; padding-left:1.2rem; color:var(--muted);">
+            <li>ClearHand delivers sub-second routing for every ticket.</li>
+            <li>Cost per ticket is in single-digit paisa with low overhead.</li>
+            <li>The interface gives leadership visibility into ticket status, department routing, and escalation path.</li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+const appState = {
+  user: {"email": "synthetic@demo.local", "role": "Employee", "name": "Synthetic"},
+  tickets: [{"ticket_id": "SYN-100", "title": "Synthetic issue 100", "description": "Network throughput is very slow for the storage replication job.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.890242", "urgency": "medium"}, {"ticket_id": "SYN-099", "title": "Synthetic issue 99", "description": "The wireless access point is not broadcasting the corporate SSID.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.763992", "urgency": "medium"}, {"ticket_id": "SYN-098", "title": "Synthetic issue 98", "description": "The router configuration change broke connectivity for several users.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.638569", "urgency": "medium"}, {"ticket_id": "SYN-097", "title": "Synthetic issue 97", "description": "The MPLS connection has high latency and dropped packets.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.512589", "urgency": "medium"}, {"ticket_id": "SYN-096", "title": "Synthetic issue 96", "description": "The firewall is blocking traffic to the service endpoint unexpectedly.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.390471", "urgency": "medium"}, {"ticket_id": "SYN-095", "title": "Synthetic issue 95", "description": "The DNS server is failing to resolve internal hostnames.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.266186", "urgency": "medium"}, {"ticket_id": "SYN-094", "title": "Synthetic issue 94", "description": "The network switch port is flapping and causing intermittent outages.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.142342", "urgency": "medium"}, {"ticket_id": "SYN-093", "title": "Synthetic issue 93", "description": "Our site-to-site network link is down and critical services are offline.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:34:00.019321", "urgency": "medium"}, {"ticket_id": "SYN-092", "title": "Synthetic issue 92", "description": "There is packet loss on the VPN tunnel to the remote office.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.897046", "urgency": "medium"}, {"ticket_id": "SYN-091", "title": "Synthetic issue 91", "description": "I cannot connect to the corporate Wi-Fi after the router firmware update.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.773230", "urgency": "medium"}, {"ticket_id": "SYN-090", "title": "Synthetic issue 90", "description": "The storage replication service is showing latency spikes.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.650868", "urgency": "medium"}, {"ticket_id": "SYN-089", "title": "Synthetic issue 89", "description": "The remote storage array is reporting SMART disk failures.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.527806", "urgency": "medium"}, {"ticket_id": "SYN-088", "title": "Synthetic issue 88", "description": "The storage cluster lost quorum and cannot serve files.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.402464", "urgency": "medium"}, {"ticket_id": "SYN-087", "title": "Synthetic issue 87", "description": "The object storage service is returning permission denied errors.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.273330", "urgency": "medium"}, {"ticket_id": "SYN-086", "title": "Synthetic issue 86", "description": "The archive server cannot mount the storage volume.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.143274", "urgency": "medium"}, {"ticket_id": "SYN-085", "title": "Synthetic issue 85", "description": "We need a new storage allocation for the project repository.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:59.011945", "urgency": "medium"}, {"ticket_id": "SYN-084", "title": "Synthetic issue 84", "description": "The file server storage pool is offline after the maintenance reboot.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.884962", "urgency": "medium"}, {"ticket_id": "SYN-083", "title": "Synthetic issue 83", "description": "The backup snapshot failed due to insufficient storage space.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.757952", "urgency": "medium"}, {"ticket_id": "SYN-082", "title": "Synthetic issue 82", "description": "The shared storage capacity warning keeps appearing on my desktop.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.633769", "urgency": "medium"}, {"ticket_id": "SYN-081", "title": "Synthetic issue 81", "description": "The archive vault search returns no results for saved documents.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.509662", "urgency": "medium"}, {"ticket_id": "SYN-080", "title": "Synthetic issue 80", "description": "The cloud storage bucket is not syncing with our local archive.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.386737", "urgency": "medium"}, {"ticket_id": "SYN-079", "title": "Synthetic issue 79", "description": "A file restore request failed from the backup storage appliance.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.263595", "urgency": "medium"}, {"ticket_id": "SYN-078", "title": "Synthetic issue 78", "description": "The storage array reports degraded performance on the NAS share.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.138982", "urgency": "medium"}, {"ticket_id": "SYN-077", "title": "Synthetic issue 77", "description": "I cannot access the shared network drive storage folder.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:58.007214", "urgency": "medium"}, {"ticket_id": "SYN-076", "title": "Synthetic issue 76", "description": "The SAN volume is full and backup jobs are failing.", "status": "ESCALATED", "department": "Storage", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.860962", "urgency": "medium"}, {"ticket_id": "SYN-075", "title": "Synthetic issue 75", "description": "The replication service reports a failed log shipping task.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.665366", "urgency": "medium"}, {"ticket_id": "SYN-074", "title": "Synthetic issue 74", "description": "The database restore process cannot find the backup media.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.537098", "urgency": "medium"}, {"ticket_id": "SYN-073", "title": "Synthetic issue 73", "description": "There are missing indexes causing slow database queries.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.401351", "urgency": "medium"}, {"ticket_id": "SYN-072", "title": "Synthetic issue 72", "description": "The DB connection string is invalid in the application configuration.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.263716", "urgency": "medium"}, {"ticket_id": "SYN-071", "title": "Synthetic issue 71", "description": "The database user does not have access to the inventory schema.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:57.125782", "urgency": "medium"}, {"ticket_id": "SYN-070", "title": "Synthetic issue 70", "description": "A table is locked and the reporting query cannot complete.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.991810", "urgency": "medium"}, {"ticket_id": "SYN-069", "title": "Synthetic issue 69", "description": "The database CPU usage is at 100% and transactions are delaying.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.853970", "urgency": "medium"}, {"ticket_id": "SYN-068", "title": "Synthetic issue 68", "description": "The DB schema migration failed during the deployment window.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.717175", "urgency": "medium"}, {"ticket_id": "SYN-067", "title": "Synthetic issue 67", "description": "The data warehouse load task is failing with a database error.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.582023", "urgency": "medium"}, {"ticket_id": "SYN-066", "title": "Synthetic issue 66", "description": "The query optimizer is causing slow joins on the customer dataset.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.455430", "urgency": "medium"}, {"ticket_id": "SYN-065", "title": "Synthetic issue 65", "description": "The database backup restore failed with checksum mismatch.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.331375", "urgency": "medium"}, {"ticket_id": "SYN-064", "title": "Synthetic issue 64", "description": "The SQL Server instance is throwing connection pool exhausted errors.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.206675", "urgency": "medium"}, {"ticket_id": "SYN-063", "title": "Synthetic issue 63", "description": "The Oracle database replication lag is causing stale reads.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:56.081961", "urgency": "medium"}, {"ticket_id": "SYN-062", "title": "Synthetic issue 62", "description": "A deadlock occurred in the DB cluster during the batch job.", "status": "ROUTED", "department": "DBA", "hand": "Team Assist", "priority": "P1", "created_at": "2026-06-09 04:33:55.955999", "urgency": "medium"}, {"ticket_id": "SYN-061", "title": "Synthetic issue 61", "description": "The PostgreSQL database is timing out when querying the orders table.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.830248", "urgency": "medium"}, {"ticket_id": "SYN-060", "title": "Synthetic issue 60", "description": "Our collaboration tool hangs when sharing documents with the team.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.704769", "urgency": "medium"}, {"ticket_id": "SYN-059", "title": "Synthetic issue 59", "description": "The application cannot upload files and shows an unknown error.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.577582", "urgency": "medium"}, {"ticket_id": "SYN-058", "title": "Synthetic issue 58", "description": "I get a 404 error on the internal knowledge base application.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.455010", "urgency": "medium"}, {"ticket_id": "SYN-057", "title": "Synthetic issue 57", "description": "Reports are not generating in the analytics application after login.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.331033", "urgency": "medium"}, {"ticket_id": "SYN-056", "title": "Synthetic issue 56", "description": "The newly deployed app version crashes on the checkout page.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.206923", "urgency": "medium"}, {"ticket_id": "SYN-055", "title": "Synthetic issue 55", "description": "The desktop application fails to start with an unhandled exception.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:55.083505", "urgency": "medium"}, {"ticket_id": "SYN-054", "title": "Synthetic issue 54", "description": "A browser extension conflict is causing our web app to freeze.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.955161", "urgency": "medium"}, {"ticket_id": "SYN-053", "title": "Synthetic issue 53", "description": "The CRM software displays corrupted fields after the update.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.834152", "urgency": "medium"}, {"ticket_id": "SYN-052", "title": "Synthetic issue 52", "description": "The mobile app is stuck on the login screen after the new patch.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.711191", "urgency": "medium"}, {"ticket_id": "SYN-051", "title": "Synthetic issue 51", "description": "The client software cannot connect to the database due to an API error.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.586154", "urgency": "medium"}, {"ticket_id": "SYN-050", "title": "Synthetic issue 50", "description": "Our SaaS portal is failing with a stack trace after the last release.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.457375", "urgency": "medium"}, {"ticket_id": "SYN-049", "title": "Synthetic issue 49", "description": "An internal app throws a runtime exception when saving the record.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.330354", "urgency": "medium"}, {"ticket_id": "SYN-048", "title": "Synthetic issue 48", "description": "The reporting dashboard times out when loading quarterly sales data.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:54.203570", "urgency": "medium"}, {"ticket_id": "SYN-047", "title": "Synthetic issue 47", "description": "Excel crashes when opening the macro-enabled workbook with a plugin error.", "status": "ROUTED", "department": "Software", "hand": "Team Assist", "priority": "P1", "created_at": "2026-06-09 04:33:54.076374", "urgency": "medium"}, {"ticket_id": "SYN-046", "title": "Synthetic issue 46", "description": "The web application returns a 500 error when submitting the order form.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.949542", "urgency": "medium"}, {"ticket_id": "SYN-045", "title": "Synthetic issue 45", "description": "There is an error on the compute blade after a hardware firmware upgrade.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.821717", "urgency": "medium"}, {"ticket_id": "SYN-044", "title": "Synthetic issue 44", "description": "The network switch module has a hardware fault LED for port 3.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.696756", "urgency": "medium"}, {"ticket_id": "SYN-043", "title": "Synthetic issue 43", "description": "The laptop keyboard is broken and needs a hardware service ticket.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.570517", "urgency": "medium"}, {"ticket_id": "SYN-042", "title": "Synthetic issue 42", "description": "A server chassis fan has failed and is causing overheating alerts.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.444392", "urgency": "medium"}, {"ticket_id": "SYN-041", "title": "Synthetic issue 41", "description": "The desktop audio device is missing from device manager after reboot.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.320654", "urgency": "medium"}, {"ticket_id": "SYN-040", "title": "Synthetic issue 40", "description": "Our edge router hardware has failed and needs a replacement module.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.196401", "urgency": "medium"}, {"ticket_id": "SYN-039", "title": "Synthetic issue 39", "description": "The USB-C docking station is not powering the external monitors.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:53.073052", "urgency": "medium"}, {"ticket_id": "SYN-038", "title": "Synthetic issue 38", "description": "The printer hardware is not responding and shows a device failure code.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.948430", "urgency": "medium"}, {"ticket_id": "SYN-037", "title": "Synthetic issue 37", "description": "I have a blue screen error on my desktop and suspect faulty RAM.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.824923", "urgency": "medium"}, {"ticket_id": "SYN-036", "title": "Synthetic issue 36", "description": "The virtualization host is down after a BIOS security policy change.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.694499", "urgency": "medium"}, {"ticket_id": "SYN-035", "title": "Synthetic issue 35", "description": "I need help with a failed NIC card on the corporate desktop.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.570930", "urgency": "medium"}, {"ticket_id": "SYN-034", "title": "Synthetic issue 34", "description": "The workstation power supply is failing and the machine keeps rebooting.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.448736", "urgency": "medium"}, {"ticket_id": "SYN-033", "title": "Synthetic issue 33", "description": "The server RAID controller reports a degraded disk array and needs replacement.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.327228", "urgency": "medium"}, {"ticket_id": "SYN-032", "title": "Synthetic issue 32", "description": "My laptop shows a hardware-assisted virtualization issue after firmware update.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.201685", "urgency": "medium"}, {"ticket_id": "SYN-031", "title": "Synthetic issue 31", "description": "Docker Desktop fails to start with a hypervisor and BIOS virtualization error.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:52.071862", "urgency": "medium"}, {"ticket_id": "SYN-030", "title": "Synthetic issue 30", "description": "I am requesting privilege escalation to view sensitive documents.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.948050", "urgency": "medium"}, {"ticket_id": "SYN-029", "title": "Synthetic issue 29", "description": "The access request portal is not granting me the correct identity permissions.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.823192", "urgency": "medium"}, {"ticket_id": "SYN-028", "title": "Synthetic issue 28", "description": "I need role-based access to the internal CRM for sales support.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.697187", "urgency": "medium"}, {"ticket_id": "SYN-027", "title": "Synthetic issue 27", "description": "The SSO login redirects to an error page when I try to enter the app.", "status": "ROUTED", "department": "Identity", "hand": "Team Assist", "priority": "P1", "created_at": "2026-06-09 04:33:51.572475", "urgency": "medium"}, {"ticket_id": "SYN-026", "title": "Synthetic issue 26", "description": "My account is stuck in locked state after too many bad password attempts.", "status": "ROUTED", "department": "Identity", "hand": "Team Assist", "priority": "P1", "created_at": "2026-06-09 04:33:51.446898", "urgency": "medium"}, {"ticket_id": "SYN-025", "title": "Synthetic issue 25", "description": "I am unable to reset my password through self-service and need help.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.322494", "urgency": "medium"}, {"ticket_id": "SYN-024", "title": "Synthetic issue 24", "description": "My permission request is pending and I cannot access the identity portal.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.195770", "urgency": "medium"}, {"ticket_id": "SYN-023", "title": "Synthetic issue 23", "description": "I need temporary access to the finance dashboard for an audit review.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:51.069349", "urgency": "medium"}, {"ticket_id": "SYN-022", "title": "Synthetic issue 22", "description": "The identity provider denies my login with unknown credential errors.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.941385", "urgency": "medium"}, {"ticket_id": "SYN-021", "title": "Synthetic issue 21", "description": "I lost my token device and cannot complete multi-factor authentication.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.815957", "urgency": "medium"}, {"ticket_id": "SYN-020", "title": "Synthetic issue 20", "description": "Please unlock my Active Directory account and reset my corporate password.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.690176", "urgency": "medium"}, {"ticket_id": "SYN-019", "title": "Synthetic issue 19", "description": "I need access to the HR system but my user is not authorized.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.564480", "urgency": "medium"}, {"ticket_id": "SYN-018", "title": "Synthetic issue 18", "description": "MFA is failing for my account and I cannot access the VPN.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.438987", "urgency": "medium"}, {"ticket_id": "SYN-017", "title": "Synthetic issue 17", "description": "My Windows account is locked and I need a password reset link.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.309293", "urgency": "medium"}, {"ticket_id": "SYN-016", "title": "Synthetic issue 16", "description": "I cannot login to the corporate portal because my password was expired.", "status": "ROUTED", "department": "Identity", "hand": "Team Assist", "priority": "P1", "created_at": "2026-06-09 04:33:50.178624", "urgency": "medium"}, {"ticket_id": "SYN-015", "title": "Synthetic issue 15", "description": "I received a notification of an exposed API key in source control.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:50.054319", "urgency": "medium"}, {"ticket_id": "SYN-014", "title": "Synthetic issue 14", "description": "The firewall logged a suspicious data exfiltration pattern.", "status": "ESCALATED", "department": "Network", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.930602", "urgency": "medium"}, {"ticket_id": "SYN-013", "title": "Synthetic issue 13", "description": "Sensitive files were copied off the server during an unauthorized session.", "status": "ESCALATED", "department": "Hardware", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.808228", "urgency": "medium"}, {"ticket_id": "SYN-012", "title": "Synthetic issue 12", "description": "Someone is using a stolen session token to access privileged systems.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.685628", "urgency": "medium"}, {"ticket_id": "SYN-011", "title": "Synthetic issue 11", "description": "A public repo contains secret keys and tokens that must be rotated.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.563531", "urgency": "medium"}, {"ticket_id": "SYN-010", "title": "Synthetic issue 10", "description": "Our identity provider reported a suspected credential compromise incident.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.434770", "urgency": "medium"}, {"ticket_id": "SYN-009", "title": "Synthetic issue 9", "description": "A critical audit log deletion event was reported from the SecOps console.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.308674", "urgency": "medium"}, {"ticket_id": "SYN-008", "title": "Synthetic issue 8", "description": "There is a brute-force attack on the VPN gateway from an unknown IP.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.183829", "urgency": "medium"}, {"ticket_id": "SYN-007", "title": "Synthetic issue 7", "description": "The security team flagged an exposed customer database leak in S3.", "status": "ESCALATED", "department": "DBA", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:49.060086", "urgency": "medium"}, {"ticket_id": "SYN-006", "title": "Synthetic issue 6", "description": "I see malware alerts from the endpoint detection system on several hosts.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:48.936797", "urgency": "medium"}, {"ticket_id": "SYN-005", "title": "Synthetic issue 5", "description": "My account was compromised with unauthorized access to confidential data.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:48.806903", "urgency": "medium"}, {"ticket_id": "SYN-004", "title": "Synthetic issue 4", "description": "A phishing email with a malicious attachment bypassed our filters.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:48.673124", "urgency": "medium"}, {"ticket_id": "SYN-003", "title": "Synthetic issue 3", "description": "Suspicious login attempts show credential stuffing against our corporate portal.", "status": "ESCALATED", "department": "Identity", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:48.532064", "urgency": "medium"}, {"ticket_id": "SYN-002", "title": "Synthetic issue 2", "description": "There is a ransomware warning on my workstation and files are being encrypted.", "status": "ESCALATED", "department": "SecOps", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:48.394266", "urgency": "medium"}, {"ticket_id": "SYN-001", "title": "Synthetic issue 1", "description": "I found a public AWS secret key in a GitHub repo and need it revoked immediately.", "status": "ESCALATED", "department": "Software", "hand": "Specialist", "priority": "P1", "created_at": "2026-06-09 04:33:47.977939", "urgency": "medium"}],
+  kpis: {"total_requests": 100, "self_help": 0, "team_assist": 5, "specialist": 95},
+  benchmark: {"avg_latency": 0.1301, "deflection_rate": 0.0, "cost_usd": 0.0003903, "cost_inr": 0.0323949, "cost_paisa": 3.2394899999999995, "tickets": 100}
+};
+
+function formatTimestamp(ts) { return ts.replace('T', ' '); }
+function getBadgeClass(hand) {
+  if (hand === 'Self-Help') return 'self';
+  if (hand === 'Team Assist') return 'team';
+  if (hand === 'Specialist') return 'specialist';
+  return 'pending';
+}
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active', el.dataset.tab===tab));
+  document.querySelectorAll('.tab-pane').forEach(el=>el.classList.toggle('hidden', el.dataset.tab!==tab));
+  if (tab === 'tickets') renderTicketList();
+}
+function renderHeader() {
+  document.getElementById('header-name').textContent = appState.user.name;
+  document.getElementById('header-role').textContent = appState.user.role;
+}
+function renderMetrics() {
+  document.getElementById('kpi-total').textContent = appState.kpis.total_requests;
+  document.getElementById('kpi-self').textContent = appState.kpis.self_help;
+  document.getElementById('kpi-team').textContent = appState.kpis.team_assist;
+  document.getElementById('kpi-specialist').textContent = appState.kpis.specialist;
+  document.getElementById('benchmark-latency').textContent = appState.benchmark.avg_latency.toFixed(3) + ' sec';
+  document.getElementById('benchmark-cost').textContent = '₹' + appState.benchmark.cost_inr.toFixed(3) + ' / ' + appState.benchmark.cost_paisa.toFixed(1) + ' paisa';
+  document.getElementById('benchmark-deflection').textContent = (appState.benchmark.deflection_rate*100).toFixed(0) + ' %';
+}
+function renderTicketList() {
+  const list = document.getElementById('ticket-list');
+  const filters = {
+    status: document.getElementById('filter-status').value,
+    department: document.getElementById('filter-department').value,
+    hand: document.getElementById('filter-hand').value,
+  };
+  list.innerHTML = '';
+  const filtered = appState.tickets.filter(t => {
+    return (filters.status === 'all' || t.status === filters.status)
+      && (filters.department === 'all' || t.department === filters.department)
+      && (filters.hand === 'all' || t.hand === filters.hand);
+  });
+  if (!filtered.length) {
+    list.innerHTML = '<div class="panel"><p style="margin:0;color:#64748b;">No matching tickets.</p></div>';
+    return;
+  }
+  filtered.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'ticket-row';
+    row.innerHTML = `
+      <div style="min-width:0;">
+        <div style="font-weight:700;">${t.title}</div>
+        <div class="meta">${t.department} · ${t.created_at} · ID ${t.ticket_id.slice(0,8)}</div>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <span class="badge ${getBadgeClass(t.hand)}">${t.hand}</span>
+        <span class="status-pill status-${t.status}">${t.status}</span>
+      </div>
+    `;
+    row.addEventListener('click', () => renderTicketDetail(t.ticket_id));
+    list.appendChild(row);
+  });
+}
+function renderTicketDetail(ticketId) {
+  const ticket = appState.tickets.find(t => t.ticket_id === ticketId);
+  if (!ticket) return;
+  document.getElementById('detail-title').textContent = ticket.title;
+  document.getElementById('detail-id').textContent = ticket.ticket_id;
+  document.getElementById('detail-status').textContent = ticket.status;
+  document.getElementById('detail-status').className = 'status-pill status-' + ticket.status;
+  document.getElementById('detail-department').textContent = ticket.department;
+  document.getElementById('detail-hand').textContent = ticket.hand;
+  document.getElementById('detail-priority').textContent = ticket.priority;
+  document.getElementById('detail-created').textContent = ticket.created_at;
+  document.getElementById('detail-description').textContent = ticket.description;
+  document.getElementById('detail-card').classList.remove('hidden');
+  switchTab('tickets');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function submitRequest(event) {
+  event.preventDefault();
+  const title = document.getElementById('new-title').value.trim();
+  const description = document.getElementById('new-description').value.trim();
+  const urgency = document.getElementById('new-urgency').value;
+  const department = document.getElementById('new-department').value;
+  if (!title || !description) {
+    alert('Subject and details are required.');
+    return;
+  }
+  const newTicket = {
+    ticket_id: 'DEMO-' + Math.floor(Math.random() * 9000 + 1000),
+    title,
+    description,
+    status: 'RECEIVED',
+    department,
+    hand: 'Routing',
+    priority: 'P2',
+    created_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+    urgency,
+  };
+  appState.tickets.unshift(newTicket);
+  appState.kpis.total_requests += 1;
+  renderMetrics();
+  renderTicketList();
+  document.getElementById('request-feedback').textContent = 'Request submitted successfully. It is now queued for routing.';
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-description').value = '';
+}
+window.addEventListener('DOMContentLoaded', () => {
+  renderHeader();
+  renderMetrics();
+  renderTicketList();
+  document.getElementById('filter-status').addEventListener('change', renderTicketList);
+  document.getElementById('filter-department').addEventListener('change', renderTicketList);
+  document.getElementById('filter-hand').addEventListener('change', renderTicketList);
+  document.getElementById('request-form').addEventListener('submit', submitRequest);
+  switchTab('overview');
+});
+</script>
+</body>
+</html>
