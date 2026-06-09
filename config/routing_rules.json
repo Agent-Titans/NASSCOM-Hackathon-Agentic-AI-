@@ -1,0 +1,43 @@
+{
+  "category_to_department": {
+    "Infrastructure": "Hardware",
+    "Application": "Software",
+    "Security": "SecOps",
+    "Database": "DBA",
+    "Storage": "Storage",
+    "Network": "Network",
+    "Access Management": "Identity"
+  },
+  "urgency_to_priority": {
+    "low": { "priority": "P2", "sla_hours": 48 },
+    "medium": { "priority": "P1", "sla_hours": 24 },
+    "high": { "priority": "P0", "sla_hours": 4 }
+  },
+  "policy_force_hand3_categories": ["Security"],
+  "supervisor_policy": {
+    "modes": {
+      "strict_lld": {
+        "lld_section": "#supervisor-agent",
+        "low_grounding_hand": "2",
+        "apply_similarity_hand1_cap": false,
+        "policy_hand1_playbook": {
+          "enabled": false,
+          "categories": [],
+          "min_source_hand": "1",
+          "min_similarity": 0.55
+        }
+      },
+      "demo": {
+        "lld_section": "intentional-deviation",
+        "low_grounding_hand": "2",
+        "apply_similarity_hand1_cap": true,
+        "policy_hand1_playbook": {
+          "enabled": true,
+          "categories": ["Access Management"],
+          "min_source_hand": "1",
+          "min_similarity": 0.55
+        }
+      }
+    }
+  }
+}

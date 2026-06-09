@@ -1,0 +1,58 @@
+---
+description: Verify every build iteration against design/LLD.html — the canonical master design
+alwaysApply: true
+---
+
+# LLD is the master design
+
+**Canonical source:** `design/LLD.html` (companion: `design/architecture.html`, `standards/apple-design.md`)
+
+Before finishing any UI, data, agent, or routing change:
+
+1. **Read the relevant LLD section** (UI/UX, Database Schema, Security, 3 Hands, User Flows).
+2. **Check alignment** — note matches, intentional deviations, and gaps.
+3. **Do not invent architecture** — five agents, fixed pipeline order, Supervisor `c_total` → Hand 1/2/3, SQLite + Chroma are fixed per LLD.
+4. **Report briefly** — compliant / gap / deviation with LLD section ID (e.g. `#requester-flow`, `#security`).
+
+## Non-negotiables from LLD
+
+| Area | Rule |
+|------|------|
+| **Access** | Requester sees **only their tickets**; assignee sees **department queue only** (`#security`) |
+| **Orchestration** | Single entry: `TicketService.process_ticket()` — Guardrail → Classifier → Router → Resolver → Supervisor |
+| **UI language** | Show Hand **outcomes** (Self-help / Routed / Specialist), not raw `c_total` or agent internals |
+| **Requester home** | List shows **status + Hand (1/2/3)** per ticket (`#requester-flow`) |
+| **Requester detail** | Hand 1: steps + **Worked/Did not work**; Hand 2: routing + SLA; Hand 3: escalation status only |
+| **Confidence** | Human-readable label derived from `c_total` — never expose raw float on requester screens |
+| **Schema** | LLD uses `requester_id`; implementation uses `user_id` — filter by authenticated user FK, not global pull |
+
+## Implementation mapping (known deviations)
+
+- `Ticket.user_id` ≡ LLD `requester_id` (same FK to `users`)
+- `Ticket.hand` values `"1"`/`"2"`/`"3"` ≡ LLD Hand1/Hand2/Hand3
+- Premium workspace UI lives in `src/ui/employee_portal.py` — must still satisfy `#requester-flow`
+
+## Supervisor policy modes (`config/routing_rules.json`)
+
+Set `SUPERVISOR_MODE=strict_lld` (default) or `demo`. Policy lives in `supervisor_policy.modes`.
+
+| Behavior | `strict_lld` (#supervisor-agent) | `demo` (intentional deviation) |
+|----------|----------------------------------|----------------------------------|
+| `low_grounding` | Hand **3** | Hand **2** |
+| `policy_hand1_playbook` | disabled | enabled for Access Management + trusted H1 RAG |
+| `apply_similarity_hand1_cap` | off (c_total only) | on (similarity &lt; 0.70 caps Hand 1) |
+| Security category | Hand 3 (`security_policy`) | same |
+
+Other documented deviations (both modes):
+
+- Early retrieval before Classifier (`#performance` — LLD places retrieval in Resolver)
+- Classifier may use trusted RAG when Gemini fails (`#classifier-agent` — LLD keyword-only fallback)
+- RAG trust gate (`src/services/rag_gate.py`) — not in LLD; prevents weak-match overrides
+
+## Verification checklist (employee workspace)
+
+- [ ] `_user_tickets()` filters by `auth_user` / `auth_user_id` — no `query(Ticket).all()`
+- [ ] Pending vs past split matches ticket lifecycle (`RESOLVED` → history)
+- [ ] Create ticket triggers `TicketService.process_ticket()` with spinner
+- [ ] Detail view matches Hand-specific LLD rules (steps, feedback, escalation)
+- [ ] No internal agent math exposed to requester

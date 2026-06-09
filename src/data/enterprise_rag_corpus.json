@@ -1,0 +1,392 @@
+[
+  {
+    "id": "ent-h1-01",
+    "title": "Web pages not loading in Chrome",
+    "issue_description": "Google Chrome spins forever on any website. Other apps have internet. Started after a Windows update this morning.",
+    "resolution_steps": [
+      "Close all Chrome windows completely.",
+      "Reopen Chrome and press Ctrl+Shift+Delete (Cmd+Shift+Delete on Mac).",
+      "Clear cached images and files for the last 24 hours only.",
+      "Try one website in a private/incognito window."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-02",
+    "title": "Forgot my login password",
+    "issue_description": "I forgot my company portal password and cannot sign in on my laptop. I have internet access on my phone.",
+    "resolution_steps": [
+      "On your phone browser, open the company password self-service portal.",
+      "Click Forgot password and verify with your work email MFA.",
+      "Set a new password following the on-screen rules.",
+      "Sign in on the laptop with the new password."
+    ],
+    "category": "Access Management",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-03",
+    "title": "Wi-Fi connected but no internet",
+    "issue_description": "Laptop shows connected to office Wi-Fi but browsers say no internet. Colleagues nearby are fine.",
+    "resolution_steps": [
+      "Turn Wi-Fi off, wait 10 seconds, turn it back on.",
+      "Forget the corporate Wi-Fi network and reconnect with your work password.",
+      "Open a new private browser window and visit a public site to test.",
+      "Restart the laptop if the issue continues."
+    ],
+    "category": "Network",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-04",
+    "title": "Teams desktop notifications missing",
+    "issue_description": "Microsoft Teams messages arrive on my phone but I get no pop-up banners on my Windows laptop.",
+    "resolution_steps": [
+      "Open Windows Settings → System → Notifications and ensure notifications are On.",
+      "In Teams → Settings → Notifications, enable banner and taskbar flash.",
+      "Quit Teams from the system tray and open it again.",
+      "Turn off Focus assist / Do Not Disturb during work hours."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-05",
+    "title": "Laptop running very slow",
+    "issue_description": "My laptop is sluggish with only Outlook and a browser open. Fan is loud but I only need basic fixes I can do myself.",
+    "resolution_steps": [
+      "Close browser tabs and apps you are not using.",
+      "Restart the laptop from the Start menu.",
+      "Plug in power — low battery can throttle speed.",
+      "If still slow after restart, note the time and apps open for IT follow-up."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-06",
+    "title": "Zoom video laggy on calls",
+    "issue_description": "Video freezes in Zoom but audio is fine. I am on home Wi-Fi with no admin access to the router.",
+    "resolution_steps": [
+      "In Zoom → Settings → Video, turn off HD video.",
+      "Close other video streaming tabs and apps.",
+      "Leave and rejoin the meeting.",
+      "Switch to phone audio only if video still freezes."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-07",
+    "title": "No sound in Teams meeting",
+    "issue_description": "I cannot hear anyone in Teams. Microphone works when I test it. Volume icon shows sound is on.",
+    "resolution_steps": [
+      "Click the speaker icon in the Teams meeting and raise volume to 100%.",
+      "Open Windows sound settings and pick the correct output device (headphones vs speakers).",
+      "Unplug and replug headset USB if you use a USB headset.",
+      "Leave the meeting and rejoin once."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-08",
+    "title": "Work email not syncing on phone",
+    "issue_description": "iPhone mail app stopped showing new work emails. Webmail in Safari on the phone works fine.",
+    "resolution_steps": [
+      "Open Settings → Mail → Accounts and open your work account.",
+      "Toggle Mail off, wait 5 seconds, toggle back on.",
+      "Force quit the Mail app and reopen it.",
+      "If prompted, re-enter your work password on the phone."
+    ],
+    "category": "Access Management",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-09",
+    "title": "Printer shows offline on my PC",
+    "issue_description": "Office printer on floor 2 says Offline in Windows. I printed successfully yesterday. I only need to print one document today.",
+    "resolution_steps": [
+      "Check the printer is powered on and not showing an error light.",
+      "Open Printers & scanners and set the correct printer as default.",
+      "Click the printer and choose Open queue — cancel stuck jobs.",
+      "Try printing a one-page test from Notepad."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-10",
+    "title": "Excel attachment will not open from Outlook",
+    "issue_description": "Double-clicking an .xlsx attachment in Outlook does nothing. I can save files to Downloads.",
+    "resolution_steps": [
+      "Save the attachment to your Downloads folder first.",
+      "Open Excel manually, then File → Open → pick the saved file.",
+      "If Excel asks about Protected View, click Enable Editing only if you trust the sender.",
+      "Restart Outlook if attachments still fail to open."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-11",
+    "title": "Internal website certificate warning",
+    "issue_description": "Browser warns the internal HR site is not secure. Clock on laptop looks correct. I am working from home with VPN.",
+    "resolution_steps": [
+      "Confirm VPN is connected using the company VPN app.",
+      "Sign out of VPN, reconnect, and retry the site.",
+      "Try the same site in a private browser window.",
+      "Do not bypass certificate warnings — stop and report if warning persists."
+    ],
+    "category": "Network",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-12",
+    "title": "Authenticator codes not accepted",
+    "issue_description": "Microsoft Authenticator codes fail when I log in. Phone shows the right account. No admin rights on laptop.",
+    "resolution_steps": [
+      "On your phone, enable Set time automatically in date/time settings.",
+      "Wait for the next code cycle and type it immediately.",
+      "Try signing in on phone browser to confirm account works.",
+      "Use backup MFA method if your company provided one."
+    ],
+    "category": "Access Management",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-13",
+    "title": "VPN error 807 on startup",
+    "issue_description": "I'm getting an Error 807 when I try to start my VPN client. Wi-Fi works but VPN will not connect.",
+    "resolution_steps": [
+      "Quit the VPN client completely from the system tray.",
+      "Reconnect to Wi-Fi and reopen the VPN client.",
+      "Sign out and sign back in with your corporate credentials.",
+      "Note the exact error code and time if the issue continues."
+    ],
+    "category": "Network",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-14",
+    "title": "PDF opens in browser and is blank",
+    "issue_description": "PDF from email opens in Chrome as a blank page. File size looks normal in Downloads.",
+    "resolution_steps": [
+      "Download the PDF fully — wait until download completes.",
+      "Right-click the file → Open with → Adobe Acrobat Reader or Preview.",
+      "If still blank, download again without opening from the browser preview.",
+      "Try opening on phone to confirm the file is not corrupted."
+    ],
+    "category": "Application",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h1-15",
+    "title": "Wrong keyboard language typing",
+    "issue_description": "Keyboard types symbols instead of letters after I bumped a key combo. I need to fix input language myself.",
+    "resolution_steps": [
+      "Press Windows+Space (or Ctrl+Space on some laptops) to switch input language.",
+      "Click the language icon on the taskbar and select English.",
+      "Open Settings → Time & language → Typing and confirm the default keyboard.",
+      "Restart the app where typing was wrong."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H1"
+  },
+  {
+    "id": "ent-h2-01",
+    "title": "PostgreSQL replica lag critical",
+    "issue_description": "Production reporting replica lag spiked to 4 hours. ETL jobs failing with FATAL: terminating connection due to administrator command. pg_stat_replication shows wal_sender_timeout on standby db-rep-03.",
+    "resolution_steps": [
+      "Capture pg_stat_replication, pg_locks, and last 500 lines of postgresql.log from primary and standby.",
+      "Check network latency between db-prd-01 and db-rep-03.",
+      "Identify long-running transactions on primary blocking WAL flush.",
+      "Rebuild standby from base backup per DBA runbook BR-DB-17 if corruption confirmed."
+    ],
+    "category": "Database",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-02",
+    "title": "Kubernetes pod OOM crashloop",
+    "issue_description": "payments-api pods crashlooping in prod namespace. Logs: OOMKilled exit 137, memory limit 512Mi. HPA at max replicas, error rate 18%.",
+    "resolution_steps": [
+      "kubectl describe pod and collect last 200 lines from crashed container.",
+      "Review memory profiling and deployment image tag diff for v2.14.0.",
+      "Raise memory limit under change approval and watch GC metrics.",
+      "Roll back deployment if regression correlates with latest release."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-03",
+    "title": "SQL Server blocking chain month-end",
+    "issue_description": "ERP database blocking during month-end close. SPID 214 waits on LCK_M_IX held by SPID 88. Users see timeout expired in SSMS.",
+    "resolution_steps": [
+      "Run sp_whoisactive and save blocking tree snapshot.",
+      "Identify head blocker and owning application login.",
+      "Coordinate with finance before KILL on head blocker.",
+      "Schedule index maintenance on GL_Posting per DBA change ticket."
+    ],
+    "category": "Database",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-04",
+    "title": "AD replication failure DC01 DC02",
+    "issue_description": "Active Directory replication failing between DC01 and DC02. Event ID 1864. dcdiag reports latency over failure threshold.",
+    "resolution_steps": [
+      "Run repadmin /showrepl and dcdiag /v on both domain controllers.",
+      "Verify DNS SRV records and w32tm time sync status.",
+      "Check firewall RPC rules between DC subnets.",
+      "Force replication only under Identity incident playbook."
+    ],
+    "category": "Access Management",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-05",
+    "title": "Load balancer health check 502",
+    "issue_description": "F5 pool api.internal.corp health checks failing HTTP 502 on /healthz. Three of six nodes down after TLS cert rotation.",
+    "resolution_steps": [
+      "Validate backend TLS chain on each node.",
+      "Curl /healthz from LB subnet with correct SNI hostname.",
+      "Compare cipher suite against F5 SSL profile.",
+      "Re-enable nodes one at a time after manual probe succeeds."
+    ],
+    "category": "Network",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-06",
+    "title": "Redis cluster MOVED errors",
+    "issue_description": "Cart service intermittent MOVED errors. redis-cli cluster info shows 2 fail flags. p99 latency 340ms vs baseline 12ms.",
+    "resolution_steps": [
+      "Export cluster nodes, slots, and recent failover events.",
+      "Inspect network between AZ-a and AZ-b Redis hosts.",
+      "Review maxmemory policy and evicted keys during peak.",
+      "Controlled failover per platform runbook after sign-off."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-07",
+    "title": "SAP batch ABAP dump tempdb full",
+    "issue_description": "SAP batch RDDIMPDP CANCELED. ST22 dump DBIF_RSQL_SQL_ERROR on ZFIN_ACCT. SQL tempdb full reported by DBA.",
+    "resolution_steps": [
+      "Attach ST22 dump and SM21 system log excerpts.",
+      "Coordinate DBA tempdb expansion and sort cleanup.",
+      "Restart batch instance only after Basis approval.",
+      "Replay job variant after root cause in change record."
+    ],
+    "category": "Application",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-08",
+    "title": "Veeam backup snapshot quiesce timeout",
+    "issue_description": "Veeam backup failed on VM SQL-PROD-04. Guest VSS writer hung 45 minutes. Processing finished with errors.",
+    "resolution_steps": [
+      "Review Veeam job log and VMware VSS events on guest.",
+      "Confirm backup repository free space and proxy mode.",
+      "Test backup with app-aware processing disabled once.",
+      "Engage DBA for manual log backup if RPO at risk."
+    ],
+    "category": "Storage",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-09",
+    "title": "GraphQL gateway 503 upstream timeout",
+    "issue_description": "Internal GraphQL gateway 503. Envoy logs upstream connect timeout to orders-service:8080. Circuit breaker open 30% of requests.",
+    "resolution_steps": [
+      "Correlate Envoy and orders-service logs by request ID.",
+      "Check mesh mTLS cert expiry and readiness probes.",
+      "Scale orders-service and verify DB pool limits.",
+      "Tune circuit breaker after stability returns."
+    ],
+    "category": "Application",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-10",
+    "title": "MongoDB shard migration stalled",
+    "issue_description": "MongoDB sh-prod chunk migration aborted: cannot find shard. Config server CPU 92%. Balancer reports stalled moves.",
+    "resolution_steps": [
+      "Capture sh.status(), balancer status, config server mongod.log.",
+      "Verify shard hostnames in DNS after DR test.",
+      "Pause balancer and diagnose orphaned chunks per DBA playbook.",
+      "Resume migration in approved maintenance window."
+    ],
+    "category": "Database",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-11",
+    "title": "DFS-R conflict storm engineering share",
+    "issue_description": "DFS-R conflict folder on \\\\corp\\engineering has 12,000 files. Event 4412 repeating on file server FS-ENG-02.",
+    "resolution_steps": [
+      "Identify top conflict files and source workstations from DFSR debug log.",
+      "Pause replication group per storage change policy.",
+      "Authoritative restore on primary after backup check.",
+      "Communicate sync moratorium to engineering leads."
+    ],
+    "category": "Storage",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-12",
+    "title": "VPN tunnel flapping AWS",
+    "issue_description": "Cisco ASA VPN to AWS VGW flapping. Syslog IKE type 240 deleted SA. ISP circuit packet loss 8%.",
+    "resolution_steps": [
+      "Collect show crypto isa sa detail and phase2 stats.",
+      "Failover to alternate ISP if available.",
+      "Verify PSK expiry and IKE proposals match AWS config.",
+      "Rekey tunnel under Network CAB maintenance."
+    ],
+    "category": "Network",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-13",
+    "title": "Jenkins Harbor robot token denied",
+    "issue_description": "CI pipeline fails docker push: access denied. Harbor robot account rotated yesterday. Build agents on k8s-ci namespace.",
+    "resolution_steps": [
+      "Validate harbor-robot-prod credential in Jenkins store.",
+      "Test docker login from build agent shell.",
+      "Update Kubernetes secret in helm values for CI.",
+      "Re-run pipeline with buildKit cache disabled to isolate auth."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-14",
+    "title": "Elasticsearch disk watermark yellow",
+    "issue_description": "logging-prod ES cluster yellow. 47 unassigned shards. CLUSTER_BLOCK_EXCEPTION disk watermark exceeded on data-07.",
+    "resolution_steps": [
+      "Check disk on all data nodes; find index growth spike.",
+      "Curator-archive indices past retention policy.",
+      "Raise flood stage only with observability manager approval.",
+      "Rebalance shards after disk below high watermark."
+    ],
+    "category": "Infrastructure",
+    "complexity_tier": "H2"
+  },
+  {
+    "id": "ent-h2-15",
+    "title": "Whitelist IP for SQL database access",
+    "issue_description": "I need someone to whitelist my IP so I can reach the SQL database from home. Remote connection is blocked by the firewall.",
+    "resolution_steps": [
+      "Collect the user's current public IP and target database hostname.",
+      "Verify manager approval for remote database access.",
+      "Submit firewall rule change to allow the IP on the database security group.",
+      "Confirm connectivity after the rule propagates and document in the ticket."
+    ],
+    "category": "Network",
+    "complexity_tier": "H2"
+  }
+]

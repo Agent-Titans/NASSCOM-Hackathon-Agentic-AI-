@@ -1,0 +1,53 @@
+Phase 1: Submission Deliverables
+
+Round 1 - Concept Note**
+* Problem understanding and objectives.
+* Proposed agentic system design considerations and architecture.
+* Technology Stack.
+* Feasibility and execution plan.
+
+Round 2 - Project Artifacts
+* Preliminary solution design.
+* Proposed solution architecture.
+* Proposed Data model and Data flow diagram.
+* Context Diagram.
+Expanded:
+Low-Level Design (LLD)
+Data sources and data engineering approach
+Data model (Entity Relationship Diagram)
+Data Flow Diagram (DFD)
+Sequence diagram
+State transition diagram
+List of data sources
+Any additional relevant project documentation
+Open-source tools and libraries you plan to use
+
+
+Round 3 - Production Ready Solution
+* Code Repository (Git).
+* Updated Solution Design Document.
+* Key Results.
+* Other Project Artifacts (Solution documentation).
+
+---
+
+Phase 2: Evaluation Criteria
+
+Round 1: Initial Screening
+* Problem Clarity: Understanding of the problem and the proposed approach.
+* Viability: Feasibility, scalability, security, and execution readiness.
+* Business Impact: Proposed business impact and tradeoff considerations.
+* User Value: Functional value and usability.
+* Data: Quality and relevance of data sets.
+
+Round 2: Technical Design
+* Architecture: Robustness of agentic AI design and architecture.
+* Diagramming: Detailing in data flow and context diagrams.
+* Ecosystem: Open-source usage and community building.
+* Ethics: Security, scalability, and Responsible/Ethical AI.
+
+Round 3: Final Jury Review
+* Implementation: Technical execution, code quality, and documentation.
+* Orchestration: Effectiveness of agent orchestration and workflow.
+* Validation: Quality of results, including accuracy, precision, F1 Score, and explainability.
+* Compliance: Adherence to Responsible/Ethical AI considerations.
