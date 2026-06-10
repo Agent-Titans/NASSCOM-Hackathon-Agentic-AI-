@@ -77,7 +77,7 @@ def matches_hand1_playbook(
     similarity: float,
     low_grounding: bool,
 ) -> bool:
-    """True when ticket matches configured Hand-1 playbook policy."""
+    """True when trusted H1 RAG playbook match meets configured policy."""
     policy = get_supervisor_policy().hand1_playbook
     if not policy.enabled or low_grounding:
         return False

@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import html
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
 from src.config.demo_profiles import demo_person_name
 from src.config.departments import display_department
+from src.data.rag_corpus_catalog import is_corpus_ticket_id
 from src.db.models import Ticket, User
 
 
@@ -63,3 +65,17 @@ def hand_chip_class(hand: str) -> str:
 
 def chip_html(css_class: str, label: str) -> str:
     return f'<span class="{css_class}">{html.escape(label)}</span>'
+
+
+def citation_display_label(ticket: Ticket) -> str:
+    """Human label for a linked reference ticket."""
+    if is_corpus_ticket_id(ticket.ticket_id):
+        return ticket.ticket_id.upper()
+    return f"INC-{ticket.ticket_id[:8].upper()}"
+
+
+def resolve_citation_ticket_id(session: Session, citation: str) -> Optional[str]:
+    """Map citation label (KB-DB-DEDUP, RAG-H3-09, INC-…) to a ticket_id."""
+    from src.services.reference_ticket_loader import resolve_reference_link
+
+    return resolve_reference_link(session, citation)

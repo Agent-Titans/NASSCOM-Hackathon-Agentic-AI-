@@ -145,5 +145,6 @@ class ResolutionArtifact(Base):
     ticket_id = mapped_column(ForeignKey("tickets.ticket_id"), unique=True)
     steps_json = mapped_column(Text, default="[]")
     citations_json = mapped_column(Text, default="[]")
+    references_json = mapped_column(Text, default="[]")
     low_grounding = mapped_column(Boolean, default=False)
     similarity_score = mapped_column(Float, nullable=True)

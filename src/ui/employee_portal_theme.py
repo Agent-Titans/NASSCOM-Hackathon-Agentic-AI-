@@ -472,7 +472,27 @@ def employee_portal_css() -> str:
     {s} .itsm-banner-info {{ background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }}
     {s} .itsm-banner-warn {{ background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }}
     {s} .itsm-banner-ok {{ background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }}
+    {s} .itsm-banner-ref {{ background: #F5F3FF; border: 1px solid #DDD6FE; color: #5B21B6; margin: 0 0 1rem; }}
+    {s} .itsm-section {{
+      background: #FAFAFA;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 0.85rem;
+    }}
+    {s} .itsm-cite-plain {{ margin: 0 0 0.35rem; font-size: 0.85rem; color: #64748B; }}
+    {s} .itsm-cite-muted {{ color: #94A3B8; font-size: 0.78rem; }}
     {s} .itsm-section-title {{ font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; margin: 0 0 0.65rem; }}
+    {s} .itsm-description-text {{
+      margin: 0 0 0.65rem;
+      color: #475569;
+      font-size: 0.9rem;
+      font-weight: 400;
+      font-family: inherit;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }}
+    {s} .itsm-description-text:last-child {{ margin-bottom: 0; }}
 
     {pp} [data-testid="stExpander"] {{
       background: rgba(255,255,255,0.65) !important;
@@ -513,6 +533,25 @@ def employee_portal_css() -> str:
       background: transparent !important;
       border: none !important;
       color: #64748B !important;
+    }}
+    {pp} [class*="st-key-portal_cite_"] button,
+    {pp} [class*="st-key-portal_ref_"] button {{
+      justify-content: flex-start !important;
+      text-align: left !important;
+      width: 100% !important;
+      padding: 0.2rem 0 !important;
+      min-height: 0 !important;
+      color: #2563EB !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 2px !important;
+    }}
+    {pp} [class*="st-key-portal_cite_"] button:hover,
+    {pp} [class*="st-key-portal_ref_"] button:hover {{
+      color: #1D4ED8 !important;
+      background: #EFF6FF !important;
+      border-radius: 6px !important;
     }}
     {pp} [data-testid="stForm"] {{
       background: #FFFFFF !important;
@@ -603,6 +642,15 @@ def employee_portal_css() -> str:
     {pp} [data-testid="stForm"] [data-testid="stTextArea"] > div {{
       border: none !important;
       background: transparent !important;
+    }}
+
+    /* Compact centered assignment dialog (Hand 2/3 submit) */
+    {pp} [data-testid="stDialog"] > div {{
+      max-width: 360px !important;
+      width: min(360px, calc(100vw - 2rem)) !important;
+    }}
+    {pp} [data-testid="stDialog"] [data-testid="stModal"] {{
+      width: min(360px, calc(100vw - 2rem)) !important;
     }}
 
     /* Mobile — stack profile + action cards */

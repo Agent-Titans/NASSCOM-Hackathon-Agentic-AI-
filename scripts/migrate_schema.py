@@ -31,6 +31,18 @@ def main() -> None:
                 print("tickets.assignee_id already present")
         Base.metadata.create_all(bind=engine, tables=[TicketComment.__table__])
         print("Ensured ticket_comments table")
+        if "resolution_artifacts" in inspect(engine).get_table_names():
+            res_cols = _column_names(engine, "resolution_artifacts")
+            if "references_json" not in res_cols:
+                conn.execute(
+                    text(
+                        "ALTER TABLE resolution_artifacts "
+                        "ADD COLUMN references_json TEXT DEFAULT '[]'"
+                    )
+                )
+                print("Added resolution_artifacts.references_json")
+            else:
+                print("resolution_artifacts.references_json already present")
     print("Schema migration complete.")
 
 

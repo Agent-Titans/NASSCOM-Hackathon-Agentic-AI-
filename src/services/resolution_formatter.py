@@ -7,6 +7,7 @@ from typing import Optional
 
 from src.clients.gemini_client import GeminiClient
 from src.config.settings import get_settings
+from src.services.resolution_steps_codec import is_schema_junk_steps
 from src.models.schemas import (
     ClassificationResult,
     ResolutionResult,
@@ -62,6 +63,12 @@ class ResolutionFormatter:
 
         req = formatted.get("steps_requester") or resolution.steps
         asn = formatted.get("steps_assignee") or resolution.steps
+        if is_schema_junk_steps(req) and is_schema_junk_steps(asn):
+            return resolution
+        if is_schema_junk_steps(req):
+            req = resolution.steps
+        if is_schema_junk_steps(asn):
+            asn = resolution.steps
         return replace(
             resolution,
             steps=req,

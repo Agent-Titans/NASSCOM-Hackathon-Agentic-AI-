@@ -8,13 +8,17 @@ from typing import Optional
 import streamlit as st
 
 from src.config.brand import HAND_DISPLAY, ORG_NAME, PRODUCT_NAME
+from src.config.departments import display_department
 from src.config.demo_profiles import demo_person_name
 from src.db.models import ClassificationArtifact, Feedback, ResolutionArtifact, Ticket, User
+from src.services.reference_ticket_loader import load_reference_ticket, normalize_reference_ticket_id
 from src.services.resolution_steps_codec import decode_steps
 from src.services.ticket_service import TicketService
 from src.stores.audit_store import AuditLogStore
+from src.stores.artifact_store import ArtifactStore
 from src.stores.ticket_store import TicketStore
 from src.ui import components as ui
+from src.ui.citation_refs import render_resolution_references
 from src.ui.comments_ui import render_ticket_comments
 from src.ui.employee_portal_theme import employee_portal_css
 from src.ui.ticket_display import (
@@ -24,6 +28,7 @@ from src.ui.ticket_display import (
     department_label,
     hand_chip_class,
     hand_routing_label,
+    is_corpus_ticket_id,
 )
 
 
@@ -228,6 +233,60 @@ def _go_create_view() -> None:
     st.session_state["page"] = "portal"
 
 
+_CONTACT_EMAIL_MARKER = "\n\nContact email:"
+
+
+def _description_parts_for_display(ticket: Ticket) -> tuple[str, str]:
+    """Split incident body and contact email for consistent typography."""
+    raw = (ticket.description_raw or "").strip()
+    sanitized = (ticket.description_sanitized or raw).strip()
+
+    contact_line = ""
+    if _CONTACT_EMAIL_MARKER in raw:
+        _, _, contact_line = raw.partition(_CONTACT_EMAIL_MARKER)
+        contact_line = contact_line.strip()
+
+    body = sanitized
+    for marker in (_CONTACT_EMAIL_MARKER, "\nContact email:"):
+        if marker in body:
+            body = body.partition(marker)[0].strip()
+            break
+
+    if not body and sanitized:
+        body = sanitized
+
+    return body, contact_line
+
+
+def _assignment_team_label(ticket: Ticket, hand: str) -> str:
+    if ticket.department_queue:
+        return display_department(ticket.department_queue)
+    if hand == "3":
+        return "Specialist"
+    return "IT Support"
+
+
+@st.dialog("Request submitted")
+def _assignment_assigned_dialog(team: str) -> None:
+    team_disp = html.escape(str(team))
+    st.markdown(
+        f"<p style='margin:0 0 1rem;font-size:0.95rem;color:#334155;line-height:1.5;'>"
+        f"Ticket assigned to <strong>{team_disp}</strong> team."
+        f"</p>",
+        unsafe_allow_html=True,
+    )
+    if st.button("OK", type="primary", use_container_width=True):
+        st.session_state.pop("portal_assignment_toast_team", None)
+        st.rerun()
+
+
+def _render_assignment_toast() -> None:
+    """Centered modal after Hand 2/3 submit — dismissed with OK."""
+    team = st.session_state.get("portal_assignment_toast_team")
+    if team:
+        _assignment_assigned_dialog(team)
+
+
 def _empty_state_html() -> str:
     return _wrap(
         '<div class="portal-empty-state">'
@@ -297,7 +356,10 @@ def _sign_out() -> None:
 
 
 def _submit_feedback(session, ticket_id: str, outcome: str) -> None:
+    from src.services.historical_success_service import invalidate_historical_cache
+
     session.add(Feedback(ticket_id=ticket_id, outcome=outcome))
+    invalidate_historical_cache()
     if outcome == "worked":
         ticket = TicketStore(session).get(ticket_id)
         if ticket:
@@ -307,7 +369,7 @@ def _submit_feedback(session, ticket_id: str, outcome: str) -> None:
 
 
 def _escalate_ticket(session, ticket_id: str) -> None:
-    """Hand 1 self-help failed → route to team assist (Hand 2), not specialist."""
+    """Hand 1 self-help failed → route to team assist (Hand 2)."""
     ticket = TicketStore(session).get(ticket_id)
     if not ticket:
         return
@@ -327,8 +389,19 @@ def _escalate_ticket(session, ticket_id: str) -> None:
 
 
 def _open_ticket(ticket_id: str) -> None:
+    st.session_state.pop("portal_return_ticket_id", None)
+    st.session_state.pop("portal_reference_view", None)
     st.session_state["portal_view"] = "detail"
     st.session_state["ticket_id"] = ticket_id
+    st.session_state["page"] = "portal"
+    st.rerun()
+
+
+def _open_reference_ticket(ref_ticket_id: str, return_to: str) -> None:
+    st.session_state["portal_return_ticket_id"] = return_to
+    st.session_state["portal_reference_view"] = True
+    st.session_state["portal_view"] = "detail"
+    st.session_state["ticket_id"] = normalize_reference_ticket_id(ref_ticket_id)
     st.session_state["page"] = "portal"
     st.rerun()
 
@@ -502,15 +575,10 @@ def render_portal_create(user: User, session) -> None:
         session.refresh(ticket)
 
         hand = result.decision.hand
-        if hand == "3":
-            dept = ticket.department_queue or "Specialist Desk"
-            st.session_state["portal_flash"] = f"Routed to human verification · {dept} team."
-            st.session_state["portal_flash_type"] = "human"
-        elif hand == "2":
-            dept = ticket.department_queue or "IT Support"
-            hl, _, _ = HAND_DISPLAY[hand]
-            st.session_state["portal_flash"] = f"Routed to {hl} · {dept} queue."
-            st.session_state["portal_flash_type"] = "success"
+        if hand in ("2", "3"):
+            st.session_state["portal_assignment_toast_team"] = _assignment_team_label(
+                ticket, hand
+            )
         else:
             hl, _, _ = HAND_DISPLAY[hand]
             st.session_state["portal_flash"] = f"{hl} steps ready — open your ticket to view."
@@ -530,9 +598,19 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
         st.warning("Select a ticket first.")
         return
 
-    ticket = TicketStore(session).get(ticket_id)
     auth_user_id = st.session_state.get("auth_user_id", user.user_id)
-    if not ticket or ticket.user_id != auth_user_id:
+    reference_view = bool(st.session_state.get("portal_reference_view"))
+    ticket = (
+        load_reference_ticket(session, ticket_id)
+        if reference_view
+        else TicketStore(session).get(ticket_id)
+    )
+    corpus_ref = bool(ticket and is_corpus_ticket_id(ticket.ticket_id))
+
+    if not ticket:
+        st.error("Ticket not found.")
+        return
+    if not (reference_view or corpus_ref) and ticket.user_id != auth_user_id:
         st.error("Ticket not found or access denied.")
         return
 
@@ -546,10 +624,30 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
 
     _render_topnav("portal_signout_detail")
 
-    if st.button("← Back to workspace", key="portal_detail_back", type="tertiary"):
+    return_id = st.session_state.get("portal_return_ticket_id")
+    if reference_view and return_id:
+        if st.button("← Back to your ticket", key="portal_detail_back_ref", type="tertiary"):
+            st.session_state["ticket_id"] = return_id
+            st.session_state.pop("portal_return_ticket_id", None)
+            st.session_state.pop("portal_reference_view", None)
+            st.rerun()
+    elif st.button("← Back to workspace", key="portal_detail_back", type="tertiary"):
+        st.session_state.pop("portal_return_ticket_id", None)
+        st.session_state.pop("portal_reference_view", None)
         st.session_state["portal_view"] = "home"
         st.session_state["page"] = "portal"
         st.rerun()
+
+    if reference_view or corpus_ref:
+        st.markdown(
+            _wrap(
+                '<div class="itsm-banner itsm-banner-ref">'
+                "<strong>Reference article</strong> — "
+                "Similar resolved case from the knowledge base. Use these steps as guidance."
+                "</div>"
+            ),
+            unsafe_allow_html=True,
+        )
 
     st.markdown(
         _wrap(
@@ -589,6 +687,28 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
         unsafe_allow_html=True,
     )
 
+    body, contact_line = _description_parts_for_display(ticket)
+    if body or contact_line:
+        contact_html = ""
+        if contact_line:
+            contact_html = (
+                f'<p class="itsm-description-text">'
+                f"Contact email: {html.escape(contact_line)}"
+                f"</p>"
+            )
+        body_html = ""
+        if body:
+            body_html = (
+                f'<p class="itsm-description-text">{html.escape(body)}</p>'
+            )
+        st.markdown(
+            _wrap(
+                '<div class="itsm-section"><p class="itsm-section-title">Incident description</p>'
+                f"{body_html}{contact_html}</div>"
+            ),
+            unsafe_allow_html=True,
+        )
+
     if clf:
         st.markdown(
             _wrap(
@@ -599,45 +719,51 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
             unsafe_allow_html=True,
         )
 
-    if ticket.hand == "3":
-        st.markdown(
-            _wrap(
-                '<div class="itsm-banner itsm-banner-warn" style="margin:0 0 1rem;">'
-                "<strong>Human verification required</strong> — "
-                "No automated self-help steps. A specialist will review this incident."
-                "</div>"
-            ),
-            unsafe_allow_html=True,
-        )
-    elif ticket.hand == "1" and res:
+    if res and (ticket.hand == "1" or reference_view or corpus_ref):
         steps, _ = decode_steps(res.steps_json)
+        references = ArtifactStore.load_references(res)
+        section_title = (
+            "Suggested resolution"
+            if ticket.hand == "1" and not (reference_view or corpus_ref)
+            else "Resolution steps"
+        )
         if steps:
             step_items = "".join(f"<li style='margin-bottom:0.35rem;'>{html.escape(s)}</li>" for s in steps)
             st.markdown(
                 _wrap(
-                    f'<div class="itsm-section"><p class="itsm-section-title">Resolution steps</p>'
+                    f'<div class="itsm-section"><p class="itsm-section-title">{section_title}</p>'
                     f"<ol style='margin:0;padding-left:1.2rem;color:#475569;font-size:0.9rem;'>"
                     f"{step_items}</ol></div>"
                 ),
                 unsafe_allow_html=True,
             )
-        st.markdown(_wrap('<p class="itsm-section-title">Did this resolve your issue?</p>'), unsafe_allow_html=True)
-        fb1, fb2 = st.columns(2)
-        with fb1:
-            if st.button("Worked", key=f"portal_fb_worked_{ticket_id}", type="primary", use_container_width=True):
-                _submit_feedback(session, ticket_id, "worked")
-                st.session_state["portal_flash"] = "Thank you — your request is now closed."
-                st.session_state["portal_flash_type"] = "success"
-                st.session_state["portal_view"] = "home"
-                st.rerun()
-        with fb2:
-            if st.button("Did not work", key=f"portal_fb_failed_{ticket_id}", use_container_width=True):
-                _submit_feedback(session, ticket_id, "failed")
-                _escalate_ticket(session, ticket_id)
-                st.session_state["portal_flash"] = "Routed to your team queue for follow-up."
-                st.session_state["portal_flash_type"] = "human"
-                st.session_state["portal_view"] = "home"
-                st.rerun()
+        if references and ticket.hand == "1" and not (reference_view or corpus_ref):
+            render_resolution_references(
+                session,
+                references,
+                owner_ticket_id=ticket_id,
+                key_prefix="portal",
+                wrap=_wrap,
+                open_reference=_open_reference_ticket,
+            )
+        if ticket.hand == "1" and not (reference_view or corpus_ref):
+            st.markdown(_wrap('<p class="itsm-section-title">Did this resolve your issue?</p>'), unsafe_allow_html=True)
+            fb1, fb2 = st.columns(2)
+            with fb1:
+                if st.button("Worked", key=f"portal_fb_worked_{ticket_id}", type="primary", use_container_width=True):
+                    _submit_feedback(session, ticket_id, "worked")
+                    st.session_state["portal_flash"] = "Thank you — your request is now closed."
+                    st.session_state["portal_flash_type"] = "success"
+                    st.session_state["portal_view"] = "home"
+                    st.rerun()
+            with fb2:
+                if st.button("Did not work", key=f"portal_fb_failed_{ticket_id}", use_container_width=True):
+                    _submit_feedback(session, ticket_id, "failed")
+                    _escalate_ticket(session, ticket_id)
+                    st.session_state["portal_flash"] = "Routed to your team queue for follow-up."
+                    st.session_state["portal_flash_type"] = "human"
+                    st.session_state["portal_view"] = "home"
+                    st.rerun()
 
     render_ticket_comments(session, ticket_id, user, _wrap, "portal")
 
@@ -655,3 +781,5 @@ def render_employee_portal(user: User, session) -> None:
     else:
         st.session_state["portal_view"] = "home"
         render_portal_home(user, session)
+
+    _render_assignment_toast()

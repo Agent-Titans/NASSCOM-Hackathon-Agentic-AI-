@@ -1,9 +1,12 @@
 """Product name and copy — single place for UI strings."""
 
-PRODUCT_NAME = "IntelliQ"
-ORG_NAME = "IntelliQ Systems"
-TAGLINE = "IT support, routed with confidence"
-DESCRIPTION = "One ticket. Five agents. The right level of help—immediately."
+PRODUCT_NAME = "SAARTHI"
+ORG_NAME = "SAARTHI Systems"
+PRODUCT_ABBREVIATION = (
+    "Smart Assignment, Auto-Route, Triage & Handoff Intelligence"
+)
+TAGLINE = "Every incident finds its path"
+DESCRIPTION = TAGLINE
 
 # User-facing Hand labels (not "Hand 1" in primary UI)
 HAND_DISPLAY = {

@@ -625,7 +625,7 @@ _CATEGORY_TO_DEPARTMENT: dict[str, str] = {
     "Application": "Software",
     "Security": "SecOps",
     "Database": "DBA",
-    "Storage": "Storage",
+    "Storage": "DBA",
     "Network": "Network",
     "Access Management": "Access Management",
 }
@@ -637,7 +637,6 @@ _DEPARTMENT_TO_ASSIGNEE_EMAIL: dict[str, str] = {
     "Network": "shashi@employee",
     "Access Management": "satya@employee",
     "DBA": "sagar@employee",
-    "Storage": "sagar@employee",
 }
 
 _REQUESTER_EMAILS: tuple[str, ...] = (
