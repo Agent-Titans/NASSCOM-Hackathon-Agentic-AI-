@@ -1,3 +1,3 @@
-from src.services.ticket_service import TicketService
+"""Service layer — import submodules directly to avoid circular imports."""
 
-__all__ = ["TicketService"]
+__all__: list[str] = []

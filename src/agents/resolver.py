@@ -41,7 +41,9 @@ class ResolverAgent:
                 low_grounding=is_low_grounding_similarity(raw_score),
                 similarity_score=raw_score,
                 matched_ticket_id=similar.ticket_id,
-                matched_source_hand=similar.resolution.matched_source_hand,
+                matched_source_hand=(
+                    similar.resolution.matched_source_hand or similar.source_hand
+                ),
             )
 
         generated = self.gemini.generate_resolution(

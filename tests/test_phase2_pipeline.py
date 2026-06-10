@@ -337,7 +337,7 @@ def test_windows_password_reset_hand1_playbook(demo_mode):
 
     route = RouterAgent().route(clf, "medium")
     res = ResolverAgent().resolve(san, clf, route, similar=trusted)
-    assert res.matched_source_hand is None
+    assert res.matched_source_hand == "1"
 
     dec = SupervisorAgent().decide(
         clf,
