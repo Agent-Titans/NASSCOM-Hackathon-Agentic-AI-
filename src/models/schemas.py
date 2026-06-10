@@ -30,13 +30,44 @@ class RoutingResult:
 
 
 @dataclass(frozen=True)
+class RetrievalReference:
+    """Best retrieval hit used for routing / confidence (RAG corpus or user ticket)."""
+
+    ticket_id: str
+    label: str
+    score: float
+    source: str  # rag | user
+    title: str = ""
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "ticket_id": self.ticket_id,
+            "label": self.label,
+            "score": self.score,
+            "source": self.source,
+            "title": self.title,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, object]) -> "RetrievalReference":
+        return cls(
+            ticket_id=str(data.get("ticket_id", "")),
+            label=str(data.get("label", "")),
+            score=float(data.get("score", 0.0)),
+            source=str(data.get("source", "rag")),
+            title=str(data.get("title", "")),
+        )
+
+
+@dataclass(frozen=True)
 class ResolutionResult:
     steps: List[str] = field(default_factory=list)
     citations: List[str] = field(default_factory=list)
+    references: List[RetrievalReference] = field(default_factory=list)
     low_grounding: bool = True
     similarity_score: float = 0.0
     matched_ticket_id: Optional[str] = None
-    matched_source_hand: Optional[str] = None  # corpus hand "1"|"2"|"3" when from RAG
+    matched_source_hand: Optional[str] = None  # metadata only; does not drive hand routing
     steps_requester: Optional[List[str]] = None  # friendly self-help (Hand 1/2 UI)
     steps_assignee: Optional[List[str]] = None  # technical card for agent portal
 

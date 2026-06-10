@@ -4,7 +4,7 @@
     "Application": "Software",
     "Security": "SecOps",
     "Database": "DBA",
-    "Storage": "Storage",
+    "Storage": "DBA",
     "Network": "Network",
     "Access Management": "Access Management"
   },

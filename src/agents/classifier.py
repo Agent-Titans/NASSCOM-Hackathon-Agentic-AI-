@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Optional
 
 from src.agents.keyword_index import score_categories
+from src.config.settings import get_settings
 from src.clients.gemini_client import GeminiClient
 from src.models.schemas import ClassificationResult, SanitizedText, SimilarTicketMatch
 
@@ -52,6 +53,23 @@ _NETWORK_OPS_MARKERS = (
     "start my vpn",
     "vpn will not",
 )
+_HARDWARE_MARKERS = (
+    "charger",
+    "power adapter",
+    "power cable",
+    "power brick",
+    "battery",
+    "not charging",
+    "won't charge",
+    "wont charge",
+    "doesn't charge",
+    "doesnt charge",
+    "replace laptop",
+    "broken screen",
+    "keyboard",
+    "trackpad",
+    "docking station",
+)
 _DB_INCIDENT_MARKERS = (
     "deadlock",
     "query timeout",
@@ -93,6 +111,20 @@ class ClassifierAgent:
                 source="gemini_unavailable",
             )
 
+        if (
+            similar
+            and similar.similarity_score >= get_settings().rag_sim_medium
+        ):
+            cat = self._finalize_category(
+                similar.classification.use_case_category, sanitized.text
+            )
+            return ClassificationResult(
+                use_case_category=cat,
+                subcategory=similar.classification.subcategory or "similar_ticket",
+                confidence_hint=similar.classification.confidence_hint,
+                source="rag",
+            )
+
         parsed = self.gemini.classify_ticket(sanitized.text)
         if parsed:
             cat = parsed.get("use_case_category", "Application")
@@ -128,8 +160,21 @@ class ClassifierAgent:
         lower = text.lower()
         if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
             return "Security"
+        category = ClassifierAgent._reconcile_hardware_priority(category, text)
         category = ClassifierAgent._reconcile_network_ops_priority(category, text)
         return ClassifierAgent._reconcile_security_false_positive(category, text)
+
+    @staticmethod
+    def _reconcile_hardware_priority(category: str, text: str) -> str:
+        """Charger/battery/peripheral issues are Infrastructure, not Network."""
+        lower = text.lower()
+        if not any(marker in lower for marker in _HARDWARE_MARKERS):
+            return category
+        if any(marker in lower for marker in _NETWORK_OPS_MARKERS):
+            return category
+        if category in ("Network", "Application", "Database"):
+            return "Infrastructure"
+        return category
 
     @staticmethod
     def _reconcile_network_ops_priority(category: str, text: str) -> str:

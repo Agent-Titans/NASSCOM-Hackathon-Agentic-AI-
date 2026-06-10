@@ -1,9 +1,11 @@
-"""Helpdesk Admin Dashboard — KPI overview, triage, team load, audit."""
+"""Helpdesk Admin Dashboard — KPI overview, tickets, audit."""
 from __future__ import annotations
 
 import csv
 import html
 import io
+import re
+import time
 from datetime import datetime
 from typing import Any, Optional
 
@@ -12,18 +14,41 @@ import streamlit as st
 from src.config.brand import PRODUCT_NAME
 from src.config.departments import display_department
 from src.config.demo_profiles import demo_person_name
-from src.db.models import AuditLog, Ticket, User
+from src.db.models import AuditLog, ClassificationArtifact, ResolutionArtifact, Ticket, User
 from src.services.admin_stats_service import AdminDashboardStats, get_admin_dashboard_stats
+from src.services.resolution_steps_codec import decode_steps
+from src.stores.ticket_store import TicketStore
+from src.ui import components as ui
 from src.ui.admin_portal_theme import admin_portal_css
+from src.ui.team_presence import refresh_presence_states, schedule_presence_rerun, team_members_html
+from src.ui.ticket_display import assignee_name, department_label, hand_routing_label
 
 _NAV_ITEMS = (
     ("dashboard", "OVERVIEW", "Dashboard", None),
     ("all_tickets", "TICKETS", "All Tickets", "total_tickets"),
-    ("triage", "TICKETS", "Triage Queue", "triage_count"),
-    ("team", "TEAM", "Team Workload", "near_capacity_teams"),
-    ("settings", "SYSTEM", "Settings", None),
     ("audit", "SYSTEM", "Audit Log", None),
 )
+
+_ADMIN_STATS_TTL_SEC = 45.0
+
+
+def _cached_admin_stats(session) -> AdminDashboardStats:
+    now = time.monotonic()
+    cached_at = float(st.session_state.get("_admin_stats_at", 0.0))
+    cached = st.session_state.get("_admin_stats")
+    if cached is not None and (now - cached_at) < _ADMIN_STATS_TTL_SEC:
+        return cached
+    stats = get_admin_dashboard_stats(session)
+    st.session_state["_admin_stats"] = stats
+    st.session_state["_admin_stats_at"] = now
+    return stats
+
+
+def invalidate_admin_stats_cache() -> None:
+    st.session_state.pop("_admin_stats", None)
+    st.session_state.pop("_admin_stats_at", None)
+
+_RAG_DETAIL_RE = re.compile(r"ticket=([a-f0-9]{8})\s+score=([\d.]+)")
 
 def _wrap(inner: str) -> str:
     return f'<div class="premium-admin-scope">{inner}</div>'
@@ -130,31 +155,45 @@ def _unique_sorted(rows: list[dict[str, Any]], key: str) -> list[str]:
 
 
 # (field_key, header_label, filter_kind: "list" | "text")
-_TICKET_COLUMN_FILTERS: list[tuple[str, str, str]] = [
+_ALL_TICKETS_COLUMN_FILTERS: list[tuple[str, str, str]] = [
     ("id", "ID", "list"),
     ("subject", "Subject", "text"),
     ("status", "Status", "list"),
-    ("hand", "Hand", "list"),
     ("department", "Department", "list"),
-    ("priority", "Priority", "list"),
-    ("assignee", "Assigned To", "list"),
-    ("submitter", "Submitter", "list"),
-    ("time", "Time", "list"),
+    ("assignee", "Assignee", "list"),
 ]
-_TICKET_COL_WIDTHS = [1.05, 2.1, 0.95, 0.85, 1.05, 0.85, 1.15, 1.1, 0.85]
+_ALL_TICKETS_COL_WIDTHS = [1.05, 2.45, 1.0, 1.15, 1.15]
 
 _AUDIT_COLUMN_FILTERS: list[tuple[str, str, str]] = [
-    ("timestamp", "Time", "list"),
+    ("created_at", "Created", "list"),
     ("ticket_ref", "Ticket", "list"),
-    ("agent", "Agent", "list"),
-    ("event", "Event", "list"),
-    ("details", "Details", "text"),
+    ("subject", "Title", "text"),
+    ("hand", "Hand", "list"),
+    ("confidence_match", "Conf / Match", "text"),
+    ("team", "Team", "list"),
+    ("assignee", "Assignee", "list"),
+    ("sla", "SLA", "list"),
+    ("priority", "Prio", "list"),
 ]
-_AUDIT_COL_WIDTHS = [1.15, 1.1, 1.1, 1.1, 2.4]
+_AUDIT_COL_WIDTHS = [1.05, 0.95, 1.7, 0.72, 1.4, 0.95, 1.0, 0.78, 0.82]
+
+# Short filter-button labels; popover still uses the full name.
+_FILTER_POPOVER_TITLES: dict[str, str] = {
+    "priority": "Priority",
+}
 
 
 def _filter_state_key(table_key: str, field: str) -> str:
     return f"admin_col_filter_{table_key}_{field}"
+
+
+def _col_percentages(widths: list[float]) -> list[str]:
+    total = sum(widths) or 1.0
+    return [f"{w / total * 100:.4f}%" for w in widths]
+
+
+def _colgroup_html(widths: list[float]) -> str:
+    return "".join(f'<col style="width:{pct}">' for pct in _col_percentages(widths))
 
 
 def _header_filter_label(label: str, value: list[str] | str) -> str:
@@ -226,10 +265,11 @@ def _render_column_header_filters(
 
                 hdr_label = _header_filter_label(label, current)
 
+                popover_title = _FILTER_POPOVER_TITLES.get(field, label)
                 with st.popover(hdr_label, use_container_width=True):
                     st.markdown(
                         _wrap(
-                            f'<p class="admin-col-filter-title">Filter: {html.escape(label)}</p>'
+                            f'<p class="admin-col-filter-title">Filter: {html.escape(popover_title)}</p>'
                         ),
                         unsafe_allow_html=True,
                     )
@@ -291,19 +331,23 @@ def _render_filterable_table_shell(
         rows, list_filters=preview_list, text_filters=preview_text
     )
 
-    head_l, head_r = st.columns([5.5, 1])
-    with head_l:
+    st.markdown(
+        _wrap(f'<div class="admin-table-panel" data-admin-table="{html.escape(table_key)}">'),
+        unsafe_allow_html=True,
+    )
+    toolbar_l, toolbar_r = st.columns([5.5, 1])
+    with toolbar_l:
         st.markdown(
             _wrap(
-                f'<div class="admin-card admin-table-card admin-table-card-tight">'
-                f'<div class="admin-table-card-head">'
+                f'<div class="admin-table-toolbar">'
                 f"<h3>{html.escape(title)}</h3>"
                 f'<span class="admin-filter-count">Showing {len(preview)} of {len(rows)} rows</span>'
                 f"</div>"
             ),
             unsafe_allow_html=True,
         )
-    with head_r:
+    with toolbar_r:
+        st.markdown(_wrap('<div class="admin-table-clear-wrap">'), unsafe_allow_html=True)
         if st.button(
             "Clear filters",
             key=f"admin_col_filter_clear_{table_key}",
@@ -317,6 +361,33 @@ def _render_filterable_table_shell(
         table_key, rows, column_specs, col_widths
     )
     return _apply_row_filters(rows, list_filters=list_filters, text_filters=text_filters)
+
+
+def _close_admin_table_panel() -> None:
+    st.markdown(_wrap("</div>"), unsafe_allow_html=True)
+
+
+def _open_admin_ticket(ticket_id: str) -> None:
+    st.session_state["admin_ticket_id"] = ticket_id
+    st.session_state["admin_view"] = "all_tickets"
+    st.rerun()
+
+
+def _all_tickets_csv(tickets: list[Ticket], emails: dict[str, str]) -> str:
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["ID", "Subject", "Status", "Department", "Assignee"])
+    for t in tickets:
+        writer.writerow(
+            [
+                _ticket_inc(t),
+                t.title,
+                _status_label(t.status),
+                display_department(t.department_queue) if t.department_queue else "",
+                _person_name(t.assignee_id, emails),
+            ]
+        )
+    return buf.getvalue()
 
 
 def _tickets_csv(tickets: list[Ticket], emails: dict[str, str]) -> str:
@@ -491,6 +562,7 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
         unsafe_allow_html=True,
     )
 
+    presence = refresh_presence_states()
     team_cards = []
     for team in stats.team_loads:
         cap_cls = "cap-ok"
@@ -498,6 +570,7 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
             cap_cls = "cap-danger"
         elif team.capacity_pct >= 70:
             cap_cls = "cap-warn"
+        members_block = team_members_html(team.name, presence)
         team_cards.append(
             f'<div class="admin-card admin-team-card">'
             f"<h4>{html.escape(team.name)}</h4>"
@@ -505,166 +578,259 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
             f'<p class="meta">{html.escape(team.note)}</p>'
             f'<div class="admin-cap-track"><div class="admin-cap-fill {cap_cls}" '
             f'style="width:{team.capacity_pct}%"></div></div>'
-            f'<p class="admin-cap-label">{team.capacity_pct}% capacity</p></div>'
+            f'<p class="admin-cap-label">{team.capacity_pct}% capacity</p>'
+            f"{members_block}</div>"
         )
 
     st.markdown(
         _wrap(f'<div class="admin-team-grid">{"".join(team_cards)}</div>'),
         unsafe_allow_html=True,
     )
-
-    _render_ticket_table(
-        stats.recent_tickets,
-        stats,
-        title="Recent Activity",
-        table_key="recent",
-    )
-
-
-def _render_ticket_table(
-    tickets: list[Ticket],
-    stats: AdminDashboardStats,
-    *,
-    title: str = "Tickets",
-    table_key: str = "tickets",
-) -> None:
-    row_data = [_ticket_row_data(t, stats) for t in tickets]
-    filtered = _render_filterable_table_shell(
-        title,
-        table_key,
-        row_data,
-        _TICKET_COLUMN_FILTERS,
-        _TICKET_COL_WIDTHS,
-    )
-
-    html_rows = []
-    for r in filtered:
-        t = r["ticket"]
-        html_rows.append(
-            "<tr>"
-            f'<td><span class="admin-id">{html.escape(r["id"])}</span></td>'
-            f"<td>{html.escape(r['subject'][:48])}</td>"
-            f"<td>{_status_pill(t.status)}</td>"
-            f"<td>{_hand_pill(t.hand)}</td>"
-            f"<td>{html.escape(r['department'])}</td>"
-            f"<td>{html.escape(r['priority'])}</td>"
-            f"<td>{html.escape(r['assignee'])}</td>"
-            f"<td>{html.escape(r['submitter'])}</td>"
-            f"<td>{html.escape(r['time'])}</td>"
-            "</tr>"
-        )
-    body = "".join(html_rows) if html_rows else (
-        "<tr><td colspan='9' style='color:#94A3B8;padding:1rem'>"
-        "No tickets match your filters.</td></tr>"
-    )
-    st.markdown(
-        _wrap(
-            '<div class="admin-table-wrap admin-table-wrap-body">'
-            f"<table class='admin-table admin-table-body-only'><tbody>{body}</tbody></table>"
-            "</div></div>"
-        ),
-        unsafe_allow_html=True,
-    )
+    schedule_presence_rerun()
 
 
 def _render_all_tickets(stats: AdminDashboardStats) -> None:
     _header(
         "All Tickets",
         f"{stats.total_tickets} tickets in the system",
-        _tickets_csv(stats.all_tickets, stats.requester_emails),
+        _all_tickets_csv(stats.all_tickets, stats.assignee_emails),
     )
-    _render_ticket_table(
-        stats.all_tickets,
-        stats,
-        title="All Tickets",
-        table_key="all",
-    )
-
-
-def _render_triage(stats: AdminDashboardStats) -> None:
-    open_triage = [t for t in stats.triage_tickets if t.status not in ("RESOLVED", "CLOSED")]
-    _header(
-        "Triage Queue",
-        f"{len(open_triage)} tickets awaiting specialist review",
-        _tickets_csv(open_triage, stats.requester_emails),
-    )
-    _render_ticket_table(
-        open_triage,
-        stats,
-        title="Triage Queue",
-        table_key="triage",
+    row_data = [_ticket_row_data(t, stats) for t in stats.all_tickets]
+    filtered = _render_filterable_table_shell(
+        "All Tickets",
+        "all",
+        row_data,
+        _ALL_TICKETS_COLUMN_FILTERS,
+        _ALL_TICKETS_COL_WIDTHS,
     )
 
-
-def _render_team(stats: AdminDashboardStats) -> None:
-    _header(
-        "Team Workload",
-        f"{stats.near_capacity_teams} teams near capacity",
-        _tickets_csv(stats.all_tickets, stats.requester_emails),
-    )
-    cards = []
-    for team in stats.team_loads:
-        cap_cls = "cap-ok"
-        if team.capacity_pct >= 80:
-            cap_cls = "cap-danger"
-        elif team.capacity_pct >= 70:
-            cap_cls = "cap-warn"
-        cards.append(
-            f'<div class="admin-card admin-team-card">'
-            f"<h4>{html.escape(team.name)}</h4>"
-            f'<p class="open-count">{team.open_count} open</p>'
-            f'<p class="meta">{team.agent_count} agents · {html.escape(team.note)}</p>'
-            f'<div class="admin-cap-track"><div class="admin-cap-fill {cap_cls}" '
-            f'style="width:{team.capacity_pct}%"></div></div>'
-            f'<p class="admin-cap-label">{team.capacity_pct}% capacity</p></div>'
+    if not filtered:
+        st.markdown(
+            _wrap(
+                '<div class="admin-table-data">'
+                '<p class="admin-empty-rows">No tickets match your filters.</p>'
+                "</div>"
+            ),
+            unsafe_allow_html=True,
         )
+    for r in filtered:
+        t = r["ticket"]
+        cols = st.columns(_ALL_TICKETS_COL_WIDTHS)
+        with cols[0]:
+            if st.button(
+                r["id"],
+                key=f"admin_open_{t.ticket_id}",
+                type="tertiary",
+                use_container_width=True,
+            ):
+                _open_admin_ticket(t.ticket_id)
+        with cols[1]:
+            st.markdown(
+                _wrap(f'<span class="admin-row-text">{html.escape(r["subject"][:72])}</span>'),
+                unsafe_allow_html=True,
+            )
+        with cols[2]:
+            st.markdown(_wrap(_status_pill(t.status)), unsafe_allow_html=True)
+        with cols[3]:
+            st.markdown(
+                _wrap(f'<span class="admin-row-text">{html.escape(r["department"])}</span>'),
+                unsafe_allow_html=True,
+            )
+        with cols[4]:
+            st.markdown(
+                _wrap(f'<span class="admin-row-text">{html.escape(r["assignee"])}</span>'),
+                unsafe_allow_html=True,
+            )
+    if filtered:
+        st.markdown(_wrap('<div class="admin-table-data-footer" aria-hidden="true"></div>'), unsafe_allow_html=True)
+    _close_admin_table_panel()
+
+
+def _render_admin_ticket_detail(user: User, session, ticket_id: str) -> None:
+    ticket = TicketStore(session).get(ticket_id)
+    if not ticket:
+        st.error("Ticket not found.")
+        if st.button("← Back to All Tickets", key="admin_detail_missing_back"):
+            st.session_state.pop("admin_ticket_id", None)
+            st.rerun()
+        return
+
+    clf = session.query(ClassificationArtifact).filter_by(ticket_id=ticket_id).first()
+    res = session.query(ResolutionArtifact).filter_by(ticket_id=ticket_id).first()
+    requester = session.get(User, ticket.user_id)
+    req_name = demo_person_name(requester.email) if requester else "Unknown"
+    sla_txt, sla_cls = TicketStore(session).sla_label(ticket)
+    confidence = ui.confidence_label(ticket.confidence)
+
+    if st.button("← Back to All Tickets", key="admin_detail_back", type="tertiary"):
+        st.session_state.pop("admin_ticket_id", None)
+        st.session_state["admin_view"] = "all_tickets"
+        st.rerun()
+
     st.markdown(
-        _wrap(f'<div class="admin-team-grid">{"".join(cards) or "<p>No teams</p>"}</div>'),
+        _wrap(
+            f'<div class="admin-card admin-ticket-detail">'
+            f'<p class="admin-ticket-detail-id">{html.escape(_ticket_inc(ticket))}</p>'
+            f"<h2>{html.escape(ticket.title)}</h2>"
+            f'<div class="admin-ticket-detail-chips">'
+            f"{_status_pill(ticket.status)}"
+            f"{_hand_pill(ticket.hand)}"
+            f"</div>"
+            f'<div class="admin-ticket-meta-grid">'
+            f"<div><p class=\"meta-lbl\">Requester</p><p class=\"meta-val\">{html.escape(req_name)}</p></div>"
+            f"<div><p class=\"meta-lbl\">Department</p><p class=\"meta-val\">{html.escape(department_label(ticket))}</p></div>"
+            f"<div><p class=\"meta-lbl\">Assignee</p><p class=\"meta-val\">{html.escape(assignee_name(session, ticket))}</p></div>"
+            f"<div><p class=\"meta-lbl\">Routing</p><p class=\"meta-val\">{html.escape(hand_routing_label(ticket))}</p></div>"
+            f"<div><p class=\"meta-lbl\">Confidence</p><p class=\"meta-val\">{html.escape(confidence)}</p></div>"
+            f"<div><p class=\"meta-lbl\">Priority</p><p class=\"meta-val\">{html.escape(ticket.priority or '—')}</p></div>"
+            f'<div><p class="meta-lbl">SLA</p><p class="meta-val {sla_cls}">{html.escape(sla_txt)}</p></div>'
+            f"<div><p class=\"meta-lbl\">Created</p><p class=\"meta-val\">"
+            f"{ticket.created_at.strftime('%Y-%m-%d %H:%M') if ticket.created_at else '—'}</p></div>"
+            f"</div></div>"
+        ),
         unsafe_allow_html=True,
     )
 
-
-def _render_settings() -> None:
-    _header("Settings", "System policy and pipeline configuration", "ID,Subject\n")
     st.markdown(
         _wrap(
             '<div class="admin-card">'
-            "<h3>Routing policy</h3>"
-            "<p style='color:#64748B;font-size:0.85rem;margin:0 0 0.75rem'>"
-            "Security category always routes to Hand 3 (SecOps). "
-            "Supervisor uses c_total bands: Hand 1 ≥ 0.80, Hand 2 ≥ 0.60.</p>"
-            "<h3 style='margin-top:1rem'>RAG corpus</h3>"
-            "<p style='color:#64748B;font-size:0.85rem;margin:0'>"
-            "Run <code>python scripts/seed_rag_demo_tickets.py</code> to refresh "
-            "ChromaDB demo tickets (45 samples, 15 per Hand).</p>"
+            '<h3>Incident description</h3>'
+            f'<p class="admin-ticket-desc">{html.escape(ticket.description_sanitized or ticket.description_raw)}</p>'
             "</div>"
         ),
         unsafe_allow_html=True,
     )
 
+    if clf:
+        st.markdown(
+            _wrap(
+                f'<div class="admin-card"><h3>Classification</h3>'
+                f"<p>{html.escape(clf.use_case_category)}"
+                f"{f' · {html.escape(clf.subcategory)}' if clf.subcategory else ''}"
+                f" · source {html.escape(clf.source or '—')}</p></div>"
+            ),
+            unsafe_allow_html=True,
+        )
 
-def _render_audit(session) -> None:
-    audit_rows = (
+    if res and ticket.hand in ("1", "2"):
+        steps, _ = decode_steps(res.steps_json)
+        if steps:
+            step_items = "".join(
+                f"<li>{html.escape(s)}</li>" for s in steps
+            )
+            st.markdown(
+                _wrap(
+                    f'<div class="admin-card"><h3>AI suggested resolution</h3>'
+                    f"<ol class='admin-resolution-steps'>{step_items}</ol></div>"
+                ),
+                unsafe_allow_html=True,
+            )
+
+
+def _rag_details_by_ticket(session, ticket_ids: list[str]) -> dict[str, str]:
+    if not ticket_ids:
+        return {}
+    rows = (
         session.query(AuditLog)
-        .order_by(AuditLog.timestamp.desc())
-        .limit(200)
+        .filter(
+            AuditLog.ticket_id.in_(ticket_ids),
+            AuditLog.event_type.in_(("rag_hit", "rag_miss")),
+        )
+        .order_by(AuditLog.timestamp.asc())
         .all()
     )
-    _header("Audit Log", "Privacy-safe agent trace (append-only)", "Time,Ticket,Agent,Event\n")
+    out: dict[str, str] = {}
+    for row in rows:
+        out.setdefault(row.ticket_id, row.details or "")
+    return out
 
-    row_data = [
-        {
-            "timestamp": r.timestamp.strftime("%Y-%m-%d %H:%M") if r.timestamp else "—",
-            "ticket_ref": f"INC-{r.ticket_id[:8].upper()}",
-            "agent": r.agent or "—",
-            "event": r.event_type,
-            "details": (r.details or "")[:120],
-            "_raw": r,
-        }
-        for r in audit_rows
-    ]
+
+def _format_confidence_match(ticket: Ticket, rag_details: str | None) -> str:
+    conf = f"{ticket.confidence:.0%}" if ticket.confidence is not None else "—"
+    if rag_details:
+        match = _RAG_DETAIL_RE.search(rag_details)
+        if match:
+            sim_ref = f"INC-{match.group(1).upper()}"
+            sim_score = f"{float(match.group(2)):.0%}"
+            return f"{conf} · {sim_ref} ({sim_score})"
+    return conf
+
+
+def _audit_row_data(
+    ticket: Ticket,
+    stats: AdminDashboardStats,
+    rag_details: str | None,
+) -> dict[str, Any]:
+    return {
+        "ticket": ticket,
+        "created_at": ticket.created_at.strftime("%Y-%m-%d %H:%M") if ticket.created_at else "—",
+        "ticket_ref": _ticket_inc(ticket),
+        "subject": ticket.title or "—",
+        "hand": f"Hand {ticket.hand}" if ticket.hand else "—",
+        "confidence_match": _format_confidence_match(ticket, rag_details),
+        "team": display_department(ticket.department_queue)
+        if ticket.department_queue
+        else "—",
+        "assignee": _person_name(ticket.assignee_id, stats.assignee_emails),
+        "sla": f"{ticket.sla_hours}h" if ticket.sla_hours else "—",
+        "priority": ticket.priority or "—",
+    }
+
+
+def _audit_csv(tickets: list[Ticket], stats: AdminDashboardStats, rag_map: dict[str, str]) -> str:
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(
+        [
+            "Created",
+            "Ticket",
+            "Title",
+            "Hand",
+            "Confidence",
+            "Similar Ticket",
+            "Team",
+            "Assignee",
+            "SLA",
+            "Priority",
+        ]
+    )
+    for ticket in tickets:
+        rag = rag_map.get(ticket.ticket_id)
+        conf_match = _format_confidence_match(ticket, rag)
+        similar = "—"
+        if rag:
+            m = _RAG_DETAIL_RE.search(rag)
+            if m:
+                similar = f"INC-{m.group(1).upper()} ({float(m.group(2)):.0%})"
+        writer.writerow(
+            [
+                ticket.created_at.strftime("%Y-%m-%d %H:%M") if ticket.created_at else "",
+                _ticket_inc(ticket),
+                ticket.title or "",
+                f"Hand {ticket.hand}" if ticket.hand else "",
+                f"{ticket.confidence:.0%}" if ticket.confidence is not None else "",
+                similar,
+                ticket.department_queue or "",
+                _person_name(ticket.assignee_id, stats.assignee_emails),
+                f"{ticket.sla_hours}h" if ticket.sla_hours else "",
+                ticket.priority or "",
+            ]
+        )
+    return buf.getvalue()
+
+
+def _render_audit(session, stats: AdminDashboardStats) -> None:
+    tickets = sorted(stats.all_tickets, key=lambda t: t.created_at or datetime.min, reverse=True)
+    rag_map = _rag_details_by_ticket(session, [t.ticket_id for t in tickets])
+    _header(
+        "Audit Log",
+        "Routing decisions at ticket creation — hand, confidence, team, SLA",
+        _audit_csv(tickets, stats, rag_map),
+    )
+
+    row_data = [_audit_row_data(t, stats, rag_map.get(t.ticket_id)) for t in tickets]
     filtered = _render_filterable_table_shell(
-        "Recent events",
+        "Ticket routing audit",
         "audit",
         row_data,
         _AUDIT_COLUMN_FILTERS,
@@ -673,27 +839,35 @@ def _render_audit(session) -> None:
 
     lines = []
     for r in filtered:
+        t = r["ticket"]
         lines.append(
             "<tr>"
-            f"<td>{html.escape(r['timestamp'])}</td>"
+            f"<td>{html.escape(r['created_at'])}</td>"
             f'<td><span class="admin-id">{html.escape(r["ticket_ref"])}</span></td>'
-            f"<td>{html.escape(r['agent'])}</td>"
-            f"<td>{html.escape(r['event'])}</td>"
-            f"<td>{html.escape(r['details'])}</td>"
+            f'<td class="admin-cell-wrap">{html.escape(r["subject"][:64])}</td>'
+            f"<td>{_hand_pill(t.hand)}</td>"
+            f'<td class="admin-cell-wrap">{html.escape(r["confidence_match"])}</td>'
+            f"<td>{html.escape(r['team'])}</td>"
+            f"<td>{html.escape(r['assignee'])}</td>"
+            f"<td>{html.escape(r['sla'])}</td>"
+            f"<td>{html.escape(r['priority'])}</td>"
             "</tr>"
         )
+    colgroup = _colgroup_html(_AUDIT_COL_WIDTHS)
     body = "".join(lines) if lines else (
-        "<tr><td colspan='5' style='color:#94A3B8;padding:1rem'>"
-        "No events match your filters.</td></tr>"
+        "<tr><td colspan='9' style='color:#94A3B8;padding:1rem'>"
+        "No tickets match your filters.</td></tr>"
     )
     st.markdown(
         _wrap(
-            '<div class="admin-table-wrap admin-table-wrap-body">'
-            f"<table class='admin-table admin-table-body-only'><tbody>{body}</tbody></table>"
-            "</div></div>"
+            '<div class="admin-table-data admin-table-data-html">'
+            f"<table class='admin-table admin-table-body-only admin-table-fixed'>"
+            f"<colgroup>{colgroup}</colgroup><tbody>{body}</tbody></table>"
+            "</div>"
         ),
         unsafe_allow_html=True,
     )
+    _close_admin_table_panel()
 
 
 def render_admin_portal(user: User, session) -> None:
@@ -701,23 +875,29 @@ def render_admin_portal(user: User, session) -> None:
     if "admin_view" not in st.session_state:
         st.session_state["admin_view"] = "dashboard"
 
-    stats = get_admin_dashboard_stats(session)
-    view = st.session_state["admin_view"]
+    from src.services.auto_assign_service import run_auto_assignments
+
+    run_auto_assignments(session)
+    stats = _cached_admin_stats(session)
+    valid_views = {key for key, *_ in _NAV_ITEMS}
+    view = st.session_state.get("admin_view", "dashboard")
+    if view not in valid_views:
+        view = "dashboard"
+        st.session_state["admin_view"] = view
 
     _render_topnav(user)
+    detail_id = st.session_state.get("admin_ticket_id")
+    if detail_id:
+        _render_admin_ticket_detail(user, session, detail_id)
+        return
+
     _render_nav_bar(stats, view)
 
     if view == "dashboard":
         _render_dashboard(stats)
     elif view == "all_tickets":
         _render_all_tickets(stats)
-    elif view == "triage":
-        _render_triage(stats)
-    elif view == "team":
-        _render_team(stats)
-    elif view == "settings":
-        _render_settings()
     elif view == "audit":
-        _render_audit(session)
+        _render_audit(session, stats)
     else:
         _render_dashboard(stats)

@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from src.clients.gemini_client import GeminiClient
 from src.config.rag_policy import is_low_grounding_similarity
+from src.services.rag_relevance import topic_buckets
 from src.models.schemas import (
     ClassificationResult,
     ResolutionResult,
@@ -40,7 +41,7 @@ class ResolverAgent:
                 low_grounding=is_low_grounding_similarity(raw_score),
                 similarity_score=raw_score,
                 matched_ticket_id=similar.ticket_id,
-                matched_source_hand=similar.source_hand,
+                matched_source_hand=similar.resolution.matched_source_hand,
             )
 
         generated = self.gemini.generate_resolution(
@@ -60,12 +61,42 @@ class ResolverAgent:
                     similarity_score=0.35,
                 )
 
+        hardware_steps = self._hardware_steps(sanitized.text)
+        if hardware_steps:
+            return ResolutionResult(
+                steps=hardware_steps,
+                citations=[],
+                low_grounding=True,
+                similarity_score=0.35,
+            )
+
         return ResolutionResult(
             steps=self._generic_steps(classification, routing),
             citations=[],
             low_grounding=True,
             similarity_score=0.35,
         )
+
+    @staticmethod
+    def _hardware_steps(text: str) -> Optional[List[str]]:
+        if "hardware" not in topic_buckets(text):
+            return None
+        lower = text.lower()
+        if any(
+            marker in lower
+            for marker in ("charger", "power adapter", "power cable", "battery", "charging")
+        ):
+            return [
+                "Confirm the charger is firmly connected at the laptop and wall outlet.",
+                "If available, try a known-good power adapter with the same wattage rating.",
+                "Note your asset tag and charger model for the Hardware team.",
+                "Hardware will arrange a replacement or depot swap per asset policy.",
+            ]
+        return [
+            "Note your asset tag and a brief description of the hardware symptom.",
+            "The Hardware team will diagnose and arrange repair or replacement.",
+            "Add photos or error messages in a comment if available.",
+        ]
 
     @staticmethod
     def _generic_steps(

@@ -17,7 +17,7 @@ import streamlit as st
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from src.config.brand import HAND_DISPLAY, PRODUCT_NAME, ROLE_DISPLAY
+from src.config.brand import HAND_DISPLAY, PRODUCT_NAME, ROLE_DISPLAY, TAGLINE
 from src.db.models import (
     AuditLog,
     ClassificationArtifact,
@@ -27,6 +27,7 @@ from src.db.models import (
     User,
 )
 from src.db.session import get_session_factory, init_db
+from src.services.retrieval_bootstrap import start_retrieval_warm_background
 from src.services.ticket_service import TicketService
 from src.stores.ticket_store import TicketStore
 from src.ui import components as ui
@@ -35,6 +36,7 @@ THEME = ROOT / "assets" / "theme.css"
 
 
 def get_db() -> Session:
+    """DB session only — retrieval index warms lazily on first ticket submit."""
     return get_session_factory()()
 
 
@@ -95,7 +97,6 @@ def page_login() -> None:
     """Premium unified login card + dark mode toggle."""
     from src.ui.login_render import render_login_page
 
-    ensure_db()
     render_login_page()
 
 
@@ -398,8 +399,8 @@ def ensure_db() -> None:
 
 def main() -> None:
     st.set_page_config(
-        page_title=f"{PRODUCT_NAME}",
-        page_icon="◆",
+        page_title=f"{PRODUCT_NAME} · {TAGLINE}",
+        page_icon=None,
         layout="wide",
         initial_sidebar_state=(
             "collapsed"
@@ -411,6 +412,9 @@ def main() -> None:
     )
     ui.inject_theme(THEME)
     _init_session()
+    if "saarthi_bootstrapped" not in st.session_state:
+        ensure_db()
+        st.session_state.saarthi_bootstrapped = True
 
     if "user" not in st.session_state:
         page_login()
@@ -418,34 +422,38 @@ def main() -> None:
 
     with get_db() as session:
         user = session.get(User, st.session_state["user"]["user_id"])
-    if not user:
-        del st.session_state["user"]
-        st.rerun()
-        return
+        if not user:
+            del st.session_state["user"]
+            st.rerun()
+            return
 
-    if user.role == "requester":
-        from src.ui.employee_portal import render_employee_portal
+        if "retrieval_warm_started" not in st.session_state:
+            st.session_state.retrieval_warm_started = True
+            if user.role == "requester":
+                start_retrieval_warm_background(delay_seconds=0.0, api_embeds=True)
+            else:
+                start_retrieval_warm_background(delay_seconds=2.0, api_embeds=False)
 
-        st.session_state["page"] = "portal"
-        with get_db() as session:
+        if user.role == "requester":
+            from src.ui.employee_portal import render_employee_portal
+
+            st.session_state["page"] = "portal"
             render_employee_portal(user, session)
-        return
+            return
 
-    if user.role == "admin":
-        from src.ui.admin_portal import render_admin_portal
+        if user.role == "admin":
+            from src.ui.admin_portal import render_admin_portal
 
-        st.session_state["page"] = "admin"
-        with get_db() as session:
+            st.session_state["page"] = "admin"
             render_admin_portal(user, session)
-        return
+            return
 
-    if user.role == "assignee":
-        from src.ui.agent_portal import render_agent_portal
+        if user.role == "assignee":
+            from src.ui.agent_portal import render_agent_portal
 
-        st.session_state["page"] = "agent"
-        with get_db() as session:
+            st.session_state["page"] = "agent"
             render_agent_portal(user, session)
-        return
+            return
 
     page = sidebar_nav(user)
     tid = st.session_state.get("ticket_id")

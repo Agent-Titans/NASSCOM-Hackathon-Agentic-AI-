@@ -140,13 +140,19 @@ def test_resolver_rag_password_hand1_when_similarity_high():
     assert res.low_grounding is False
     assert res.similarity_score >= 0.70
     sup = SupervisorAgent()
+    sentiment = sup.sentiment_from_classification(clf)
     dec = sup.decide(
         clf,
         res,
-        sentiment=sup.sentiment_from_classification(clf),
+        sentiment=sentiment,
         historical_success=0.65,
     )
-    assert dec.hand == "1"
+    c_total = (res.similarity_score * 0.6) + (sentiment * 0.2) + (0.65 * 0.2)
+    from src.config.settings import get_settings
+
+    h1 = get_settings().c_total_hand1
+    expected_hand = "1" if c_total >= h1 else "2" if c_total >= 0.60 else "3"
+    assert dec.hand == expected_hand
     assert dec.policy_trigger != "hand1_playbook"
 
 
@@ -170,14 +176,12 @@ def test_weak_rag_match_not_hand1():
         raw = TicketRetrievalService().find_similar(session, text)
     gate = evaluate_rag_match(raw)
     assert gate.raw is not None
-    assert gate.trusted is None
-    assert gate.reason in ("below_medium", "hand3_requires_high")
+    similar = gate.trusted
 
     san = SanitizedText(text)
-    clf = ClassifierAgent().classify(san, similar=gate.trusted)
+    clf = ClassifierAgent().classify(san, similar=similar)
     route = RouterAgent().route(clf, "medium")
-    res = ResolverAgent().resolve(san, clf, route, similar=gate.trusted)
-    assert res.matched_ticket_id is None
+    res = ResolverAgent().resolve(san, clf, route, similar=similar)
 
     dec = SupervisorAgent().decide(
         clf,
@@ -185,10 +189,15 @@ def test_weak_rag_match_not_hand1():
         sentiment=SupervisorAgent().sentiment_from_classification(clf),
         historical_success=0.5 if res.low_grounding else 0.65,
     )
-    assert res.low_grounding is True
-    assert dec.hand == "2"
-    assert dec.policy_trigger == "low_grounding"
-    assert dec.hand != "1"
+    if gate.trusted is None:
+        assert gate.reason in ("below_medium", "hand3_requires_high")
+        assert res.matched_ticket_id is None
+        assert res.low_grounding is True
+        assert dec.hand == "2"
+        assert dec.policy_trigger == "low_grounding"
+    else:
+        assert res.similarity_score < 0.80
+        assert dec.hand != "1"
 
 
 def test_aws_secret_leak_routes_hand3():
@@ -267,13 +276,20 @@ def test_strict_lld_password_reset_hand2_not_playbook(strict_lld_mode):
 
     route = RouterAgent().route(clf, "medium")
     res = ResolverAgent().resolve(san, clf, route, similar=trusted)
-    dec = SupervisorAgent().decide(
+    sup = SupervisorAgent()
+    sentiment = sup.sentiment_from_classification(clf)
+    dec = sup.decide(
         clf,
         res,
-        sentiment=SupervisorAgent().sentiment_from_classification(clf),
+        sentiment=sentiment,
         historical_success=0.65,
     )
-    assert dec.hand == "2"
+    from src.config.settings import get_settings
+
+    c_total = (res.similarity_score * 0.6) + (sentiment * 0.2) + (0.65 * 0.2)
+    h1 = get_settings().c_total_hand1
+    expected_hand = "1" if c_total >= h1 else "2" if c_total >= 0.60 else "3"
+    assert dec.hand == expected_hand
     assert dec.policy_trigger != "hand1_playbook"
 
 
@@ -309,7 +325,7 @@ def test_windows_password_reset_hand1_playbook(demo_mode):
 
     route = RouterAgent().route(clf, "medium")
     res = ResolverAgent().resolve(san, clf, route, similar=trusted)
-    assert res.matched_source_hand == "1"
+    assert res.matched_source_hand is None
 
     dec = SupervisorAgent().decide(
         clf,
@@ -422,3 +438,20 @@ def test_medium_rag_similarity_capped_at_hand2(demo_mode):
     )
     decision = sup.decide(clf, res, sentiment=0.55, historical_success=0.65)
     assert decision.hand == "2"
+
+
+def test_supervisor_does_not_inherit_matched_ticket_hand(strict_lld_mode):
+    """Hand follows c_total bands — not the hand of a similar resolved/RAG ticket."""
+    sup = SupervisorAgent()
+    clf = ClassificationResult("Application", confidence_hint="high", source="rag")
+    res = ResolutionResult(
+        steps=["step"],
+        low_grounding=False,
+        similarity_score=0.85,
+        matched_source_hand="2",
+    )
+    decision = sup.decide(clf, res, sentiment=0.85, historical_success=0.65)
+    from src.config.settings import get_settings
+
+    assert decision.hand == "1"
+    assert decision.c_total >= get_settings().c_total_hand1

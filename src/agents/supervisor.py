@@ -8,7 +8,7 @@ config/routing_rules.json (mode: strict_lld | demo).
 """
 from __future__ import annotations
 
-from src.config.rag_policy import blocks_hand1_similarity, is_trusted_rag_match
+from src.config.rag_policy import blocks_hand1_similarity
 from src.config.settings import get_settings
 from src.config.supervisor_policy import get_supervisor_policy, matches_hand1_playbook
 from src.models.schemas import (
@@ -71,7 +71,6 @@ class SupervisorAgent:
 
         if matches_hand1_playbook(
             category=classification.use_case_category,
-            source_hand=resolution.matched_source_hand,
             similarity=similarity,
             low_grounding=resolution.low_grounding,
         ):
@@ -99,14 +98,6 @@ class SupervisorAgent:
             hand = _cap_hand(hand, "2")
             status = "ROUTED"
             escalation = False
-
-        if (
-            is_trusted_rag_match(similarity)
-            and resolution.matched_source_hand in ("2", "3")
-        ):
-            hand = _cap_hand(hand, resolution.matched_source_hand)
-            status = _status_for_hand(hand, escalation=hand == "3")
-            escalation = hand == "3"
 
         return SupervisorDecision(
             hand=hand,

@@ -73,16 +73,13 @@ def get_supervisor_policy() -> SupervisorPolicy:
 def matches_hand1_playbook(
     *,
     category: str,
-    source_hand: Optional[str],
     similarity: float,
     low_grounding: bool,
 ) -> bool:
-    """True when ticket matches configured Hand-1 playbook policy."""
+    """True when category + match confidence meet configured Hand-1 playbook policy."""
     policy = get_supervisor_policy().hand1_playbook
     if not policy.enabled or low_grounding:
         return False
     if category not in policy.categories:
-        return False
-    if source_hand != policy.min_source_hand:
         return False
     return similarity >= policy.min_similarity

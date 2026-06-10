@@ -72,18 +72,26 @@ def _resolution_hours(ticket: Ticket) -> Optional[float]:
     return max(delta.total_seconds() / 3600.0, 0.1)
 
 
+def _operational_ticket_query(session):
+    """Exclude RAG seed rows — dashboard tracks live user-submitted tickets only."""
+    q = session.query(Ticket)
+    for prefix in ("rag-", "kb-", "ent-"):
+        q = q.filter(~Ticket.ticket_id.like(f"{prefix}%"))
+    return q
+
+
 def _week_delta(session: Session) -> tuple[Optional[int], Optional[float]]:
     now = datetime.utcnow()
     week = now - timedelta(days=7)
     prev = now - timedelta(days=14)
 
     this_week = (
-        session.query(Ticket)
+        _operational_ticket_query(session)
         .filter(Ticket.created_at >= week)
         .count()
     )
     last_week = (
-        session.query(Ticket)
+        _operational_ticket_query(session)
         .filter(Ticket.created_at >= prev, Ticket.created_at < week)
         .count()
     )
@@ -92,7 +100,7 @@ def _week_delta(session: Session) -> tuple[Optional[int], Optional[float]]:
         total_delta = int(round((this_week - last_week) / last_week * 100))
 
     def _avg_hours(since: datetime, until: Optional[datetime] = None) -> Optional[float]:
-        q = session.query(Ticket).filter(Ticket.status.in_(tuple(_CLOSED)))
+        q = _operational_ticket_query(session).filter(Ticket.status.in_(tuple(_CLOSED)))
         q = q.filter(Ticket.updated_at >= since)
         if until:
             q = q.filter(Ticket.updated_at < until)
@@ -111,7 +119,7 @@ def _week_delta(session: Session) -> tuple[Optional[int], Optional[float]]:
 
 def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
     tickets = (
-        session.query(Ticket)
+        _operational_ticket_query(session)
         .order_by(Ticket.created_at.desc())
         .all()
     )
@@ -202,7 +210,7 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
     unassigned_triage = sum(
         1 for t in stats.triage_tickets if not t.assignee_id and t.status not in _CLOSED
     )
-    triage_agents = max(agents_by_dept.get("SecOps", 0) + agents_by_dept.get("Software", 0), 1)
+    triage_agents = max(sum(agents_by_dept.values()), 1)
 
     def _append_team(name: str, open_count: int, agents: int, *, triage: bool = False) -> None:
         if triage:

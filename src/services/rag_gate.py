@@ -11,6 +11,7 @@ from typing import Optional
 
 from src.config.settings import get_settings
 from src.models.schemas import SimilarTicketMatch
+from src.services.rag_relevance import is_rag_relevant
 
 
 @dataclass(frozen=True)
@@ -22,7 +23,11 @@ class RagGateDecision:
     reason: str  # trusted | no_match | below_medium | hand3_requires_high
 
 
-def evaluate_rag_match(similar: Optional[SimilarTicketMatch]) -> RagGateDecision:
+def evaluate_rag_match(
+    similar: Optional[SimilarTicketMatch],
+    *,
+    query_text: str = "",
+) -> RagGateDecision:
     """
     Decide whether a retrieval hit is strong enough to influence the pipeline.
 
@@ -31,7 +36,8 @@ def evaluate_rag_match(similar: Optional[SimilarTicketMatch]) -> RagGateDecision
     2. Score < rag_sim_medium (0.55) → reject (too weak)
     3. Hand 3 corpus/ticket and score < rag_sim_high (0.70) → reject (triage playbooks
        must not win on loose keyword overlap)
-    4. Otherwise → trusted
+    4. Topic/title relevance fails → reject (wrong playbook)
+    5. Otherwise → trusted
     """
     if similar is None:
         return RagGateDecision(raw=None, trusted=None, reason="no_match")
@@ -51,6 +57,14 @@ def evaluate_rag_match(similar: Optional[SimilarTicketMatch]) -> RagGateDecision
             raw=similar,
             trusted=None,
             reason="hand3_requires_high",
+        )
+
+    relevant, relevance_reason = is_rag_relevant(query_text, similar)
+    if not relevant:
+        return RagGateDecision(
+            raw=similar,
+            trusted=None,
+            reason=relevance_reason,
         )
 
     return RagGateDecision(raw=similar, trusted=similar, reason="trusted")

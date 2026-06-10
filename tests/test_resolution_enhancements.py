@@ -10,7 +10,11 @@ sys.path.insert(0, str(ROOT))
 
 from src.data.enterprise_rag_corpus import ENTERPRISE_RAG_CORPUS, load_enterprise_corpus
 from src.models.schemas import ClassificationResult, ResolutionResult, RoutingResult, SanitizedText
-from src.services.resolution_steps_codec import decode_steps, encode_steps
+from src.services.resolution_steps_codec import (
+    decode_steps,
+    encode_steps,
+    is_schema_junk_steps,
+)
 
 
 def test_enterprise_corpus_counts_and_h1_simplicity():
@@ -43,6 +47,56 @@ def test_steps_codec_legacy_list():
     req, asn = decode_steps(raw)
     assert req == ["a", "b"]
     assert asn == ["a", "b"]
+
+
+def test_steps_codec_rejects_schema_junk():
+    assert is_schema_junk_steps(["v", "requester", "assignee"])
+    raw = encode_steps(["v", "requester", "assignee"])
+    req, asn = decode_steps(raw)
+    assert req == []
+    assert asn == []
+
+
+def test_gemini_format_unwraps_nested_v2_dict(monkeypatch):
+    from src.clients.gemini_client import GeminiClient
+    from src.config.settings import get_settings
+
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
+    get_settings.cache_clear()
+    client = GeminiClient()
+    with patch.object(client, "_post") as mock_post:
+        mock_post.return_value = {
+            "candidates": [
+                {
+                    "content": {
+                        "parts": [
+                            {
+                                "text": (
+                                    '{"steps_requester": {"v": 2, "requester": '
+                                    '["Check scheduler pod logs"], "assignee": '
+                                    '["kubectl logs deployment/airflow-scheduler"]}, '
+                                    '"steps_assignee": {"v": 2, "requester": '
+                                    '["Status update"], "assignee": '
+                                    '["Inspect task logs in UI"]}}'
+                                )
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        out = client.format_resolution_audiences(
+            ticket_text="airflow logs missing",
+            category="Application",
+            department="Software",
+            hand="2",
+            playbook_steps=["Verify scheduler is running", "Check worker logs"],
+            citations=[],
+        )
+    get_settings.cache_clear()
+    assert out is not None
+    assert out["steps_requester"] == ["Check scheduler pod logs"]
+    assert out["steps_assignee"] == ["Inspect task logs in UI"]
 
 
 def test_security_short_circuit_skips_resolver_llm():

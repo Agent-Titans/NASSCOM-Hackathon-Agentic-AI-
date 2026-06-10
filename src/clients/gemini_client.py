@@ -270,13 +270,27 @@ class GeminiClient:
             if start < 0 or end <= start:
                 return None
             parsed = json.loads(text[start:end])
-            req = parsed.get("steps_requester") or []
-            asn = parsed.get("steps_assignee") or []
+            from src.services.resolution_steps_codec import (
+                _coerce_step_list,
+                is_schema_junk_steps,
+            )
+
+            req = _coerce_step_list(parsed.get("steps_requester"), prefer="requester")
+            asn = _coerce_step_list(parsed.get("steps_assignee"), prefer="assignee")
+            if parsed.get("v") == 2 and not req and not asn:
+                req = _coerce_step_list(parsed.get("requester"), prefer="requester")
+                asn = _coerce_step_list(parsed.get("assignee"), prefer="assignee")
             if not req and not asn:
                 return None
+            if is_schema_junk_steps(req) and is_schema_junk_steps(asn):
+                return None
+            if is_schema_junk_steps(req):
+                req = list(playbook_steps)
+            if is_schema_junk_steps(asn):
+                asn = list(playbook_steps)
             return {
-                "steps_requester": [str(s) for s in req],
-                "steps_assignee": [str(s) for s in (asn or req)],
+                "steps_requester": req,
+                "steps_assignee": asn or req,
             }
         except (urllib.error.HTTPError, json.JSONDecodeError, KeyError, IndexError) as exc:
             logger.warning("Gemini format_resolution_audiences failed: %s", exc)

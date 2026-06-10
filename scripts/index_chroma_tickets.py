@@ -20,6 +20,7 @@ def main() -> None:
             svc.ensure_index(session)
             count = svc.chroma.count
         print(f"Chroma indexed documents: {count}")
+        print("Run scripts/warm_cache.py to pre-build embedding disk cache.")
 
 
 if __name__ == "__main__":

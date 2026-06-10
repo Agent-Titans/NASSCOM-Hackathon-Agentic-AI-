@@ -274,13 +274,13 @@
   },
   {
     "id": "ent-h2-07",
-    "title": "SAP batch ABAP dump tempdb full",
-    "issue_description": "SAP batch RDDIMPDP CANCELED. ST22 dump DBIF_RSQL_SQL_ERROR on ZFIN_ACCT. SQL tempdb full reported by DBA.",
+    "title": "Airflow job and audit logs not visible",
+    "issue_description": "Apache Airflow UI shows DAG runs but task logs and audit log views are empty. Scheduler and workers report healthy in monitoring.",
     "resolution_steps": [
-      "Attach ST22 dump and SM21 system log excerpts.",
-      "Coordinate DBA tempdb expansion and sort cleanup.",
-      "Restart batch instance only after Basis approval.",
-      "Replay job variant after root cause in change record."
+      "Confirm the task instance state in the Airflow UI and note the run id.",
+      "Check scheduler and worker logs for log upload or GCS/S3 permission errors.",
+      "Verify the configured remote logging path and IAM credentials for the log bucket.",
+      "Clear stuck task instances and re-run after fixing the logging backend."
     ],
     "category": "Application",
     "complexity_tier": "H2"

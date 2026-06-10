@@ -6,6 +6,7 @@ Pipeline order is fixed; total local CPU work is linear in ticket text size.
 from __future__ import annotations
 
 import time
+from dataclasses import replace
 from typing import Callable, Optional, TypeVar
 
 from sqlalchemy.orm import Session
@@ -83,6 +84,9 @@ class TicketService:
         stops immediately — Classifier, Router, and Resolver are NOT invoked.
         Ticket is force-routed to Hand 3 with guardrail_ok=False on AgentRun.
         """
+        from src.services.retrieval_bootstrap import start_retrieval_warm_background
+
+        start_retrieval_warm_background(api_embeds=True, delay_seconds=0)
         self.audit.record(ticket, "pipeline_started")
         pipeline_started_at = time.perf_counter()
         agent_run = self.agent_runs.begin(ticket)
@@ -97,16 +101,16 @@ class TicketService:
             return self._security_halt(ticket, agent_run, exc)
 
         retrieval_text = f"{ticket.title}\n{sanitized.text}".strip()
-        raw_similar = self._timed(
+        raw_similar, retrieval_references = self._timed(
             ticket,
             "retrieval",
-            lambda: self.retrieval.find_similar(
+            lambda: self.retrieval.find_similar_and_references(
                 self.session,
                 retrieval_text,
                 exclude_ticket_id=ticket.ticket_id,
             ),
         )
-        rag_gate = evaluate_rag_match(raw_similar)
+        rag_gate = evaluate_rag_match(raw_similar, query_text=retrieval_text)
         trusted_similar = rag_gate.trusted
 
         if rag_gate.trusted:
@@ -189,6 +193,7 @@ class TicketService:
                     sanitized, classification, routing, trusted_similar
                 ),
             )
+            resolution = replace(resolution, references=retrieval_references)
             self.agent_runs.mark_resolver(agent_run, ok=True)
 
         sentiment = self.supervisor.sentiment_from_classification(classification)

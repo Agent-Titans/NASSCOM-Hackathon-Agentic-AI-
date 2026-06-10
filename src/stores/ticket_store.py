@@ -40,6 +40,9 @@ class TicketStore:
         include_resolved: bool = False,
     ) -> list[Ticket]:
         """Assignee queue: Hand 2 and 3 only (Hand 1 stays with requester)."""
+        from src.services.auto_assign_service import run_auto_assignments
+
+        run_auto_assignments(self.session)
         queues = department_queue_aliases(department)
         q = (
             self.session.query(Ticket)
@@ -54,15 +57,29 @@ class TicketStore:
         return sorted(tickets, key=self._queue_sort_key)
 
     def department_stats(self, department: str, assignee_id: str) -> dict:
-        tickets = self.list_for_department(department)
+        from src.services.auto_assign_service import run_auto_assignments
+
+        run_auto_assignments(self.session)
+        queues = department_queue_aliases(department)
+        all_dept = (
+            self.session.query(Ticket)
+            .filter(
+                Ticket.department_queue.in_(queues),
+                Ticket.hand.in_(("2", "3")),
+            )
+            .all()
+        )
+        tickets = sorted(
+            (t for t in all_dept if t.status not in ("RESOLVED", "CLOSED")),
+            key=self._queue_sort_key,
+        )
+        resolved = [t for t in all_dept if t.status == "RESOLVED"]
         unassigned = [t for t in tickets if not t.assignee_id]
         mine = [t for t in tickets if t.assignee_id == assignee_id]
         at_risk = [t for t in tickets if self.sla_at_risk(t)]
         escalations = [
             t for t in tickets if t.hand == "3" or t.escalation_required
         ]
-        resolved = self.list_for_department(department, include_resolved=True)
-        resolved = [t for t in resolved if t.status == "RESOLVED"]
         return {
             "total": len(tickets),
             "unassigned": len(unassigned),
@@ -71,6 +88,7 @@ class TicketStore:
             "escalations": len(escalations),
             "resolved": len(resolved),
             "tickets": tickets,
+            "resolved_tickets": resolved,
         }
 
     def get(self, ticket_id: str) -> Optional[Ticket]:
@@ -115,6 +133,13 @@ class TicketStore:
         ticket.status = "RESOLVED"
         self.session.commit()
         self.session.refresh(ticket)
+        from src.services.historical_success_service import invalidate_historical_cache
+        from src.services.process_cache import invalidate_retrieval_cache
+        from src.services.ticket_retrieval import mark_resolved_ticket_for_index
+
+        mark_resolved_ticket_for_index(ticket.ticket_id)
+        invalidate_retrieval_cache()
+        invalidate_historical_cache()
         return ticket
 
     def update_hand(

@@ -5,7 +5,7 @@ import html
 
 import streamlit as st
 
-from src.config.brand import ORG_NAME, PRODUCT_NAME, TAGLINE
+from src.config.brand import ORG_NAME, PRODUCT_ABBREVIATION, PRODUCT_NAME, TAGLINE
 from src.config.demo_auth import (
     AGENT_WORKSPACE_EMAILS,
     DEFAULT_DEMO_PASSWORD,
@@ -15,15 +15,16 @@ from src.config.demo_auth import (
 )
 from src.db.models import User
 from src.db.session import get_session_factory
+from src.services.retrieval_bootstrap import retrieval_warm_status
 from src.ui.login_theme import login_css
 
 _FEATURE_CARDS = (
-    ("badge-instant", "Instant", "Instant Resolution",
-     "Instant RAG-grounded self-help validation for direct user tracking."),
-    ("badge-automated", "Automated", "Intelligent Routing",
-     "Deterministic queue mapping with active SLA monitoring optimization."),
-    ("badge-escalated", "Escalated", "Governed Escalation",
-     "Policy-driven manual escalation matrix handling complex operational anomalies."),
+    ("badge-instant", "Hand 1", "Self-Help Resolution",
+     "RAG-grounded steps employees can try immediately — no queue wait."),
+    ("badge-automated", "Hand 2", "Smart Routing",
+     "Auto-route to the right team with capacity-aware assignment."),
+    ("badge-escalated", "Hand 3", "Expert Escalation",
+     "Policy-driven specialist review when confidence is low."),
 )
 
 
@@ -82,6 +83,9 @@ def _session_login(user: User) -> None:
     if user.role == "requester":
         st.session_state["page"] = "portal"
         st.session_state["portal_view"] = "home"
+        from src.services.retrieval_bootstrap import start_retrieval_warm_background
+
+        start_retrieval_warm_background(delay_seconds=0.5, api_embeds=True)
     else:
         st.session_state["page"] = "overview"
 
@@ -93,13 +97,27 @@ def _session_login(user: User) -> None:
 def _welcome_hero_html() -> str:
     name = html.escape(PRODUCT_NAME)
     tagline = html.escape(TAGLINE)
+    caption = html.escape(PRODUCT_ABBREVIATION)
+    warm = retrieval_warm_status()
+    warm_html = ""
+    if warm == "running":
+        warm_html = (
+            '<p class="login-warm-pill" aria-live="polite">'
+            '<span class="login-warm-dot"></span> Preparing routing engine…'
+            "</p>"
+        )
     return (
         '<div class="login-page-root welcome-scope">'
+        '<div class="login-hero-glow" aria-hidden="true"></div>'
         '<div class="hero-container">'
+        '<div class="brand-lockup">'
         '<p class="login-eyebrow">WELCOME TO</p>'
         f'<h1 class="login-title"><span class="brand-name">{name}</span>'
         '<span class="brand-dot">.</span></h1>'
+        "</div>"
         f'<p class="login-tagline">{tagline}</p>'
+        f'<p class="login-caption">{caption}</p>'
+        f"{warm_html}"
         "</div>"
     )
 
@@ -127,10 +145,6 @@ def _signin_shell_header_html() -> str:
     brand = html.escape(PRODUCT_NAME)
     return (
         '<div class="signin-scope signin-topbar">'
-        '<span class="signin-topbar-icon" aria-hidden="true">'
-        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" '
-        'stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/>'
-        '<path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>'
         f'<span class="signin-topbar-brand">{brand}</span>'
         "</div>"
         '<div class="signin-scope signin-card-header">'
@@ -238,15 +252,13 @@ def render_login_page() -> None:
     if "user" in st.session_state:
         return
 
-    Session = get_session_factory()
-    with Session() as session:
-        users = session.query(User).order_by(User.role, User.email).all()
-
-    if not users:
-        st.error("No accounts found. Run `python scripts/seed_users.py`")
-        return
-
     if st.session_state.get("show_signin"):
+        Session = get_session_factory()
+        with Session() as session:
+            users = session.query(User).order_by(User.role, User.email).all()
+        if not users:
+            st.error("No accounts found. Run `python scripts/seed_users.py`")
+            return
         render_signin_step(users)
         return
 

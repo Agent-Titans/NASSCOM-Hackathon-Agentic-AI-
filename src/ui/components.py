@@ -2,16 +2,31 @@
 from __future__ import annotations
 
 import html
+from functools import lru_cache
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import streamlit as st
 
-from src.config.brand import DESCRIPTION, HAND_DISPLAY, PRODUCT_NAME, ROLE_DISPLAY, TAGLINE
+from src.config.brand import (
+    HAND_DISPLAY,
+    PRODUCT_ABBREVIATION,
+    PRODUCT_NAME,
+    ROLE_DISPLAY,
+    TAGLINE,
+)
+
+
+@lru_cache(maxsize=4)
+def _read_theme_css(path_str: str, mtime_ns: int) -> str:
+    return Path(path_str).read_text(encoding="utf-8")
 
 
 def inject_theme(css_path) -> None:
-    if css_path.exists():
-        st.markdown(f"<style>{css_path.read_text()}</style>", unsafe_allow_html=True)
+    path = Path(css_path)
+    if path.exists():
+        css = _read_theme_css(str(path), path.stat().st_mtime_ns)
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 
 def hand_badge_html(hand: Optional[str]) -> str:
@@ -126,6 +141,7 @@ def auth_signin_card() -> None:
           <p class="welcome-to">Welcome to</p>
           <p class="brand">{html.escape(PRODUCT_NAME)}<span class="dot">.</span></p>
           <p class="tagline">{html.escape(TAGLINE)}</p>
+          <p class="caption">{html.escape(PRODUCT_ABBREVIATION)}</p>
         </div>
         """,
         unsafe_allow_html=True,

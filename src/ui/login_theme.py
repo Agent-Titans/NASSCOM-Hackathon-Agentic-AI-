@@ -1,7 +1,10 @@
-"""IntelliQ login — welcome, sign-in, and workspace scope styles."""
+"""SAARTHI login — welcome, sign-in, and workspace scope styles."""
 from __future__ import annotations
 
+from functools import lru_cache
 
+
+@lru_cache(maxsize=2)
 def login_css(dark: bool) -> str:
     if dark:
         bg = "linear-gradient(180deg, #0F172A 0%, #020617 100%)"
@@ -144,7 +147,24 @@ def login_css(dark: bool) -> str:
       box-sizing: border-box;
       text-align: center;
     }}
+    {w} .login-page-root {{
+      position: relative;
+      overflow: hidden;
+    }}
+    {w} .login-hero-glow {{
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 320px;
+      background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }}
     {w} .hero-container {{
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -154,29 +174,82 @@ def login_css(dark: bool) -> str:
       padding: 0 1rem;
       text-align: center;
     }}
+    {w} .brand-lockup {{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      margin-bottom: 0.15rem;
+      text-align: center;
+    }}
     {w} .login-eyebrow {{
-      margin: 0 0 0.5rem;
-      font-size: 0.75rem;
+      margin: 0 0 0.35rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: {eyebrow};
     }}
     {w} .login-title {{
       margin: 0;
-      font-size: 4rem;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      line-height: 1.1;
+      font-size: clamp(2.75rem, 8vw, 4.25rem);
+      font-weight: 800;
+      font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+      letter-spacing: 0.14em;
+      line-height: 1.05;
+      text-transform: uppercase;
     }}
-    {w} .brand-name {{ color: {brand_name}; }}
-    {w} .brand-dot {{ color: {brand_dot}; }}
+    {w} .brand-name {{
+      background: linear-gradient(135deg, {brand_name} 0%, #4F46E5 45%, #0EA5E9 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }}
+    {w} .brand-dot {{
+      color: {brand_dot};
+      font-weight: 800;
+      letter-spacing: 0;
+    }}
+    {w} .login-warm-pill {{
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 1rem 0 0;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: {card_text};
+      background: {glass_bg};
+      border: 1px solid {glass_border};
+    }}
+    {w} .login-warm-dot {{
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3B82F6;
+      animation: saarthi-pulse 1.2s ease-in-out infinite;
+    }}
+    @keyframes saarthi-pulse {{
+      0%, 100% {{ opacity: 0.45; transform: scale(0.9); }}
+      50% {{ opacity: 1; transform: scale(1.1); }}
+    }}
     {w} .login-tagline {{
       margin: 0.75rem 0 0;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: {tagline};
       line-height: 1.5;
-      max-width: 28rem;
+      max-width: 32rem;
+      font-weight: 500;
+    }}
+    {w} .login-caption {{
+      margin: 0.55rem 0 0;
+      font-size: 0.82rem;
+      color: {card_text};
+      line-height: 1.5;
+      max-width: 36rem;
     }}
     {w} [data-testid="stElementContainer"]:has(.login-page-root),
     {w} [data-testid="stElementContainer"]:has(.welcome-body) {{
@@ -581,16 +654,6 @@ def login_css(dark: bool) -> str:
       color: #0F172A;
       font-weight: 700;
       font-size: 1.05rem;
-    }}
-    .signin-scope .signin-topbar-icon {{
-      display: inline-flex;
-      width: 28px;
-      height: 28px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      background: #F1F5F9;
-      color: #334155;
     }}
     .signin-scope.signin-card-header {{
       text-align: center;

@@ -10,17 +10,14 @@ import streamlit as st
 from src.config.brand import HAND_DISPLAY, ORG_NAME, PRODUCT_NAME
 from src.config.departments import departments_match, display_department
 from src.config.demo_profiles import demo_person_name
+from src.services.reference_ticket_loader import load_reference_ticket, normalize_reference_ticket_id
 from src.services.resolution_steps_codec import decode_steps
-from src.db.models import (
-    AuditLog,
-    ClassificationArtifact,
-    ResolutionArtifact,
-    Ticket,
-    User,
-)
+from src.db.models import ClassificationArtifact, ResolutionArtifact, Ticket, User
+from src.stores.artifact_store import ArtifactStore
 from src.stores.ticket_store import TicketStore
 from src.ui import components as ui
 from src.ui.agent_portal_theme import agent_portal_css
+from src.ui.citation_refs import render_resolution_references
 from src.ui.comments_ui import render_ticket_comments
 from src.ui.ticket_display import (
     assignee_name,
@@ -29,6 +26,7 @@ from src.ui.ticket_display import (
     department_label,
     hand_chip_class,
     hand_routing_label,
+    is_corpus_ticket_id,
     person_name,
 )
 
@@ -269,8 +267,20 @@ def _sign_out() -> None:
 
 
 def _open_ticket(ticket_id: str) -> None:
+    st.session_state.pop("agent_return_ticket_id", None)
+    st.session_state.pop("agent_reference_view", None)
     st.session_state["agent_view"] = "detail"
     st.session_state["ticket_id"] = ticket_id
+    st.session_state["page"] = "agent"
+    st.rerun()
+
+
+def _open_reference_ticket(ref_ticket_id: str, return_to: str) -> None:
+    """Open a RAG/historical reference ticket and allow return to the current ticket."""
+    st.session_state["agent_return_ticket_id"] = return_to
+    st.session_state["agent_reference_view"] = True
+    st.session_state["agent_view"] = "detail"
+    st.session_state["ticket_id"] = normalize_reference_ticket_id(ref_ticket_id)
     st.session_state["page"] = "agent"
     st.rerun()
 
@@ -292,24 +302,6 @@ def _resolve_ticket(session, ticket: Ticket) -> None:
     _agent_toast(f"Ticket INC-{_ticket_key(ticket)} marked resolved.")
     st.session_state["agent_view"] = "home"
     st.rerun()
-
-
-def _similar_tickets(session, ticket: Ticket, clf: ClassificationArtifact | None) -> list[Ticket]:
-    if not clf:
-        return []
-    return (
-        session.query(Ticket)
-        .join(ClassificationArtifact, ClassificationArtifact.ticket_id == Ticket.ticket_id)
-        .filter(
-            Ticket.department_queue == ticket.department_queue,
-            Ticket.status == "RESOLVED",
-            Ticket.ticket_id != ticket.ticket_id,
-            ClassificationArtifact.use_case_category == clf.use_case_category,
-        )
-        .order_by(Ticket.created_at.desc())
-        .limit(3)
-        .all()
-    )
 
 
 def _render_queue_rows(
@@ -491,11 +483,7 @@ def render_agent_home(user: User, session) -> None:
     with st.expander(f"Department inbox ({len(filtered)})", expanded=True):
         _render_queue_rows(filtered, user, session, "inbox")
 
-    resolved = [
-        t
-        for t in store.list_for_department(dept, include_resolved=True)
-        if t.status == "RESOLVED"
-    ]
+    resolved = stats.get("resolved_tickets") or []
     if resolved:
         with st.expander(f"Recently closed ({len(resolved)})", expanded=False):
             _render_resolved_rows(resolved[:8], user, session, "resolved")
@@ -506,38 +494,61 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
         st.warning("Select a ticket first.")
         return
 
-    ticket = TicketStore(session).get(ticket_id)
+    reference_view = bool(st.session_state.get("agent_reference_view"))
+    ticket = (
+        load_reference_ticket(session, ticket_id)
+        if reference_view
+        else TicketStore(session).get(ticket_id)
+    )
     dept = user.department or "Hardware"
     dept_label = display_department(dept)
-    if not ticket or not departments_match(ticket.department_queue, dept):
-        st.error("Ticket not found or not in your department queue.")
+    corpus_ref = bool(ticket and is_corpus_ticket_id(ticket.ticket_id))
+
+    if not ticket:
+        st.error("Ticket not found.")
         return
-    if ticket.hand not in ("2", "3"):
-        st.error("This ticket is not in the assignee queue.")
-        return
+    if not (reference_view or corpus_ref):
+        if not departments_match(ticket.department_queue, dept):
+            st.error("Ticket not found or not in your department queue.")
+            return
+        if ticket.hand not in ("2", "3"):
+            st.error("This ticket is not in the assignee queue.")
+            return
 
     clf = session.query(ClassificationArtifact).filter_by(ticket_id=ticket_id).first()
     res = session.query(ResolutionArtifact).filter_by(ticket_id=ticket_id).first()
-    audits = (
-        session.query(AuditLog)
-        .filter_by(ticket_id=ticket_id)
-        .order_by(AuditLog.timestamp.asc())
-        .all()
-    )
     requester = session.get(User, ticket.user_id)
     req_name = _display_name(requester.email) if requester else "Unknown"
     hand_label, _, _ = HAND_DISPLAY.get(ticket.hand or "2", ("Team Assist", "", ""))
     confidence = ui.confidence_label(ticket.confidence)
     sla_txt, sla_cls = TicketStore(session).sla_label(ticket)
     key = _ticket_key(ticket)
-    similar = _similar_tickets(session, ticket, clf)
-
     _render_topnav("agent_signout_detail")
 
-    if st.button("← Back to dashboard", key="agent_detail_back", type="tertiary"):
+    return_id = st.session_state.get("agent_return_ticket_id")
+    if reference_view and return_id:
+        if st.button("← Back to previous ticket", key="agent_detail_back_ref", type="tertiary"):
+            st.session_state["ticket_id"] = return_id
+            st.session_state.pop("agent_return_ticket_id", None)
+            st.session_state.pop("agent_reference_view", None)
+            st.rerun()
+    elif st.button("← Back to dashboard", key="agent_detail_back", type="tertiary"):
+        st.session_state.pop("agent_return_ticket_id", None)
+        st.session_state.pop("agent_reference_view", None)
         st.session_state["agent_view"] = "home"
         st.session_state["page"] = "agent"
         st.rerun()
+
+    if reference_view or corpus_ref:
+        st.markdown(
+            _wrap(
+                '<div class="itsm-banner itsm-banner-ref">'
+                "<strong>Reference ticket</strong> — "
+                "Opened from AI resolution sources. Use for context when handling the active incident."
+                "</div>"
+            ),
+            unsafe_allow_html=True,
+        )
 
     banner_cls = "itsm-banner-warn" if ticket.hand == "3" else "itsm-banner-info"
     banner_head = (
@@ -546,7 +557,7 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
         else f"Routed assist — {dept_label} queue"
     )
     banner_body = (
-        "This incident needs specialist review. Check audit context before acting."
+        "This incident needs specialist review before acting."
         if ticket.hand == "3"
         else "AI suggested resolution available below. Validate before closing with requester."
     )
@@ -614,77 +625,49 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
     if res and ticket.hand in ("1", "2"):
         _req_steps, assignee_steps = decode_steps(res.steps_json)
         steps = assignee_steps or _req_steps
-        cites = json.loads(res.citations_json or "[]")
+        references = ArtifactStore.load_references(res)
         if steps:
             step_items = "".join(
                 f"<li style='margin-bottom:0.35rem;'>{html.escape(s)}</li>" for s in steps
-            )
-            cite_items = "".join(
-                f"<li style='margin-bottom:0.25rem;'>{html.escape(c)}</li>" for c in cites
             )
             st.markdown(
                 _wrap(
                     f'<div class="itsm-section"><p class="itsm-section-title">'
                     f"AI suggested resolution</p>"
                     f"<ol style='margin:0 0 0.75rem;padding-left:1.2rem;color:#475569;"
-                    f"font-size:0.9rem;'>{step_items}</ol>"
-                    f"<p class='itsm-section-title'>References</p>"
-                    f"<ul style='margin:0;padding-left:1.2rem;color:#64748B;"
-                    f"font-size:0.85rem;'>{cite_items}</ul></div>"
+                    f"font-size:0.9rem;'>{step_items}</ol></div>"
                 ),
                 unsafe_allow_html=True,
             )
-
-    if similar:
-        sim_items = "".join(
-            f"<li style='margin-bottom:0.3rem;'>INC-{_ticket_key(s)} — "
-            f"{html.escape(s.title[:48])}</li>"
-            for s in similar
-        )
-        st.markdown(
-            _wrap(
-                f'<div class="itsm-section"><p class="itsm-section-title">'
-                f"Similar resolved tickets</p>"
-                f"<ul style='margin:0;padding-left:1.2rem;color:#475569;"
-                f"font-size:0.88rem;'>{sim_items}</ul></div>"
-            ),
-            unsafe_allow_html=True,
+        render_resolution_references(
+            session,
+            references,
+            owner_ticket_id=ticket_id,
+            key_prefix="agent",
+            wrap=_wrap,
+            open_reference=_open_reference_ticket,
         )
 
-    if ticket.hand == "3" or res and res.low_grounding:
-        audit_lines = "".join(
-            f"<li style='margin-bottom:0.25rem;font-size:0.82rem;color:#64748B;'>"
-            f"{a.timestamp:%H:%M:%S} — {html.escape(a.agent or 'system')}: "
-            f"{html.escape(a.event_type)}</li>"
-            for a in audits[:8]
-        )
-        st.markdown(
-            _wrap(
-                f'<div class="itsm-section"><p class="itsm-section-title">Audit context</p>'
-                f"<ul style='margin:0;padding-left:1.1rem;'>{audit_lines}</ul></div>"
-            ),
-            unsafe_allow_html=True,
-        )
-
-    st.markdown(_wrap('<p class="itsm-section-title">Actions</p>'), unsafe_allow_html=True)
-    ac1, ac2, ac3 = st.columns(3)
-    with ac1:
-        if not ticket.assignee_id:
-            if st.button("Assign to me", key="agent_detail_assign", type="primary", use_container_width=True):
-                _assign_ticket(session, ticket, user)
-        elif ticket.assignee_id == user.user_id:
-            if st.button("Release to queue", key="agent_detail_release", use_container_width=True):
-                _release_ticket(session, ticket)
-        else:
-            st.caption(f"Owned by {_assignee_label(ticket, user, session)}")
-    with ac2:
-        if ticket.status != "RESOLVED":
-            if st.button("Mark resolved", key="agent_detail_resolve", type="primary", use_container_width=True):
-                _resolve_ticket(session, ticket)
-    with ac3:
-        if st.button("Back to inbox", key="agent_detail_inbox", use_container_width=True):
-            st.session_state["agent_view"] = "home"
-            st.rerun()
+    if not (reference_view or corpus_ref):
+        st.markdown(_wrap('<p class="itsm-section-title">Actions</p>'), unsafe_allow_html=True)
+        ac1, ac2, ac3 = st.columns(3)
+        with ac1:
+            if not ticket.assignee_id:
+                if st.button("Assign to me", key="agent_detail_assign", type="primary", use_container_width=True):
+                    _assign_ticket(session, ticket, user)
+            elif ticket.assignee_id == user.user_id:
+                if st.button("Release to queue", key="agent_detail_release", use_container_width=True):
+                    _release_ticket(session, ticket)
+            else:
+                st.caption(f"Owned by {_assignee_label(ticket, user, session)}")
+        with ac2:
+            if ticket.status != "RESOLVED":
+                if st.button("Mark resolved", key="agent_detail_resolve", type="primary", use_container_width=True):
+                    _resolve_ticket(session, ticket)
+        with ac3:
+            if st.button("Back to inbox", key="agent_detail_inbox", use_container_width=True):
+                st.session_state["agent_view"] = "home"
+                st.rerun()
 
     render_ticket_comments(session, ticket_id, user, _wrap, "agent")
 

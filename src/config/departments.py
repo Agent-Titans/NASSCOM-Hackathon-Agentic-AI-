@@ -13,7 +13,6 @@ DEPARTMENT_QUEUES: tuple[str, ...] = (
     "SecOps",
     ACCESS_MANAGEMENT,
     "DBA",
-    "Storage",
 )
 
 
@@ -30,6 +29,8 @@ def canonical_department(name: str) -> str:
     """Map legacy stored values to the canonical department queue name."""
     if name == _LEGACY_IDENTITY:
         return ACCESS_MANAGEMENT
+    if name == "Storage":
+        return "DBA"
     return name
 
 
@@ -44,4 +45,6 @@ def department_queue_aliases(department: str) -> tuple[str, ...]:
     canon = canonical_department(department)
     if canon == ACCESS_MANAGEMENT:
         return (ACCESS_MANAGEMENT, _LEGACY_IDENTITY)
+    if canon == "DBA":
+        return ("DBA", "Storage")
     return (canon,)

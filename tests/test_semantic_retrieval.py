@@ -51,6 +51,9 @@ def test_printer_jam_trusted_with_mock_embeddings():
     Session = get_session_factory()
 
     clear_embedding_cache()
+    from src.services.process_cache import invalidate_process_caches
+
+    invalidate_process_caches()
     query_vec = [1.0, 0.0, 0.0]
     rag_vec = [0.95, 0.05, 0.0]
     kb_vec = [0.7, 0.71, 0.0]
@@ -81,3 +84,38 @@ def test_printer_jam_trusted_with_mock_embeddings():
     assert gate.trusted is not None
     assert gate.reason == "trusted"
     assert raw.similarity_score >= 0.55
+
+
+def test_user_ticket_semantic_scores_boosts_keyword_match():
+    """Semantic layer must outrank a strong keyword-only user ticket score."""
+    from unittest.mock import patch
+
+    from src.services.semantic_similarity import user_ticket_semantic_scores
+
+    query = (
+        "integrate copilot with visual studio\n"
+        "Unable to integrate github copilot with visual studio code"
+    )
+    prior_doc = (
+        "integrate github copilot and visual studio\n"
+        "integrate visual studio code with github copilot"
+    )
+    clear_embedding_cache()
+
+    query_vec = [1.0, 0.0, 0.0]
+    prior_vec = [0.95, 0.05, 0.0]
+
+    def fake_embed(text: str):
+        if "Unable to integrate github copilot" in text:
+            return query_vec
+        if "integrate visual studio code with github copilot" in text:
+            return prior_vec
+        return None
+
+    with patch("src.services.semantic_similarity.GeminiClient") as mock_cls:
+        mock_cls.return_value.available = True
+        mock_cls.return_value.embed_text.side_effect = fake_embed
+        scores = user_ticket_semantic_scores(query, {"prior-1": prior_doc})
+
+    assert scores["prior-1"] >= 0.85
+    assert scores["prior-1"] > 0.72  # beats keyword-only fast-path score
