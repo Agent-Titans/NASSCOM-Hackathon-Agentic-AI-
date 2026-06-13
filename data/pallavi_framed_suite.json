@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "description": "10-ticket suite — title + framed description only (LLD-aligned expectations)",
+  "cases": [
+    {
+      "id": "F01",
+      "title": "VPN Connectivity Flapping",
+      "description": "Users reporting VPN disconnects every 15-20 minutes. VPN client logs show L2TP timeout errors at the corporate VPN gateway.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "VPN gateway timeout — Network ops"
+    },
+    {
+      "id": "F02",
+      "title": "Intermittent Office Wi-Fi",
+      "description": "Wi-Fi in the main lobby is dropping signal intermittently. Wireless coverage issue — possible channel interference affecting lobby access points.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Wi-Fi coverage — Network"
+    },
+    {
+      "id": "F03",
+      "title": "Server Room Cooling Alert",
+      "description": "DC-B HVAC unit reporting Compressor Failure. Server room temperature rising above 28°C — facility hardware emergency.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2", "3"],
+      "notes": "HVAC / datacenter hardware"
+    },
+    {
+      "id": "F04",
+      "title": "Report Export Timeout",
+      "description": "Quarterly Financial Report export hangs in the reporting web application and returns HTTP 504 Gateway Timeout. Backend export job fails — application timeout, not a password or access request.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "App export job / async processing"
+    },
+    {
+      "id": "F05",
+      "title": "Mobile App Login Loop",
+      "description": "iOS mobile application logs users out after every app suspension even when the session token is still valid. Auth session persistence bug in the mobile app wrapper.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Mobile app auth bug"
+    },
+    {
+      "id": "F06",
+      "title": "Broken CSS on Dashboard",
+      "description": "Admin Dashboard web application UI is completely unstyled. CSS asset files are not loading from the deployment CDN path after the latest release.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Web UI / deployment config"
+    },
+    {
+      "id": "F07",
+      "title": "Account Lockout - Repeated",
+      "description": "Security incident: user admin_jdoe locked out 4 times today despite correct password entry. Suspected malicious background service attempting repeated authentication.",
+      "urgency": "medium",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Suspected auth attack"
+    },
+    {
+      "id": "F08",
+      "title": "S3 Bucket Public Exposure",
+      "description": "Security monitor detected S3 bucket dev-logs-raw is publicly exposed. Unauthorized data access risk — apply Block Public Access and audit bucket logs immediately.",
+      "urgency": "medium",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Cloud security exposure"
+    },
+    {
+      "id": "F09",
+      "title": "Requested sudo access",
+      "description": "Access Management request: developer needs temporary sudo access to the prod-k8s-master node to investigate a bug. Standard privileged-access approval workflow — not an active breach.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2", "3"],
+      "notes": "Privileged access provisioning"
+    },
+    {
+      "id": "F10",
+      "title": "Query Performance Degradation",
+      "description": "PostgreSQL database query performance degradation: main Users table SELECT takes 12 seconds, previously 200ms. Suspect missing indices on the created_at column — run ANALYZE.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "SQL performance / indexing"
+    }
+  ]
+}

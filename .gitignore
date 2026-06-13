@@ -8,7 +8,15 @@ __pycache__/
 
 data/app.db
 data/chroma/
+data/embedding_cache.json
 *.db
+
+docs/*.pdf
+docs/master50_run.log
+data/chroma_ingest.log
+data/chroma_reingest.log
+docs/set_master50_results.json
+docs/set_smoke10_results.json
 
 .DS_Store
 .idea/

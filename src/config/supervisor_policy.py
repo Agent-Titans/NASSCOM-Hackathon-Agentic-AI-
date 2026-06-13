@@ -36,6 +36,7 @@ class SupervisorPolicy:
     hand1_playbook: Hand1PlaybookPolicy
     apply_similarity_hand1_cap: bool
     force_hand3_categories: tuple[str, ...]
+    urgency_min_hand: dict[str, str]
 
 
 def _load_rules(path: Path) -> dict:
@@ -60,6 +61,15 @@ def get_supervisor_policy() -> SupervisorPolicy:
         min_source_hand=str(playbook_raw.get("min_source_hand", "1")),
         min_similarity=float(playbook_raw.get("min_similarity", 0.55)),
     )
+    urgency_raw = cfg.get("urgency_min_hand", {})
+    urgency_min_hand = {
+        str(k).lower(): str(v)
+        for k, v in urgency_raw.items()
+        if str(v) in ("1", "2", "3")
+    }
+    if not urgency_min_hand:
+        urgency_min_hand = {"low": "1", "medium": "1", "high": "2"}
+
     return SupervisorPolicy(
         mode=mode,
         lld_section=str(cfg.get("lld_section", "#supervisor-agent")),
@@ -67,7 +77,15 @@ def get_supervisor_policy() -> SupervisorPolicy:
         hand1_playbook=playbook,
         apply_similarity_hand1_cap=bool(cfg.get("apply_similarity_hand1_cap", False)),
         force_hand3_categories=tuple(rules.get("policy_force_hand3_categories", [])),
+        urgency_min_hand=urgency_min_hand,
     )
+
+
+def min_hand_for_urgency(urgency: str | None) -> str:
+    """Minimum Hand tier for ticket urgency (1 < 2 < 3)."""
+    policy = get_supervisor_policy()
+    key = (urgency or "medium").strip().lower()
+    return policy.urgency_min_hand.get(key, policy.urgency_min_hand.get("medium", "1"))
 
 
 def matches_hand1_playbook(

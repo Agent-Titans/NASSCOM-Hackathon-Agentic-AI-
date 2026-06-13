@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capgemini Technology — Routing Test Report</title>
+<style>
+  :root { --pass: #0d7a3e; --fail: #c0392b; --bg: #f4f6f8; --card: #fff; --border: #dde3ea; --accent: #0070ad; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a1a2e; padding: 2rem; line-height: 1.5; }
+  .header { background: linear-gradient(135deg, var(--accent) 0%, #12abdb 50%, #1a1a2e 100%); color: #fff; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .header p { opacity: 0.9; font-size: 0.95rem; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px; }
+  .stat .num { font-size: 1.75rem; font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.pass .num { color: var(--pass); }
+  .stat.fail .num { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 0.9rem; }
+  th { background: var(--accent); color: #fff; padding: 0.75rem 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr.pass td { background: #f0faf4; }
+  tr.fail td { background: #fef5f4; }
+  tr:hover td { filter: brightness(0.97); }
+  .desc { max-width: 340px; color: #444; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+  .badge.pass { background: #d4edda; color: var(--pass); }
+  .badge.fail { background: #f8d7da; color: var(--fail); }
+  .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Capgemini Technology — Routing Test Report</h1>
+  <p>50 consulting & delivery IT helpdesk scenarios · Set CG</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="num">50</div><div class="lbl">Total</div></div>
+  <div class="stat pass"><div class="num">42</div><div class="lbl">Passed</div></div>
+  <div class="stat fail"><div class="num">8</div><div class="lbl">Failed</div></div>
+  <div class="stat pass"><div class="num">84%</div><div class="lbl">Pass Rate</div></div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Title</th><th>Description</th>
+      <th>Exp Hand</th><th>Exp Dept</th><th>Act Hand</th><th>Act Dept</th><th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class="pass">
+  <td>CG01</td>
+  <td><strong>Cannot Login to Capgemini MyWizard Portal</strong></td>
+  <td class="desc">Cannot login to Capgemini MyWizard employee portal after password reset. Self-service portal shows 'Invalid credentials'. Need access to submit weekly timesheet before Friday cutoff.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG02</td>
+  <td><strong>Client VPN FortiClient Connection Failed Error 201</strong></td>
+  <td class="desc">FortiClient VPN to client Barclays environment fails with Error 201 authentication failed. Required for sprint demo with client stakeholders at 3 PM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG03</td>
+  <td><strong>Ransomware Detected on Project Laptop</strong></td>
+  <td class="desc">Security incident: CrowdStrike detected ransomware encryption on developer laptop. Project source code folder files renamed with .encrypted extension. Machine isolated from network.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG04</td>
+  <td><strong>Company Laptop Screen Flickering After Dock Connect</strong></td>
+  <td class="desc">Capgemini-issued laptop screen flickers when connected to USB-C dock. Undocked display is fine. Affects daily client standup presentations.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG05</td>
+  <td><strong>SAP S4HANA Transport Import Failed in QA</strong></td>
+  <td class="desc">SAP S4HANA transport import failed in client QA system with error 'Import cancelled due to object lock'. Blocking UAT sign-off for finance module.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG06</td>
+  <td><strong>PostgreSQL Connection Pool Exhausted on Microservice</strong></td>
+  <td class="desc">PostgreSQL connection pool exhausted on client-order-service. API returning HTTP 500 errors. All 50 connections in use, no idle connections available.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG07</td>
+  <td><strong>New Contractor Okta and Jira Provisioning</strong></td>
+  <td class="desc">New contractor joining client agile team Monday — need Okta SSO account, Jira project access, Confluence space, and client VPN profile per onboarding form ONB-CG-331.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG08</td>
+  <td><strong>Floor Printer Paper Jam Cannot Print Deliverable</strong></td>
+  <td class="desc">HP printer on Bangalore EPIP campus Floor 5 has paper jam. Red jam light on, print queue stuck with 12 documents including client status report.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG09</td>
+  <td><strong>Microsoft Teams Breakout Rooms Not Working</strong></td>
+  <td class="desc">Microsoft Teams breakout rooms fail to open during client workshop. Organizer sees 'Something went wrong' error. Main meeting audio works fine.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG10</td>
+  <td><strong>Firewall Whitelist Client API Endpoint Port 8443</strong></td>
+  <td class="desc">Need firewall rule to whitelist client API endpoint payments.clientcorp.com on port 8443 from Capgemini dev subnet. Approved in change request CR-CG-2290.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG11</td>
+  <td><strong>Phishing Email Mimicking Capgemini HR Payroll</strong></td>
+  <td class="desc">Security incident: multiple consultants received phishing email mimicking Capgemini HR payroll with malicious link. Four employees clicked before IT broadcast warning.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG12</td>
+  <td><strong>Oracle Database Tablespace ORADATA 97 Percent Full</strong></td>
+  <td class="desc">Oracle database ORADATA tablespace at 97% on client production DB. Batch jobs failing with ORA-01653. Client SLA breach risk for nightly processing.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG13</td>
+  <td><strong>Resigned Consultant Revoke All Client Access</strong></td>
+  <td class="desc">Consultant resigned effective today — immediate offboarding: disable AD, revoke Okta, client VPN, GitHub org, Jira, and ServiceNow access per HR exit ticket.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG14</td>
+  <td><strong>Campus Wi-Fi Authentication Failing Pune Hinjewadi</strong></td>
+  <td class="desc">Corporate Wi-Fi at Pune Hinjewadi campus rejects valid credentials with 'Authentication server timeout'. Wired port on same desk works normally.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG15</td>
+  <td><strong>Salesforce Lightning Page Blank After Sandbox Refresh</strong></td>
+  <td class="desc">Salesforce Lightning Experience loads blank white page after client sandbox refresh. Classic view works when switched manually. Affects CRM demo for client.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG16</td>
+  <td><strong>Laptop Battery Drains to Zero in 30 Minutes</strong></td>
+  <td class="desc">Company laptop battery drains from 100% to 0% in 30 minutes even when plugged in. Power adapter connected, charging LED flickers. Need replacement for client site visit.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG17</td>
+  <td><strong>Production API Keys Exposed in GitLab Repository</strong></td>
+  <td class="desc">Security incident: GitLab secret detection found production AWS access keys in client project repository. Merge request was approved by 3 reviewers before alert.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG18</td>
+  <td><strong>MongoDB Replica Set Secondary Not Syncing</strong></td>
+  <td class="desc">MongoDB replica set secondary node stuck in RECOVERING state. Primary node healthy but read queries failing on secondary. Client reporting dashboard stale.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG19</td>
+  <td><strong>ServiceNow Incident Form Submit Button Spins</strong></td>
+  <td class="desc">ServiceNow incident form submit spins indefinitely after filling all mandatory fields. No error message. Other ServiceNow modules load correctly in same session.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG20</td>
+  <td><strong>MFA Authenticator Lost Need Device Re-Enrollment</strong></td>
+  <td class="desc">Lost phone with Microsoft Authenticator MFA app. Cannot login to corporate email or client VPN until new device enrolled. Manager confirmed identity via HR.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG21</td>
+  <td><strong>MPLS Circuit Down Mumbai to Client Data Center</strong></td>
+  <td class="desc">MPLS WAN circuit between Mumbai delivery center and client data center down since 7 AM IST. Offshore team cannot reach client staging environment.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG22</td>
+  <td><strong>Docker Desktop Won't Start After Windows Update</strong></td>
+  <td class="desc">Docker Desktop fails to start with WSL2 error after Windows 11 KB update. Needed for local container development on client microservices project.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG23</td>
+  <td><strong>USB Headset Microphone Not Working on Teams Calls</strong></td>
+  <td class="desc">Jabra USB headset microphone not detected in Microsoft Teams calls. Headset works in Windows sound settings test. Colleagues cannot hear me on client calls.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG24</td>
+  <td><strong>Snowflake Warehouse Suspended Credit Quota Hit</strong></td>
+  <td class="desc">Snowflake analytics warehouse WH_CLIENT suspended — credit quota exhausted. Client ETL pipelines and Tableau dashboards failing since midnight batch run.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG25</td>
+  <td><strong>Unauthorized RDP Login From Foreign IP Address</strong></td>
+  <td class="desc">Security incident: SIEM alert shows successful RDP login to project jump server from IP 185.220.101.47 at 2:30 AM IST. No approved travel for that user.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG26</td>
+  <td><strong>Power BI Report Refresh Failed Gateway Offline</strong></td>
+  <td class="desc">On-premises Power BI data gateway shows offline in Power BI Service. All client dashboards failed scheduled refresh since 6 AM IST.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG27</td>
+  <td><strong>NetApp Snapshot Restore for Deleted Project Files</strong></td>
+  <td class="desc">Client project files accidentally deleted from NetApp NAS share. Need snapshot restore from last night 11 PM before client audit on Thursday.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG28</td>
+  <td><strong>Intune Device Non-Compliant Blocking Outlook Mobile</strong></td>
+  <td class="desc">Intune marks iPhone as non-compliant — Outlook mobile cannot sync email. Device encryption on but policy shows false positive jailbreak detection.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="fail">
+  <td>CG29</td>
+  <td><strong>DHCP Scope Exhausted Floor 8 Bangalore Campus</strong></td>
+  <td class="desc">Users on Bangalore EPIP campus Floor 8 report 'No IP address assigned'. DHCP scope 10.28.0.0/24 shows zero available leases since morning.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG30</td>
+  <td><strong>Jenkins CI Pipeline Maven Build Failing</strong></td>
+  <td class="desc">Jenkins CI pipeline for client payment microservice failing at Maven compile step. Dependency resolution error. Last successful build 3 days ago.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>CG31</td>
+  <td><strong>Smart Badge Denied at Mumbai Office Main Gate</strong></td>
+  <td class="desc">Employee smart badge denied at Mumbai Airoli campus main gate turnstile with red LED. Badge works for cafeteria but not building entry since reissue.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>CG32</td>
+  <td><strong>Redis Cache Cluster Node Down Connection Timeout</strong></td>
+  <td class="desc">Redis cluster node redis-cache-03 down. Application logs show connection timeouts. API latency increased from 200ms to 5 seconds on client portal.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG33</td>
+  <td><strong>Laptop Blue Screen MEMORY_MANAGEMENT After Update</strong></td>
+  <td class="desc">Company laptop BSOD with stop code MEMORY_MANAGEMENT after Windows update. Cannot boot into Windows. Need urgent replacement for client workshop tomorrow.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG34</td>
+  <td><strong>Azure DevOps Pipeline Release Stuck Deploying</strong></td>
+  <td class="desc">Azure DevOps release pipeline stuck at 'Deploying to staging' for 4 hours. No error in logs. Client UAT environment unreachable from pipeline agent.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG35</td>
+  <td><strong>DLP Alert Sensitive Client Data in Email Attachment</strong></td>
+  <td class="desc">Security incident: DLP flagged email with client PII data sent to personal Gmail address. Employee attached customer database export by mistake.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG36</td>
+  <td><strong>Cisco AnyConnect VPN Error 807 From Home Office</strong></td>
+  <td class="desc">Cisco AnyConnect VPN fails with Error 807 from home office. Cannot reach Capgemini internal tools or client staging server. Internet works fine.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG37</td>
+  <td><strong>SharePoint Document Library Upload Fails Large File</strong></td>
+  <td class="desc">SharePoint client project site upload fails at 95% for 1.5GB deliverable archive. Error 'Something went wrong'. Smaller files upload successfully.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG38</td>
+  <td><strong>Dual Monitor Second Screen Not Detected on Dock</strong></td>
+  <td class="desc">Second Dell monitor not detected when laptop connected to USB-C dock. Display settings show one screen only. Needed for dual-screen client development.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG39</td>
+  <td><strong>MySQL Replication Lag 4 Hours on Reporting DB</strong></td>
+  <td class="desc">MySQL replication lag 4 hours on client reporting replica. MIS dashboards showing stale data. SQL thread running but relay log apply slow.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG40</td>
+  <td><strong>Grant Jira Admin Access for Project Lead</strong></td>
+  <td class="desc">Project lead needs Jira administrator access for client project board per approved ServiceNow request. Temporary 30-day elevation with manager sign-off.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG41</td>
+  <td><strong>Kafka Consumer Lag 500K Messages Trade Feed</strong></td>
+  <td class="desc">Apache Kafka consumer group lag exceeding 500,000 messages on client trade-feed topic. Downstream analytics not receiving real-time data.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG42</td>
+  <td><strong>Veeam Backup Job Failed Repository Out of Space</strong></td>
+  <td class="desc">Veeam backup job Nightly-VM-Client failed — backup repository volume full. Last successful backup 5 days ago. Client DR compliance at risk.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG43</td>
+  <td><strong>Webex Desktop One-Way Audio on Client Call</strong></td>
+  <td class="desc">Cisco Webex desktop — client hears me but I cannot hear them on daily scrum. Webex browser version has two-way audio on same laptop.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG44</td>
+  <td><strong>PCI Card Numbers Found in Application Debug Logs</strong></td>
+  <td class="desc">Security incident: Splunk detected full credit card numbers in payment service debug logs on app-pay-stg-01. Debug logging left enabled in staging.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG45</td>
+  <td><strong>Internal DNS Not Resolving client.corp.local</strong></td>
+  <td class="desc">Users cannot resolve client.corp.local hostnames since 10 AM IST. External websites load fine. Affects client API integration testing.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG46</td>
+  <td><strong>AutoCAD License Checkout Failed FlexLM Timeout</strong></td>
+  <td class="desc">AutoCAD 2024 license checkout failed — FlexLM server timeout. Cannot open client architectural drawings for review. Server ping succeeds.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG47</td>
+  <td><strong>Zebra Label Printer Offline in Project Lab</strong></td>
+  <td class="desc">Zebra ZT410 label printer shows offline in Windows. Project lab cannot print shipping labels for client hardware deployment.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG48</td>
+  <td><strong>Elasticsearch Cluster Red Status Shard Unassigned</strong></td>
+  <td class="desc">Elasticsearch cluster status RED — 12 unassigned shards on client search index. Product search API returning empty results on client e-commerce portal.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG49</td>
+  <td><strong>Citrix VDI Published App Disconnects Every 15 Min</strong></td>
+  <td class="desc">Citrix Workspace published client SAP app disconnects every 15 minutes with 'Connection to server lost'. Other published apps work normally.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>CG50</td>
+  <td><strong>SSL Certificate Expired on Client Portal Staging</strong></td>
+  <td class="desc">Security incident: client staging portal shows NET::ERR_CERT_DATE_INVALID. SSL certificate expired yesterday. Client UAT testing blocked.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr>
+  </tbody>
+</table>
+<p class="footer">Generated by SAARTHI routing test pipeline · Gemini classifier + RAG</p>
+</body>
+</html>

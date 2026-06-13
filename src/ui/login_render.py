@@ -1,4 +1,4 @@
-"""Login — IntelliQ welcome home + email/password sign-in."""
+"""Login — SAARTHI welcome home + email/password sign-in."""
 from __future__ import annotations
 
 import html
@@ -26,12 +26,6 @@ _FEATURE_CARDS = (
     ("badge-escalated", "Hand 3", "Expert Escalation",
      "Policy-driven specialist review when confidence is low."),
 )
-
-
-def _init_theme_state() -> bool:
-    if "dark_mode" not in st.session_state:
-        st.session_state.dark_mode = False
-    return bool(st.session_state.dark_mode)
 
 
 def _theme_toggle() -> bool:
@@ -94,8 +88,27 @@ def _session_login(user: User) -> None:
     st.rerun()
 
 
-def _welcome_hero_html() -> str:
+def _brand_wordmark_html(*, size: str = "hero") -> str:
     name = html.escape(PRODUCT_NAME)
+    return (
+        f'<span class="brand-wordmark brand-wordmark-{size}">'
+        f'<span class="brand-name">{name}</span><span class="brand-dot">.</span>'
+        "</span>"
+    )
+
+
+def _brand_title_html(*, eyebrow: str = "") -> str:
+    eyebrow_html = (
+        f'<p class="login-eyebrow">{html.escape(eyebrow)}</p>' if eyebrow else ""
+    )
+    return (
+        f'<div class="brand-lockup">{eyebrow_html}'
+        f'<p class="login-title">{_brand_wordmark_html(size="hero")}</p>'
+        "</div>"
+    )
+
+
+def _welcome_hero_html() -> str:
     tagline = html.escape(TAGLINE)
     caption = html.escape(PRODUCT_ABBREVIATION)
     warm = retrieval_warm_status()
@@ -108,13 +121,8 @@ def _welcome_hero_html() -> str:
         )
     return (
         '<div class="login-page-root welcome-scope">'
-        '<div class="login-hero-glow" aria-hidden="true"></div>'
         '<div class="hero-container">'
-        '<div class="brand-lockup">'
-        '<p class="login-eyebrow">WELCOME TO</p>'
-        f'<h1 class="login-title"><span class="brand-name">{name}</span>'
-        '<span class="brand-dot">.</span></h1>'
-        "</div>"
+        f"{_brand_title_html(eyebrow='WELCOME TO')}"
         f'<p class="login-tagline">{tagline}</p>'
         f'<p class="login-caption">{caption}</p>'
         f"{warm_html}"
@@ -141,27 +149,36 @@ def _welcome_tail_html() -> str:
     )
 
 
-def _signin_shell_header_html() -> str:
-    brand = html.escape(PRODUCT_NAME)
+def _signin_topnav_html() -> str:
+    """Brand row above the card — SAARTHI wordmark."""
     return (
-        '<div class="signin-scope signin-topbar">'
-        f'<span class="signin-topbar-brand">{brand}</span>'
+        '<span class="signin-layout-marker" aria-hidden="true"></span>'
+        '<div class="signin-scope signin-topnav-outside">'
+        f'<div class="signin-topnav">{_brand_wordmark_html(size="nav")}</div>'
         "</div>"
-        '<div class="signin-scope signin-card-header">'
+    )
+
+
+def _signin_card_top_html() -> str:
+    return (
+        '<span class="signin-card-shell-marker" aria-hidden="true"></span>'
+        '<div class="signin-scope signin-card-top">'
         '<div class="signin-lock-icon" aria-hidden="true">'
-        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" '
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" '
         'stroke="#fff" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/>'
         '<path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg></div>'
-        '<h1 class="signin-title">Sign In</h1>'
-        '<p class="signin-subtitle">Enter your credentials to access your account.</p>'
+        '<p class="signin-heading">Sign In</p>'
+        '<p class="signin-subtitle">Enter your credentials to access your account</p>'
         "</div>"
     )
 
 
 def _render_auth_chrome(scope: str = "welcome") -> bool:
-    st.markdown('<div class="login-toggle-wrap">', unsafe_allow_html=True)
-    dark = _theme_toggle()
-    st.markdown("</div>", unsafe_allow_html=True)
+    dark = bool(st.session_state.get("dark_mode", False))
+    if scope != "signin":
+        st.markdown('<div class="login-toggle-wrap">', unsafe_allow_html=True)
+        dark = _theme_toggle()
+        st.markdown("</div>", unsafe_allow_html=True)
     st.html(login_css(dark))
     return dark
 
@@ -189,63 +206,59 @@ def _lookup_user(users: list[User], email: str) -> User | None:
 def render_signin_step(users: list[User]) -> None:
     _render_auth_chrome("signin")
 
-    _, center, _ = st.columns([1, 1.1, 1])
-    with center:
-        st.markdown('<div class="signin-scope signin-page">', unsafe_allow_html=True)
-        st.markdown(_signin_shell_header_html(), unsafe_allow_html=True)
+    st.markdown(_signin_topnav_html(), unsafe_allow_html=True)
+    st.markdown(_signin_card_top_html(), unsafe_allow_html=True)
 
-        error = st.session_state.get("auth_login_error")
-        if error:
-            st.markdown(
-                f'<p class="signin-scope signin-error">{html.escape(error)}</p>',
-                unsafe_allow_html=True,
-            )
+    error = st.session_state.get("auth_login_error")
+    if error:
+        st.markdown(
+            f'<p class="signin-scope signin-error">{html.escape(error)}</p>',
+            unsafe_allow_html=True,
+        )
 
-        with st.form("signin_form", clear_on_submit=False, border=False):
-            email = st.text_input(
-                "Email Address",
-                placeholder="you@example.com",
-                key="signin_email",
-            )
-            password = st.text_input(
-                "Password",
-                type="password",
-                placeholder="••••••••",
-                key="signin_password",
-            )
-            show_pw = st.checkbox("Show password", key="signin_show_password")
-            if show_pw:
-                st.caption(f"Password: {DEFAULT_DEMO_PASSWORD}")
+    with st.form("signin_form", clear_on_submit=False, border=False):
+        st.markdown(
+            '<span class="signin-form-marker" aria-hidden="true"></span>',
+            unsafe_allow_html=True,
+        )
+        email = st.text_input(
+            "Email Address",
+            placeholder="you@example.com",
+            key="signin_email",
+        )
+        password = st.text_input(
+            "Password",
+            type="password",
+            placeholder="••••••••",
+            key="signin_password",
+        )
+        submitted = st.form_submit_button("Sign In", type="primary", use_container_width=True)
 
-            submitted = st.form_submit_button("Sign In", type="primary", use_container_width=True)
+        if submitted:
+            if not email.strip() or not password:
+                st.session_state["auth_login_error"] = "Email and password are required."
+                st.rerun()
 
-            if submitted:
-                if not email.strip() or not password:
-                    st.session_state["auth_login_error"] = "Email and password are required."
-                    st.rerun()
+            if not verify_demo_password(password):
+                st.session_state["auth_login_error"] = "Invalid email or password."
+                st.rerun()
 
-                if not verify_demo_password(password):
-                    st.session_state["auth_login_error"] = "Invalid email or password."
-                    st.rerun()
+            user = _lookup_user(users, email)
+            if user is None:
+                st.session_state["auth_login_error"] = (
+                    "Unknown email. Use your assigned employee or agent address."
+                )
+                st.rerun()
 
-                user = _lookup_user(users, email)
-                if user is None:
-                    st.session_state["auth_login_error"] = (
-                        "Unknown email. Use your assigned employee or agent address."
-                    )
-                    st.rerun()
+            norm = normalize_email(user.email)
+            if norm in EMPLOYEE_PORTAL_EMAILS and user.role != "requester":
+                st.session_state["auth_login_error"] = "Invalid email or password."
+                st.rerun()
+            if norm in AGENT_WORKSPACE_EMAILS and user.role not in ("assignee", "admin"):
+                st.session_state["auth_login_error"] = "Invalid email or password."
+                st.rerun()
 
-                norm = normalize_email(user.email)
-                if norm in EMPLOYEE_PORTAL_EMAILS and user.role != "requester":
-                    st.session_state["auth_login_error"] = "Invalid email or password."
-                    st.rerun()
-                if norm in AGENT_WORKSPACE_EMAILS and user.role not in ("assignee", "admin"):
-                    st.session_state["auth_login_error"] = "Invalid email or password."
-                    st.rerun()
-
-                _session_login(user)
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            _session_login(user)
 
 
 def render_login_page() -> None:

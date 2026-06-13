@@ -10,21 +10,32 @@ from src.db.session import get_session_factory, init_db  # noqa: E402
 
 # (email, role, department) — emails stored lowercase; default password 1234 (see demo_auth)
 SEED_USERS = [
-    # Employee portal
+    # Employee portal (Use Case requesters)
     ("pallavi@user", "requester", None),
     ("gajanan@user", "requester", None),
     ("imran@user", "requester", None),
     ("naveen@user", "requester", None),
     ("santhosh@user", "requester", None),
-    # Agent workspace
+    ("requester@demo.local", "requester", None),
+    # Agent workspace — one queue per Use Case department (+ backups)
     ("sree@employee", "assignee", "Hardware"),
+    ("kiran@employee", "assignee", "Hardware"),
+    ("vikram@employee", "assignee", "Hardware"),
     ("subbu@employee", "assignee", "Software"),
     ("sruthi@employee", "assignee", "Software"),
+    ("meena@employee", "assignee", "Software"),
+    ("anita@employee", "assignee", "Software"),
     ("shashi@employee", "assignee", "Network"),
+    ("rahul@employee", "assignee", "Network"),
+    ("deepak@employee", "assignee", "Network"),
     ("narsimha@employee", "assignee", "SecOps"),
     ("chandana@employee", "assignee", "SecOps"),
+    ("rohan@employee", "assignee", "SecOps"),
     ("satya@employee", "assignee", "Access Management"),
+    ("meera@employee", "assignee", "Access Management"),
     ("sagar@employee", "assignee", "DBA"),
+    ("priya@employee", "assignee", "DBA"),
+    ("arjun@employee", "assignee", "DBA"),
     ("admin@employee", "admin", None),
 ]
 
@@ -42,7 +53,7 @@ def main() -> None:
                 continue
             session.add(User(email=email, role=role, department=department))
 
-        # Retire pre-IntelliQ demo assignees (e.g. software@demo.local) left in SQLite.
+        # Retire pre-SAARTHI demo assignees (e.g. software@demo.local) left in SQLite.
         stale_assignees = (
             session.query(User)
             .filter(User.role == "assignee", ~User.email.in_(canonical_assignees))

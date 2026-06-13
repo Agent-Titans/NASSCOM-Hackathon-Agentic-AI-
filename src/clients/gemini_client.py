@@ -73,6 +73,55 @@ class GeminiClient:
             logger.warning("Gemini embed failed: %s", exc)
             return None
 
+    def embed_texts_batch(
+        self,
+        texts: list[str],
+        *,
+        timeout: int = 90,
+    ) -> list[Optional[list[float]]]:
+        """Batch embed via Gemini batchEmbedContents (fewer HTTP round-trips)."""
+        if not self.available or not texts:
+            return []
+        model = self.settings.gemini_model_embed
+        key = self.settings.google_api_key
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model}:batchEmbedContents?key={key}"
+        )
+        body = {
+            "requests": [
+                {
+                    "model": f"models/{model}",
+                    "content": {"parts": [{"text": text[:8000]}]},
+                }
+                for text in texts
+            ]
+        }
+        try:
+            data = json.dumps(body).encode("utf-8")
+            req = urllib.request.Request(
+                url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                raw = json.loads(resp.read().decode())
+            embeddings = raw.get("embeddings") or []
+            out: list[Optional[list[float]]] = []
+            for item in embeddings:
+                values = item.get("values") if isinstance(item, dict) else None
+                out.append([float(v) for v in values] if values else None)
+            if len(out) != len(texts):
+                logger.warning(
+                    "Gemini batch embed size mismatch: sent %d got %d",
+                    len(texts),
+                    len(out),
+                )
+                while len(out) < len(texts):
+                    out.append(None)
+            return out[: len(texts)]
+        except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError, KeyError, TypeError) as exc:
+            logger.warning("Gemini batch embed failed: %s", exc)
+            return [None] * len(texts)
+
     def scan_prompt_injection(self, ticket_text: str) -> str:
         """
         Layer 2 defensive guardrail — treat ticket body as static untrusted data.

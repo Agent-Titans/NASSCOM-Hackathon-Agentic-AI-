@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "description": "Use Case 1 golden set — expected category, hand, and department after full pipeline.",
+  "thresholds": {
+    "classification_accuracy": 0.85,
+    "routing_accuracy": 0.85,
+    "hand_accuracy": 0.85
+  },
+  "cases": [
+    {
+      "id": "aws_secret_leak",
+      "title": "AWS key exposed",
+      "description": "Urgent security cleanup needed for public repository. I accidentally pushed my raw AWS secret access key to a public GitHub branch.",
+      "urgency": "high",
+      "expect": { "category": "Security", "hand": "3", "department": "SecOps" }
+    },
+    {
+      "id": "vpn_breach",
+      "title": "VPN breach",
+      "description": "Possible security breach on VPN - unauthorized access detected on admin account",
+      "urgency": "high",
+      "expect": { "category": "Security", "hand": "3", "department": "SecOps" }
+    },
+    {
+      "id": "windows_password_reset",
+      "title": "Windows password reset",
+      "description": "How do I reset my Windows login password? I am locked out of my active directory account and need the link to reset my corporate password",
+      "expect": { "category": "Access Management", "hand": "1", "department": "Access Management" }
+    },
+    {
+      "id": "forgot_portal_password",
+      "title": "Forgot password",
+      "description": "I forgot my password and cannot login to the company portal",
+      "expect": { "category": "Access Management", "hand": "1", "department": "Access Management" }
+    },
+    {
+      "id": "chrome_cache_h1",
+      "title": "Chrome slow",
+      "description": "Google Chrome spins forever on any website. Other apps have internet. Started after a Windows update this morning.",
+      "expect": { "category": "Application", "hand": "1", "department": "Software" }
+    },
+    {
+      "id": "printer_jam",
+      "title": "Printer jam",
+      "description": "Printer paper jammed in 2nd floor printer in office",
+      "expect": { "category": "Infrastructure", "hand": "1", "department": "Hardware" }
+    },
+    {
+      "id": "laptop_charger",
+      "title": "Charger not working",
+      "description": "Laptop charger not charging, no light on power adapter",
+      "expect": { "category": "Infrastructure", "hand": "2", "department": "Hardware" }
+    },
+    {
+      "id": "docker_hypervisor",
+      "title": "Docker hypervisor",
+      "description": "Docker Desktop failing to start / Hypervisor error. Hardware-assisted virtualization must be enabled in the BIOS. It worked fine yesterday before the system security policy updates ran overnight.",
+      "expect": { "category": "Infrastructure", "hand": "2", "department": "Hardware" }
+    },
+    {
+      "id": "sql_null_migration",
+      "title": "SQL null values",
+      "description": "SQL query returns null values in production database table after migration",
+      "expect": { "category": "Database", "hand": "2", "department": "DBA" }
+    },
+    {
+      "id": "storage_nas_backup",
+      "title": "NAS backup failed",
+      "description": "Storage backup failed last night — NAS share quota may be full. Disk archive job error.",
+      "expect": { "category": "Storage", "hand": "1", "department": "DBA" }
+    },
+    {
+      "id": "vpn_error_807",
+      "title": "VPN error 807",
+      "description": "I'm getting an Error 807 when I try to start my VPN client.",
+      "expect": { "category": "Network", "hand": "1", "department": "Network" }
+    },
+    {
+      "id": "ip_whitelist_sql",
+      "title": "IP whitelist for SQL",
+      "description": "I need someone to whitelist my IP so I can reach the SQL database.",
+      "expect": { "category": "Network", "hand": "2", "department": "Network" }
+    },
+    {
+      "id": "cognos_db2",
+      "title": "Cognos DB2 config",
+      "description": "[Other] Need help to configure DB2 details for IBM Cognos framework manager",
+      "expect": { "category": "Network", "hand": "2", "department": "Network" }
+    },
+    {
+      "id": "outlook_crash",
+      "title": "Outlook crash",
+      "description": "Microsoft Outlook application crashes on startup with error code after latest Office patch",
+      "expect": { "category": "Application", "hand": "1", "department": "Software" }
+    },
+    {
+      "id": "sharepoint_upload",
+      "title": "SharePoint upload",
+      "description": "SharePoint application upload fails with permission denied on team site",
+      "expect": { "category": "Storage", "hand": "2", "department": "DBA" }
+    },
+    {
+      "id": "laptop_fan_noise",
+      "title": "Laptop fan noise",
+      "description": "Laptop fan loud after update, overheating on Hardware team laptop",
+      "expect": { "category": "Infrastructure", "hand": "2", "department": "Hardware" }
+    }
+  ]
+}

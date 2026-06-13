@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "description": "20 fresh IT office scenarios (set B) — Gemini embedding test only",
+  "cases": [
+    {
+      "id": "D01",
+      "title": "Zoom camera shows black screen",
+      "description": "In Zoom meetings my laptop camera shows a black screen. Other participants cannot see me. Camera LED is on. Issue started after last Windows update.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"]
+    },
+    {
+      "id": "D02",
+      "title": "Excel macros disabled by policy",
+      "description": "Excel spreadsheets with macros stopped working. Message says macros have been disabled by organization policy. I need macros for monthly finance reporting.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" }
+    },
+    {
+      "id": "D03",
+      "title": "Possible ransomware on file server",
+      "description": "Files on the shared drive have strange .locked extensions and a ransom note appeared. Several teams cannot open documents. Need urgent security help.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" }
+    },
+    {
+      "id": "D04",
+      "title": "Cannot join guest WiFi network",
+      "description": "Visitor guest WiFi CORP-GUEST asks for credentials I do not have. Conference room iPad cannot connect for client demo in 30 minutes.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" }
+    },
+    {
+      "id": "D05",
+      "title": "Laptop stolen — remote wipe needed",
+      "description": "My company MacBook was stolen from a taxi. I need IT to remotely wipe the device and revoke access to corporate email and VPN immediately.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" }
+    },
+    {
+      "id": "D06",
+      "title": "OneDrive sync conflict loop",
+      "description": "OneDrive keeps showing sync conflict on shared project folder. Files duplicate with computer name suffix every hour. Cannot collaborate with team.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" }
+    },
+    {
+      "id": "D07",
+      "title": "Jira SSO login fails",
+      "description": "Jira shows SAML authentication error when I sign in with corporate SSO. Confluence works fine. Need access to sprint board today.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"]
+    },
+    {
+      "id": "D08",
+      "title": "Keyboard keys double-typing",
+      "description": "Several keys on my company laptop keyboard register double characters. External USB keyboard works fine. Hardware seems faulty.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" }
+    },
+    {
+      "id": "D09",
+      "title": "PostgreSQL replication lag alert",
+      "description": "Monitoring alert: PostgreSQL replica is 45 minutes behind primary. Reporting dashboards show stale data. DBA attention needed.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" }
+    },
+    {
+      "id": "D10",
+      "title": "Firewall port open request",
+      "description": "Need firewall rule to allow inbound HTTPS from vendor IP 203.0.113.50 to our staging API server for integration testing next week.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" }
+    },
+    {
+      "id": "D11",
+      "title": "UPS beeping after power outage",
+      "description": "Server room UPS beeping continuously after building power blip. Rack servers still up but alarm won't stop.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" }
+    },
+    {
+      "id": "D12",
+      "title": "Intune device compliance block",
+      "description": "Company phone blocked from email — Intune says device is non-compliant because OS patch is missing. Cannot approve MFA requests.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"]
+    },
+    {
+      "id": "D13",
+      "title": "BitLocker recovery key needed",
+      "description": "Windows laptop asks for BitLocker recovery key after motherboard replacement. I do not have the 48-digit key saved.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"]
+    },
+    {
+      "id": "D14",
+      "title": "Remote desktop disconnects every 5 min",
+      "description": "RDP to office workstation drops connection every five minutes with error 0x204. VPN stays connected. Happens from home only.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" }
+    },
+    {
+      "id": "D15",
+      "title": "Add user to email distribution list",
+      "description": "Please add new hire sarah.chen@company.com to the all-engineering@company.com distribution list for announcements.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" }
+    },
+    {
+      "id": "D16",
+      "title": "Kubernetes pod CrashLoopBackOff",
+      "description": "Production namespace payment-api pods in CrashLoopBackOff after last deploy. Logs show OOMKilled. Need platform team escalation.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" }
+    },
+    {
+      "id": "D17",
+      "title": "Badge won't open office door",
+      "description": "My building access badge stopped working at main entrance turnstile. Still works in parking garage. Started this morning.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" }
+    },
+    {
+      "id": "D18",
+      "title": "Salesforce SSO redirect loop",
+      "description": "Salesforce login redirects in endless loop after identity provider change. Cannot access customer accounts for quarterly close.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"]
+    },
+    {
+      "id": "D19",
+      "title": "Antivirus quarantined legitimate tool",
+      "description": "CrowdStrike quarantined our internal dev CLI tool as malware. Build pipeline failing on all agents. Need security review and whitelist.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" }
+    },
+    {
+      "id": "D20",
+      "title": "Monitor wrong resolution after dock",
+      "description": "When I dock my laptop the external 4K monitor stuck at 1024x768 blurry resolution. Undock redock does not fix. Display settings greyed out.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" }
+    }
+  ]
+}

@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master 100 — Multi-Firm Routing Report</title>
+<style>
+  :root { --pass: #0d7a3e; --fail: #c0392b; --bg: #f4f6f8; --card: #fff; --border: #dde3ea; --accent: #1B4F72; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a1a2e; padding: 2rem; line-height: 1.5; }
+  .header { background: linear-gradient(135deg, var(--accent) 0%, #12abdb 50%, #1a1a2e 100%); color: #fff; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .header p { opacity: 0.9; font-size: 0.95rem; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px; }
+  .stat .num { font-size: 1.75rem; font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.pass .num { color: var(--pass); }
+  .stat.fail .num { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 0.9rem; }
+  th { background: var(--accent); color: #fff; padding: 0.75rem 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr.pass td { background: #f0faf4; }
+  tr.fail td { background: #fef5f4; }
+  tr:hover td { filter: brightness(0.97); }
+  .desc { max-width: 340px; color: #444; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+  .badge.pass { background: #d4edda; color: var(--pass); }
+  .badge.fail { background: #f8d7da; color: var(--fail); }
+  .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+  .section-title { margin: 2rem 0 0.5rem; font-size: 1.25rem; color: #1a1a2e; }
+  .section-sub { margin-bottom: 1rem; color: #555; font-size: 0.9rem; max-width: 720px; }
+  .specialists-table th { background: #7c3aed; }
+  .firm-table th { background: #0369a1; }
+  .firm-table { margin-bottom: 1.5rem; max-width: 640px; }
+  .spec-path { color: #5b21b6; font-weight: 600; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Master 100 — Multi-Firm Routing Report</h1>
+  <p>Capgemini · JP Morgan · HSBC · TCS · NASSCOM · Microsoft · Wipro/HCL/Deloitte/Nvidia · Software Office · title+description classifier</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="num">100</div><div class="lbl">Total</div></div>
+  <div class="stat pass"><div class="num">86</div><div class="lbl">Passed</div></div>
+  <div class="stat fail"><div class="num">14</div><div class="lbl">Failed</div></div>
+  <div class="stat pass"><div class="num">86%</div><div class="lbl">Pass Rate</div></div>
+</div>
+
+<h2 class="section-title">Pass rate by firm</h2>
+<table class="firm-table">
+  <thead><tr><th>Firm</th><th>Passed</th><th>Total</th><th>Rate</th></tr></thead>
+  <tbody><tr><td>Capgemini</td><td>16</td><td>20</td><td><strong>80%</strong></td></tr><tr><td>HSBC India</td><td>13</td><td>15</td><td><strong>87%</strong></td></tr><tr><td>JP Morgan</td><td>14</td><td>15</td><td><strong>93%</strong></td></tr><tr><td>Microsoft</td><td>7</td><td>10</td><td><strong>70%</strong></td></tr><tr><td>NASSCOM</td><td>10</td><td>10</td><td><strong>100%</strong></td></tr><tr><td>Software Office</td><td>7</td><td>8</td><td><strong>88%</strong></td></tr><tr><td>TCS</td><td>12</td><td>12</td><td><strong>100%</strong></td></tr><tr><td>Wipro/HCL/Deloitte/Nvidia</td><td>7</td><td>10</td><td><strong>70%</strong></td></tr></tbody>
+</table>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Firm</th><th>Title</th><th>Description</th>
+      <th>Exp Hand</th><th>Exp Dept</th><th>Act Hand</th><th>Act Dept</th><th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class="pass">
+  <td>M001</td>
+  <td>Capgemini</td>
+  <td><strong>Cannot Login to Capgemini MyWizard Portal</strong></td>
+  <td class="desc">Cannot login to Capgemini MyWizard employee portal after password reset. Self-service portal shows 'Invalid credentials'. Need access to submit weekly timesheet before Friday cutoff.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M002</td>
+  <td>Capgemini</td>
+  <td><strong>Client VPN FortiClient Connection Failed Error 201</strong></td>
+  <td class="desc">FortiClient VPN to client Barclays environment fails with Error 201 authentication failed. Required for sprint demo with client stakeholders at 3 PM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M003</td>
+  <td>Capgemini</td>
+  <td><strong>Ransomware Detected on Project Laptop</strong></td>
+  <td class="desc">Security incident: CrowdStrike detected ransomware encryption on developer laptop. Project source code folder files renamed with .encrypted extension. Machine isolated from network.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M004</td>
+  <td>Capgemini</td>
+  <td><strong>Company Laptop Screen Flickering After Dock Connect</strong></td>
+  <td class="desc">Capgemini-issued laptop screen flickers when connected to USB-C dock. Undocked display is fine. Affects daily client standup presentations.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M005</td>
+  <td>Capgemini</td>
+  <td><strong>SAP S4HANA Transport Import Failed in QA</strong></td>
+  <td class="desc">SAP S4HANA transport import failed in client QA system with error 'Import cancelled due to object lock'. Blocking UAT sign-off for finance module.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M006</td>
+  <td>Capgemini</td>
+  <td><strong>PostgreSQL Connection Pool Exhausted on Microservice</strong></td>
+  <td class="desc">PostgreSQL connection pool exhausted on client-order-service. API returning HTTP 500 errors. All 50 connections in use, no idle connections available.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M007</td>
+  <td>Capgemini</td>
+  <td><strong>New Contractor Okta and Jira Provisioning</strong></td>
+  <td class="desc">New contractor joining client agile team Monday — need Okta SSO account, Jira project access, Confluence space, and client VPN profile per onboarding form ONB-CG-331.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M008</td>
+  <td>Capgemini</td>
+  <td><strong>Floor Printer Paper Jam Cannot Print Deliverable</strong></td>
+  <td class="desc">HP printer on Bangalore EPIP campus Floor 5 has paper jam. Red jam light on, print queue stuck with 12 documents including client status report.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M009</td>
+  <td>Capgemini</td>
+  <td><strong>Microsoft Teams Breakout Rooms Not Working</strong></td>
+  <td class="desc">Microsoft Teams breakout rooms fail to open during client workshop. Organizer sees 'Something went wrong' error. Main meeting audio works fine.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M010</td>
+  <td>Capgemini</td>
+  <td><strong>Firewall Whitelist Client API Endpoint Port 8443</strong></td>
+  <td class="desc">Need firewall rule to whitelist client API endpoint payments.clientcorp.com on port 8443 from Capgemini dev subnet. Approved in change request CR-CG-2290.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M011</td>
+  <td>Capgemini</td>
+  <td><strong>Phishing Email Mimicking Capgemini HR Payroll</strong></td>
+  <td class="desc">Security incident: multiple consultants received phishing email mimicking Capgemini HR payroll with malicious link. Four employees clicked before IT broadcast warning.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M012</td>
+  <td>Capgemini</td>
+  <td><strong>Oracle Database Tablespace ORADATA 97 Percent Full</strong></td>
+  <td class="desc">Oracle database ORADATA tablespace at 97% on client production DB. Batch jobs failing with ORA-01653. Client SLA breach risk for nightly processing.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M013</td>
+  <td>Capgemini</td>
+  <td><strong>Resigned Consultant Revoke All Client Access</strong></td>
+  <td class="desc">Consultant resigned effective today — immediate offboarding: disable AD, revoke Okta, client VPN, GitHub org, Jira, and ServiceNow access per HR exit ticket.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M014</td>
+  <td>Capgemini</td>
+  <td><strong>Campus Wi-Fi Authentication Failing Pune Hinjewadi</strong></td>
+  <td class="desc">Corporate Wi-Fi at Pune Hinjewadi campus rejects valid credentials with 'Authentication server timeout'. Wired port on same desk works normally.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M015</td>
+  <td>Capgemini</td>
+  <td><strong>Salesforce Lightning Page Blank After Sandbox Refresh</strong></td>
+  <td class="desc">Salesforce Lightning Experience loads blank white page after client sandbox refresh. Classic view works when switched manually. Affects CRM demo for client.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M016</td>
+  <td>Capgemini</td>
+  <td><strong>Laptop Battery Drains to Zero in 30 Minutes</strong></td>
+  <td class="desc">Company laptop battery drains from 100% to 0% in 30 minutes even when plugged in. Power adapter connected, charging LED flickers. Need replacement for client site visit.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M017</td>
+  <td>Capgemini</td>
+  <td><strong>Production API Keys Exposed in GitLab Repository</strong></td>
+  <td class="desc">Security incident: GitLab secret detection found production AWS access keys in client project repository. Merge request was approved by 3 reviewers before alert.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M018</td>
+  <td>Capgemini</td>
+  <td><strong>MongoDB Replica Set Secondary Not Syncing</strong></td>
+  <td class="desc">MongoDB replica set secondary node stuck in RECOVERING state. Primary node healthy but read queries failing on secondary. Client reporting dashboard stale.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M019</td>
+  <td>Capgemini</td>
+  <td><strong>ServiceNow Incident Form Submit Button Spins</strong></td>
+  <td class="desc">ServiceNow incident form submit spins indefinitely after filling all mandatory fields. No error message. Other ServiceNow modules load correctly in same session.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M020</td>
+  <td>Capgemini</td>
+  <td><strong>MFA Authenticator Lost Need Device Re-Enrollment</strong></td>
+  <td class="desc">Lost phone with Microsoft Authenticator MFA app. Cannot login to corporate email or client VPN until new device enrolled. Manager confirmed identity via HR.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M021</td>
+  <td>JP Morgan</td>
+  <td><strong>JPMorgan Markets Login Locked After Failed Attempts</strong></td>
+  <td class="desc">Cannot login to JPMorgan Markets trading platform — account locked after 5 failed password attempts. Need access restored before US market open at 7 PM IST.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M022</td>
+  <td>JP Morgan</td>
+  <td><strong>Murex Trade Booking Interface Timeout</strong></td>
+  <td class="desc">Murex front-office trade booking screen times out on submit for FX derivatives. Other Murex modules load normally. Blocking EMEA desk trade capture.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M023</td>
+  <td>JP Morgan</td>
+  <td><strong>Spear Phishing Targeting Equities Trading Desk</strong></td>
+  <td class="desc">Security incident: equities trading desk received targeted phishing email with fake compliance PDF attachment. One trader opened file before SOC alert broadcast.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M024</td>
+  <td>JP Morgan</td>
+  <td><strong>Trading Floor Bloomberg Keyboard Unresponsive</strong></td>
+  <td class="desc">Bloomberg terminal keyboard not responding on Mumbai BKC trading floor. Market data displays but cannot execute BLAST or run analytics functions.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M025</td>
+  <td>JP Morgan</td>
+  <td><strong>SQL Server Deadlock on Risk Reporting Database</strong></td>
+  <td class="desc">SQL Server risk reporting database showing persistent deadlocks on VaR calculation stored procedures. Risk reports delayed 3 hours for global risk committee.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M026</td>
+  <td>JP Morgan</td>
+  <td><strong>GlobalProtect VPN Gateway Unreachable From Home</strong></td>
+  <td class="desc">GlobalProtect VPN to JPMC corporate network shows 'Gateway unreachable' from home office. Required for after-hours production support on payments platform.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M027</td>
+  <td>JP Morgan</td>
+  <td><strong>Confluence Page Blank After Chrome Update</strong></td>
+  <td class="desc">Atlassian Confluence pages load blank white screen in Google Chrome after corporate browser update. Confluence works in Edge on same machine.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M028</td>
+  <td>JP Morgan</td>
+  <td><strong>New Associate Onboarding AD and Trading IDs</strong></td>
+  <td class="desc">New associate joining Mumbai Technology team Monday — need AD account, JPMorgan SSO, Murex read access, and ServiceNow profile per HR ticket ONB-JPM-882.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M029</td>
+  <td>JP Morgan</td>
+  <td><strong>FIX Protocol Gateway Connection Dropped</strong></td>
+  <td class="desc">FIX protocol gateway connection to external broker dropped at 3 PM IST. Electronic equity orders not reaching exchange. Session shows LOGOUT received unexpectedly.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M030</td>
+  <td>JP Morgan</td>
+  <td><strong>Ransomware Alert on Shared Drive P Drive</strong></td>
+  <td class="desc">Security incident: files on shared P drive encrypted with .ryuk extension. CrowdStrike EDR alert on 4 workstations. Project documentation inaccessible.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M031</td>
+  <td>JP Morgan</td>
+  <td><strong>Oracle Exadata Tablespace Full on Payments DB</strong></td>
+  <td class="desc">Oracle Exadata PAYMENTS_PROD tablespace 99% full. Real-time payment posting failing with ORA-01653. Transaction volume spike since morning.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M032</td>
+  <td>JP Morgan</td>
+  <td><strong>Microsoft Teams Screen Share Black for Clients</strong></td>
+  <td class="desc">Microsoft Teams screen share shows black screen to external client attendees during deal review. Presenter sees content normally on Windows 11 laptop.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M033</td>
+  <td>JP Morgan</td>
+  <td><strong>Laptop Docking Station USB Ports Not Working</strong></td>
+  <td class="desc">Lenovo USB-C docking station USB ports not detecting keyboard and mouse on trading desk. Laptop built-in ports work. Dock power LED is green.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M034</td>
+  <td>JP Morgan</td>
+  <td><strong>Firewall Rule Blocking SWIFT Alliance Access</strong></td>
+  <td class="desc">Corporate firewall change blocking outbound connectivity to SWIFT Alliance Access server. Cross-border payment messages queuing since 9 AM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M035</td>
+  <td>JP Morgan</td>
+  <td><strong>Splunk Alert API Keys in Git Repository</strong></td>
+  <td class="desc">Security incident: Splunk secret scanning detected production API keys committed to internal Git repository in merge request. Repo has 25 developer access.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M036</td>
+  <td>HSBC India</td>
+  <td><strong>HSBCnet Corporate Banking Login Locked</strong></td>
+  <td class="desc">Cannot login to HSBCnet corporate banking portal — account locked after 3 failed attempts. Need urgent access to approve supplier payment batch before 4 PM IST cutoff.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M037</td>
+  <td>HSBC India</td>
+  <td><strong>SWIFT GPI Payment Message Stuck in Queue</strong></td>
+  <td class="desc">Outbound SWIFT GPI payment messages stuck in middleware queue since 10 AM IST. 47 cross-border transfers pending for corporate clients. MQ channel shows RUNNING but no dequeue.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M038</td>
+  <td>HSBC India</td>
+  <td><strong>Phishing Email Targeting Mumbai Treasury Team</strong></td>
+  <td class="desc">Security incident: Mumbai treasury team received spear-phishing email mimicking RBI notice with malicious Excel attachment. Two associates opened attachment before IT alert.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M039</td>
+  <td>HSBC India</td>
+  <td><strong>Bloomberg Terminal Keyboard Not Responding</strong></td>
+  <td class="desc">Bloomberg terminal keyboard unresponsive on trading desk Mumbai office. Screen displays data but cannot enter commands or run functions. Backup terminal also affected.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M040</td>
+  <td>HSBC India</td>
+  <td><strong>Oracle Flexcube Batch Job Failed EOD</strong></td>
+  <td class="desc">Oracle Flexcube end-of-day batch job FLEOD_BATCH failed at step 14 with ORA-01652 unable to extend temp segment. Core banking interest accrual not completed.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M041</td>
+  <td>HSBC India</td>
+  <td><strong>VPN to GSC Hyderabad Fails Error 691</strong></td>
+  <td class="desc">Cisco AnyConnect VPN to GSC Hyderabad data center fails with Error 691 authentication failed. Required for production support shift starting 6 PM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M042</td>
+  <td>HSBC India</td>
+  <td><strong>KYC Document Upload Failing in Onboarding App</strong></td>
+  <td class="desc">Digital KYC onboarding application rejects Aadhaar and PAN document uploads with error 'File validation failed'. Web form loads but submit fails for all new retail accounts.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M043</td>
+  <td>HSBC India</td>
+  <td><strong>Mainframe CICS Transaction Abend S0C4</strong></td>
+  <td class="desc">CICS region PRODBANK showing repeated S0C4 abends on account inquiry transaction CIQRY. Customer-facing ATM balance inquiry failing across Maharashtra ATMs.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M044</td>
+  <td>HSBC India</td>
+  <td><strong>New Analyst AD Account and Bloomberg ID</strong></td>
+  <td class="desc">New joiner in Mumbai Global Banking team starts Monday — need Active Directory account, Bloomberg UUID, and HSBCnet read-only access per HR onboarding ticket ONB-4412.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M045</td>
+  <td>HSBC India</td>
+  <td><strong>ATM Switch Network Link Down Pune Region</strong></td>
+  <td class="desc">ATM switch network link to Pune region concentrator down since 2 PM IST. 120 ATMs offline — customers cannot withdraw cash. MPLS circuit shows interface down on router.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M046</td>
+  <td>HSBC India</td>
+  <td><strong>PCI Cardholder Data Found in Application Logs</strong></td>
+  <td class="desc">Security incident: Splunk alert detected full 16-digit card numbers in payment gateway application logs on app-pay-prod-02. Log retention policy violation — need immediate containment.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M047</td>
+  <td>HSBC India</td>
+  <td><strong>Trade Finance LC Module Screen Freeze</strong></td>
+  <td class="desc">Trade finance letter-of-credit module freezes on document submission screen. Spinning loader for 10+ minutes. Other trade finance screens work. Blocking USD 2M LC issuance.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M048</td>
+  <td>HSBC India</td>
+  <td><strong>PostgreSQL Standby Replication Lag 6 Hours</strong></td>
+  <td class="desc">PostgreSQL standby replica on reporting cluster 6 hours behind primary. Regulatory MIS reports showing stale data. Replication slot active but WAL apply stalled.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M049</td>
+  <td>HSBC India</td>
+  <td><strong>Dual Monitor Setup Not Detecting Second Screen</strong></td>
+  <td class="desc">Trading desk dual monitor setup — second Dell 27-inch monitor not detected on workstation. Display settings show only one screen. Cable and monitor tested on colleague desk works.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M050</td>
+  <td>HSBC India</td>
+  <td><strong>UPI Payment API Returning HTTP 503 Errors</strong></td>
+  <td class="desc">UPI payment integration API returning HTTP 503 to mobile banking app since 11 AM IST. NPCI switch connectivity check shows timeout. Customer complaints increasing on social media.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M051</td>
+  <td>TCS</td>
+  <td><strong>Cannot Login to Ultimatix Employee Portal</strong></td>
+  <td class="desc">Cannot login to Ultimatix employee self-service portal — password rejected after recent reset. Need access to submit timesheet before payroll cutoff today.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M052</td>
+  <td>TCS</td>
+  <td><strong>Client Site GlobalProtect VPN Connection Failed</strong></td>
+  <td class="desc">GlobalProtect VPN to client Citibank environment fails with 'Gateway unreachable' from home office. Required for daily standup and code commit access.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M053</td>
+  <td>TCS</td>
+  <td><strong>Fake HR Payroll Phishing Email Reported</strong></td>
+  <td class="desc">Security incident: multiple associates received fake HR payroll email with malicious link. Three employees clicked link before warning sent. Need SecOps investigation.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M054</td>
+  <td>TCS</td>
+  <td><strong>Company Laptop Battery Not Charging Past 15 Percent</strong></td>
+  <td class="desc">TCS-issued Dell Latitude battery stuck at 15% and not charging. Power adapter connected, LED shows charging but percentage never increases. Need replacement for client demo.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M055</td>
+  <td>TCS</td>
+  <td><strong>SAP S4HANA Fiori App Transaction Timeout</strong></td>
+  <td class="desc">SAP S/4HANA Fiori purchase requisition app times out after 60 seconds on submit. Other Fiori tiles load fine. Blocking month-end procurement for client project.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M056</td>
+  <td>TCS</td>
+  <td><strong>SQL Server Blocking Queries on Client Reporting DB</strong></td>
+  <td class="desc">SQL Server client reporting database showing severe blocking chains. Dashboard queries timing out after 5 minutes. Blocking session SPID 284 holding locks since 7 AM.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M057</td>
+  <td>TCS</td>
+  <td><strong>New Joiner Laptop Email and AD Account Setup</strong></td>
+  <td class="desc">New associate joining Pune DC on Monday — need laptop image, Active Directory account, corporate email, and Ultimatix ID provisioned per onboarding checklist HR-2291.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M058</td>
+  <td>TCS</td>
+  <td><strong>Floor 12 Printer Toner Empty Cannot Print</strong></td>
+  <td class="desc">HP printer on Floor 12 Pune campus shows 'Replace toner cartridge' and will not print client deliverable documents. Red toner light blinking.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M059</td>
+  <td>TCS</td>
+  <td><strong>Microsoft Teams Screen Share Frozen for Client</strong></td>
+  <td class="desc">Microsoft Teams screen share freezes during client review call — attendees see static image. Camera and audio work. Teams version 24127, Windows 11.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M060</td>
+  <td>TCS</td>
+  <td><strong>Firewall Whitelist Request for Client API Endpoint</strong></td>
+  <td class="desc">Need corporate firewall rule to allow outbound HTTPS from dev subnet to client API endpoint api.clientbank.com port 443. Change request CR-8842 approved by client IT.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M061</td>
+  <td>TCS</td>
+  <td><strong>Ransomware Detected on Project Shared Folder</strong></td>
+  <td class="desc">Security incident: files on project shared drive P:\ClientABC encrypted with .lockbit extension. CrowdStrike alert on file server. Five team members cannot access deliverables.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M062</td>
+  <td>TCS</td>
+  <td><strong>Oracle RMAN Backup Failed Archive Log Missing</strong></td>
+  <td class="desc">Oracle RMAN nightly backup failed with ORA-00257 archiver error. Archive log destination full on client DB server orcl-prod-01. Client SLA backup window missed.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M063</td>
+  <td>NASSCOM</td>
+  <td><strong>Forgot Password Cannot Login NASSCOM Member Portal</strong></td>
+  <td class="desc">Forgot my NASSCOM member portal password and self-service reset link expired. Cannot login to access event registration and industry reports. Need password reset before webinar tomorrow.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M064</td>
+  <td>NASSCOM</td>
+  <td><strong>Conference Room Printer Paper Jam Red Light</strong></td>
+  <td class="desc">HP printer in NASSCOM Bangalore office conference room has paper jam. Red jam indicator on, cannot print attendee badges for tomorrow's DeepTech summit session.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M065</td>
+  <td>NASSCOM</td>
+  <td><strong>Cisco VPN Error 807 Cannot Connect From Home</strong></td>
+  <td class="desc">Cisco AnyConnect VPN to NASSCOM corporate network fails with Error 807 from home office. Cannot access internal wiki or submit timesheet. Internet connection works fine.</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M066</td>
+  <td>NASSCOM</td>
+  <td><strong>Google Chrome Shows Blank White Pages Only</strong></td>
+  <td class="desc">Google Chrome browser shows blank white page for all websites on work laptop. Microsoft Edge works fine on same machine. Cleared cache but issue persists.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M067</td>
+  <td>NASSCOM</td>
+  <td><strong>Outlook Desktop Search Returns No Results</strong></td>
+  <td class="desc">Microsoft Outlook desktop search returns no results for any email in mailbox. Web Outlook search works correctly. Need to find NASSCOM leadership meeting invite from last week.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M068</td>
+  <td>NASSCOM</td>
+  <td><strong>Wi-Fi Password Prompt Loop on MacBook</strong></td>
+  <td class="desc">Corporate Wi-Fi on MacBook keeps prompting for password in a loop. Credentials are correct but never connects. Wired ethernet port on desk works normally.</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M069</td>
+  <td>NASSCOM</td>
+  <td><strong>Microsoft Teams Desktop Keeps Crashing on Launch</strong></td>
+  <td class="desc">Microsoft Teams desktop app crashes within 30 seconds of opening on Windows 11. Teams web version works in browser. Reinstall did not fix the issue.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M070</td>
+  <td>NASSCOM</td>
+  <td><strong>New Intern AD Account and Email Provisioning</strong></td>
+  <td class="desc">New intern joining NASSCOM Mumbai office Monday — need Active Directory account, corporate email, and VPN access provisioned per HR onboarding checklist ONB-NS-112.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M071</td>
+  <td>NASSCOM</td>
+  <td><strong>PostgreSQL Connection Pool Exhausted Member DB</strong></td>
+  <td class="desc">PostgreSQL member database connection pool exhausted on pg-member-prod. NASSCOM portal member login API returning HTTP 500 errors since 10 AM IST.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M072</td>
+  <td>NASSCOM</td>
+  <td><strong>Laptop USB-C Dock Monitor Not Detected</strong></td>
+  <td class="desc">Dell USB-C docking station — external monitor not detected when laptop connected. Laptop screen works, dock power LED green. Needed for dual-screen policy work.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M073</td>
+  <td>Microsoft</td>
+  <td><strong>Azure AD Conditional Access Blocking Teams Login</strong></td>
+  <td class="desc">Cannot sign in to Microsoft Teams on corporate laptop — Azure AD Conditional Access policy blocks login with error AADSTS53003. Need access for executive briefing in 30 minutes.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M074</td>
+  <td>Microsoft</td>
+  <td><strong>SharePoint Online Site Collection 503 Errors</strong></td>
+  <td class="desc">SharePoint Online intranet site returns HTTP 503 for all users in Redmond campus since 9 AM PST. Site collection SPO-ENG-PORTAL shows service unavailable in admin center.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M075</td>
+  <td>Microsoft</td>
+  <td><strong>Defender Alert — Lateral Movement on Azure VM</strong></td>
+  <td class="desc">Microsoft Defender for Endpoint alert: suspected lateral movement detected on Azure VM WIN-PROD-4412 in East US subscription. Multiple failed RDP attempts from compromised service account.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M076</td>
+  <td>Microsoft</td>
+  <td><strong>Surface Laptop Docking Station Dual Monitor Failure</strong></td>
+  <td class="desc">Surface Laptop 5 on docking station — external dual monitors not detected after Windows 11 23H2 update. USB-C dock LED solid white but displays show no signal.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M077</td>
+  <td>Microsoft</td>
+  <td><strong>Azure SQL Managed Instance Failover Stuck</strong></td>
+  <td class="desc">Azure SQL Managed Instance MI-PROD-CRM failover operation stuck in progress for 45 minutes. Application teams report connection timeouts to *.database.windows.net endpoint.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M078</td>
+  <td>Microsoft</td>
+  <td><strong>ExpressRoute Circuit BGP Session Down</strong></td>
+  <td class="desc">Azure ExpressRoute circuit ER-SEA-01 BGP session down with ISP. Hybrid connectivity between on-prem Seattle datacenter and Azure VNet PROD-VNET lost. SAP workloads unreachable.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M079</td>
+  <td>Microsoft</td>
+  <td><strong>Power Platform Flow Failing on Dataverse Connector</strong></td>
+  <td class="desc">Power Automate cloud flow HR-Onboarding-Flow fails at Dataverse connector step with error 502 Bad Gateway. 120 new hire provisioning tasks blocked since yesterday.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="fail">
+  <td>M080</td>
+  <td>Microsoft</td>
+  <td><strong>Visual Studio Enterprise License Activation Failed</strong></td>
+  <td class="desc">Visual Studio 2022 Enterprise fails activation with error 0x80070005 access denied. Developer needs build access for .NET 8 microservices release tonight.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="fail">
+  <td>M081</td>
+  <td>Microsoft</td>
+  <td><strong>New Hire M365 E5 and Azure RBAC Provisioning</strong></td>
+  <td class="desc">New program manager starts Monday — need Microsoft 365 E5 license, Azure subscription Reader role on DEV-RG, and Entra ID security group SG-PM-TEAM per onboarding ticket ONB-8821.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M082</td>
+  <td>Microsoft</td>
+  <td><strong>Sentinel SIEM Correlation Rule False Positive Flood</strong></td>
+  <td class="desc">Microsoft Sentinel workspace producing 4000+ false positive alerts per hour from custom KQL correlation rule CORR-AZ-LOGIN. SOC analysts cannot triage real incidents.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M083</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Wipro VPN Authentication Failed Pune GDC</strong></td>
+  <td class="desc">Cisco AnyConnect VPN to Wipro Pune GDC fails with Error 691 authentication failed since morning IST. Cannot access client SAP landscape for release deployment tonight.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M084</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>HCL Campus Laptop Docking Station No Display</strong></td>
+  <td class="desc">Lenovo ThinkPad on USB-C dock at HCL Noida campus — dual monitors not detected after Windows update. Dock power LED on but external displays show no signal during client demo.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M085</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Deloitte D365 F&O Batch Job Stuck Posting</strong></td>
+  <td class="desc">Dynamics 365 Finance batch job GL_POSTING stuck at step 7 for 3 hours affecting EMEA close. Application server responsive but batch framework shows repeated timeout on voucher posting.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="fail">
+  <td>M086</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Nvidia CUDA Driver Crash on DGX Training Node</strong></td>
+  <td class="desc">Nvidia DGX A100 training node GPU0 CUDA driver crash during PyTorch distributed job. nvidia-smi shows GPU fallen off bus. ML research team blocked on LLM fine-tuning run NV-TRAIN-09.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M087</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Wipro Phishing Campaign Targeting Delivery Managers</strong></td>
+  <td class="desc">Security incident: Wipro delivery managers received spear-phishing emails mimicking client PO approval with malicious macro attachment. Two managers enabled macros before SOC alert broadcast.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M088</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>HCL Oracle RAC Node Eviction ORA-29740</strong></td>
+  <td class="desc">Oracle RAC cluster PROD-HR one node evicted with ORA-29740 inconsistent membership. HCL managed services payroll database inaccessible for 2000 users across three client tenants.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M089</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Deloitte New Consultant AD and ServiceNow Access</strong></td>
+  <td class="desc">New Deloitte technology consultant starts Monday — need Active Directory account, ServiceNow ITSM agent role, and client VDI group per onboarding ticket ONB-DTT-5521.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M090</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Nvidia GitLab Runner Secret Leaked in CI Log</strong></td>
+  <td class="desc">Security incident: Nvidia GitLab CI pipeline log printed NVAPI deployment token in plain text on public runner job #88421. Token visible in build artifacts folder accessible to 40 engineers.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M091</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>Wipro ServiceNow MID Server Heartbeat Lost</strong></td>
+  <td class="desc">ServiceNow MID server MID-WIP-LON-03 heartbeat lost since 2 AM GMT. Discovery and orchestration jobs failing for UK banking client integration workspace.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M092</td>
+  <td>Wipro/HCL/Deloitte/Nvidia</td>
+  <td><strong>HCL MPLS Link Flapping Mumbai DC</strong></td>
+  <td class="desc">MPLS WAN circuit between HCL Mumbai DC and client DR site flapping every 10 minutes. BGP sessions reset repeatedly causing SAP GUI disconnects for 300 users.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M093</td>
+  <td>Software Office</td>
+  <td><strong>Outlook Desktop Crashes on Startup</strong></td>
+  <td class="desc">Microsoft Outlook desktop crashes immediately on launch with error 'Outlook could not start last time'. Safe mode also fails. Web Outlook works fine in browser.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M094</td>
+  <td>Software Office</td>
+  <td><strong>Excel Formulas Show #NAME Error After Update</strong></td>
+  <td class="desc">All Excel workbook formulas show #NAME? error after Office 365 update. Macros and data connections broken on monthly finance report. Other Office apps work.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M095</td>
+  <td>Software Office</td>
+  <td><strong>Teams Camera Shows Black Screen in Meetings</strong></td>
+  <td class="desc">Microsoft Teams video calls show black camera feed to other participants. Camera LED is on but preview is blank. Camera works in Windows Camera app.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M096</td>
+  <td>Software Office</td>
+  <td><strong>Chrome Blocks Approved Password Manager Extension</strong></td>
+  <td class="desc">Google Chrome shows 'Extension blocked by administrator' for approved 1Password browser extension. Cannot autofill credentials for internal tools.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M097</td>
+  <td>Software Office</td>
+  <td><strong>SAP GUI Session Times Out Every 5 Minutes</strong></td>
+  <td class="desc">SAP GUI desktop client disconnects every 5 minutes with message 'Session timed out'. Re-login works but session drops again during data entry.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>M098</td>
+  <td>Software Office</td>
+  <td><strong>Adobe Acrobat Cannot Open Signed PDF Files</strong></td>
+  <td class="desc">Adobe Acrobat Reader DC fails to open digitally signed PDF contracts with error 'There was an error opening this document'. Browser PDF preview works.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>M099</td>
+  <td>Software Office</td>
+  <td><strong>Visio License Activation Failed</strong></td>
+  <td class="desc">Microsoft Visio shows 'This product cannot be activated' after laptop replacement. Need Visio re-activated to edit network diagrams for audit.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>M100</td>
+  <td>Software Office</td>
+  <td><strong>OneNote Notebook Stuck on Syncing Spinner</strong></td>
+  <td class="desc">Microsoft OneNote desktop shows perpetual 'Syncing...' on shared team notebook. New notes not visible to teammates. OneNote web shows old content only.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr>
+  </tbody>
+</table>
+
+<h2 class="section-title">Routing Specialists — SecOps-owned desk</h2>
+<p class="section-sub">Misroutes caught by automated tests. In production, any assignee sends these to the SecOps specialist desk for one-hop correction.</p>
+<table class="specialists-table">
+  <thead>
+    <tr>
+      <th>ID</th><th>Title</th><th>AI routed to</th><th>Correct dept</th><th>Specialist path</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+  <td>M005</td>
+  <td><strong>SAP S4HANA Transport Import Failed in QA</strong></td>
+  <td>DBA</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M007</td>
+  <td><strong>New Contractor Okta and Jira Provisioning</strong></td>
+  <td>Network</td>
+  <td>Access Management</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Access Management</td>
+</tr><tr>
+  <td>M012</td>
+  <td><strong>Oracle Database Tablespace ORADATA 97 Percent Full</strong></td>
+  <td>SecOps</td>
+  <td>DBA</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → DBA</td>
+</tr><tr>
+  <td>M019</td>
+  <td><strong>ServiceNow Incident Form Submit Button Spins</strong></td>
+  <td>SecOps</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M022</td>
+  <td><strong>Murex Trade Booking Interface Timeout</strong></td>
+  <td>Network</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M043</td>
+  <td><strong>Mainframe CICS Transaction Abend S0C4</strong></td>
+  <td>DBA</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M049</td>
+  <td><strong>Dual Monitor Setup Not Detecting Second Screen</strong></td>
+  <td>Software</td>
+  <td>Hardware</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Hardware</td>
+</tr><tr>
+  <td>M079</td>
+  <td><strong>Power Platform Flow Failing on Dataverse Connector</strong></td>
+  <td>Access Management</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M080</td>
+  <td><strong>Visual Studio Enterprise License Activation Failed</strong></td>
+  <td>Access Management</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M081</td>
+  <td><strong>New Hire M365 E5 and Azure RBAC Provisioning</strong></td>
+  <td>SecOps</td>
+  <td>Access Management</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Access Management</td>
+</tr><tr>
+  <td>M085</td>
+  <td><strong>Deloitte D365 F&O Batch Job Stuck Posting</strong></td>
+  <td>Hardware</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M086</td>
+  <td><strong>Nvidia CUDA Driver Crash on DGX Training Node</strong></td>
+  <td>Software</td>
+  <td>Hardware</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Hardware</td>
+</tr><tr>
+  <td>M091</td>
+  <td><strong>Wipro ServiceNow MID Server Heartbeat Lost</strong></td>
+  <td>Hardware</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>M099</td>
+  <td><strong>Visio License Activation Failed</strong></td>
+  <td>Hardware</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr>
+  </tbody>
+</table>
+<p class="footer">Generated by SAARTHI routing test pipeline · Gemini classifier + RAG · SecOps Routing Specialists fallback</p>
+</body>
+</html>

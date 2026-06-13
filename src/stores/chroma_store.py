@@ -1,4 +1,4 @@
-"""ChromaDB store — BM25 keyword retrieval over historical tickets (LLD RAG)."""
+"""ChromaDB store — local sentence-transformers or Gemini embeddings for RAG."""
 from __future__ import annotations
 
 import logging
@@ -13,108 +13,42 @@ logger = logging.getLogger(__name__)
 _COLLECTION = "historical_tickets"
 
 
-def _bm25_embedding_function():
-    try:
-        from chromadb.utils.embedding_functions import ChromaBm25EmbeddingFunction
+def _local_embedding_function():
+    """ONNX all-MiniLM-L6-v2 — same family as sentence-transformers, no PyTorch."""
+    from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 
-        return ChromaBm25EmbeddingFunction()
-    except (ImportError, ValueError) as exc:
-        logger.warning("Chroma BM25 unavailable (%s)", exc)
-        return None
-
-
-def _default_embedding_function():
-    try:
-        from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
-
-        return DefaultEmbeddingFunction()
-    except (ImportError, ValueError) as exc:
-        logger.warning("Chroma default embedding unavailable (%s)", exc)
-        return None
+    return DefaultEmbeddingFunction()
 
 
 class ChromaTicketStore:
     def __init__(self) -> None:
         settings = get_settings()
         self._client = chromadb.PersistentClient(path=settings.chroma_persist_dir)
-        self._ef: Optional[Any] = None
         self._collection: Optional[Any] = None
-        self._bm25_broken = False
         self._embedding_mode = "none"
-
-        if self._open_existing_collection():
-            return
-
-        self._ef = _bm25_embedding_function()
-        if self._ef is not None:
-            try:
-                self._collection = self._client.create_collection(
-                    name=_COLLECTION,
-                    embedding_function=self._ef,
-                    metadata={"hnsw:space": "cosine"},
-                )
-            except Exception:
-                self._collection = None
-            if self._collection and self._probe_collection():
-                self._embedding_mode = "bm25"
-                return
-        self._try_default_embedding()
+        self._open_existing_collection()
 
     def _open_existing_collection(self) -> bool:
-        """Reuse persisted collection (avoids BM25 vs default embedding conflicts)."""
         try:
-            self._collection = self._client.get_collection(_COLLECTION)
-            self._embedding_mode = "existing"
-            self._bm25_broken = False
+            backend = get_settings().rag_embedding_backend.lower()
+            if backend == "local":
+                self._collection = self._client.get_collection(
+                    _COLLECTION,
+                    embedding_function=_local_embedding_function(),
+                )
+            else:
+                self._collection = self._client.get_collection(_COLLECTION)
+            meta = self._collection.metadata or {}
+            self._embedding_mode = str(meta.get("embedding_mode", "existing"))
             return True
         except Exception:
-            return False
-
-    def _probe_collection(self) -> bool:
-        """Return True when upsert/query works on the active collection."""
-        if not self._collection:
-            return False
-        probe_id = "__chroma_probe__"
-        try:
-            self._collection.upsert(
-                ids=[probe_id],
-                documents=["probe keyword test document"],
-                metadatas=[{"probe": True}],
-            )
-            self._collection.delete(ids=[probe_id])
-            return True
-        except Exception as exc:
-            logger.warning("Chroma collection probe failed (%s)", exc)
-            self._bm25_broken = True
             self._collection = None
+            self._embedding_mode = "none"
             return False
-
-    def _try_default_embedding(self) -> None:
-        """BM25 sparse vectors fail on Chroma 1.5.x — fall back to dense default embeddings."""
-        default_ef = _default_embedding_function()
-        if default_ef is None:
-            return
-        try:
-            try:
-                self._client.delete_collection(_COLLECTION)
-            except Exception:
-                pass
-            self._ef = default_ef
-            self._collection = self._client.get_or_create_collection(
-                name=_COLLECTION,
-                embedding_function=self._ef,
-            )
-            if self._probe_collection():
-                self._embedding_mode = "default"
-                self._bm25_broken = False
-                logger.info("Chroma using default dense embeddings (BM25 unavailable)")
-        except Exception as exc:
-            logger.warning("Chroma default embedding setup failed (%s)", exc)
-            self._collection = None
 
     @property
     def available(self) -> bool:
-        return self._collection is not None and not self._bm25_broken
+        return self._collection is not None
 
     @property
     def count(self) -> int:
@@ -127,71 +61,161 @@ class ChromaTicketStore:
         ticket_id: str,
         document: str,
         metadata: dict[str, Any],
+        *,
+        embedding: Optional[list[float]] = None,
     ) -> None:
         if not self._collection:
             return
         try:
-            self._collection.upsert(
-                ids=[ticket_id],
-                documents=[document],
-                metadatas=[metadata],
-            )
+            if embedding is not None:
+                self._collection.upsert(
+                    ids=[ticket_id],
+                    documents=[document],
+                    metadatas=[metadata],
+                    embeddings=[embedding],
+                )
+            else:
+                self._collection.upsert(
+                    ids=[ticket_id],
+                    documents=[document],
+                    metadatas=[metadata],
+                )
         except Exception as exc:
             logger.warning("Chroma upsert failed: %s", exc)
 
-    def reindex_all(
-        self,
-        entries: list[tuple[str, str, dict[str, Any]]],
-    ) -> int:
-        """Replace collection contents with corpus entries. Returns document count."""
-        if not self.available and self._embedding_mode == "none":
-            default_ef = _default_embedding_function()
-            if default_ef:
-                self._ef = default_ef
-                try:
-                    try:
-                        self._client.delete_collection(_COLLECTION)
-                    except Exception:
-                        pass
-                    self._collection = self._client.create_collection(
-                        name=_COLLECTION,
-                        embedding_function=self._ef,
-                    )
-                    self._embedding_mode = "default"
-                    self._bm25_broken = False
-                except Exception as exc:
-                    logger.warning("Chroma reindex setup failed (%s)", exc)
-                    return 0
-
-        if not self._collection:
-            return 0
-
+    def reset_collection(self) -> bool:
+        """Delete and recreate collection for the configured embedding backend."""
+        settings = get_settings()
+        backend = settings.rag_embedding_backend.lower()
         try:
             try:
                 self._client.delete_collection(_COLLECTION)
             except Exception:
                 pass
-            self._collection = self._client.create_collection(
-                name=_COLLECTION,
-                embedding_function=self._ef,
-            )
-        except Exception as exc:
-            logger.warning("Chroma reindex recreate failed (%s)", exc)
-            return 0
 
-        for doc_id, document, metadata in entries:
-            self.upsert(doc_id, document, metadata)
+            if backend == "local":
+                self._collection = self._client.create_collection(
+                    name=_COLLECTION,
+                    embedding_function=_local_embedding_function(),
+                    metadata={
+                        "hnsw:space": "cosine",
+                        "embedding_mode": "local",
+                        "embedding_model": settings.local_embedding_model,
+                    },
+                )
+                self._embedding_mode = "local"
+            else:
+                self._collection = self._client.create_collection(
+                    name=_COLLECTION,
+                    metadata={
+                        "hnsw:space": "cosine",
+                        "embedding_mode": "gemini",
+                        "embedding_model": settings.gemini_model_embed,
+                    },
+                )
+                self._embedding_mode = "gemini"
+            return True
+        except Exception as exc:
+            logger.warning("Chroma collection create failed (%s)", exc)
+            self._collection = None
+            self._embedding_mode = "none"
+            return False
+
+    def reset_gemini_collection(self) -> bool:
+        """Backward-compatible alias — respects rag_embedding_backend."""
+        return self.reset_collection()
+
+    def upsert_document_batch(
+        self,
+        entries: list[tuple[str, str, dict[str, Any]]],
+    ) -> None:
+        if not self._collection or not entries:
+            return
+        batch_size = 100
+        for start in range(0, len(entries), batch_size):
+            chunk = entries[start : start + batch_size]
+            try:
+                self._collection.upsert(
+                    ids=[doc_id for doc_id, _doc, _meta in chunk],
+                    documents=[doc for _doc_id, doc, _meta in chunk],
+                    metadatas=[meta for _doc_id, _doc, meta in chunk],
+                )
+            except Exception as exc:
+                logger.warning("Chroma document batch upsert failed (%s)", exc)
+                for doc_id, doc, meta in chunk:
+                    self.upsert(doc_id, doc, meta)
+
+    def upsert_gemini_batch(
+        self,
+        entries: list[tuple[str, str, dict[str, Any], list[float]]],
+    ) -> None:
+        if not self._collection or not entries:
+            return
+        batch_size = 100
+        for start in range(0, len(entries), batch_size):
+            chunk = entries[start : start + batch_size]
+            try:
+                self._collection.upsert(
+                    ids=[doc_id for doc_id, _doc, _meta, _vec in chunk],
+                    documents=[doc for _doc_id, doc, _meta, _vec in chunk],
+                    metadatas=[meta for _doc_id, _doc, meta, _vec in chunk],
+                    embeddings=[vec for _doc_id, _doc, _meta, vec in chunk],
+                )
+            except Exception as exc:
+                logger.warning("Chroma gemini batch upsert failed (%s)", exc)
+                for doc_id, doc, meta, vec in chunk:
+                    self.upsert(doc_id, doc, meta, embedding=vec)
+
+    def reindex_documents(self, entries: list[tuple[str, str, dict[str, Any]]]) -> int:
+        """Index corpus with local sentence-transformers (no API calls)."""
+        if not self.reset_collection():
+            return 0
+        self.upsert_document_batch(entries)
         return self.count
 
+    def reindex_gemini(
+        self,
+        entries: list[tuple[str, str, dict[str, Any], list[float]]],
+    ) -> int:
+        """Replace collection with Gemini-precomputed embeddings."""
+        if not self.reset_collection():
+            return 0
+        self.upsert_gemini_batch(entries)
+        return self.count
+
+    def reindex_all(
+        self,
+        entries: list[tuple[str, str, dict[str, Any]]],
+    ) -> int:
+        settings = get_settings()
+        if settings.rag_embedding_backend.lower() == "gemini":
+            from src.services.chroma_indexing import embed_corpus_entries
+
+            embedded = embed_corpus_entries(entries)
+            return self.reindex_gemini(embedded)
+        return self.reindex_documents(entries)
+
     def query(self, text: str, top_k: int = 5) -> list[tuple[str, float]]:
-        """Return (ticket_id, similarity_score) best first. similarity in 0..1."""
+        """Return (ticket_id, similarity_score) best first."""
         if not self._collection or self.count == 0 or not text.strip():
             return []
+
         try:
-            result = self._collection.query(
-                query_texts=[text[:8000]],
-                n_results=min(top_k, self.count),
-            )
+            if self._embedding_mode == "gemini":
+                from src.services.semantic_similarity import embed_query_cached
+
+                vec = embed_query_cached(text[:8000])
+                if not vec:
+                    return []
+                result = self._collection.query(
+                    query_embeddings=[vec],
+                    n_results=min(top_k, self.count),
+                )
+            else:
+                result = self._collection.query(
+                    query_texts=[text[:8000]],
+                    n_results=min(top_k, self.count),
+                )
         except Exception as exc:
             logger.warning("Chroma query failed: %s", exc)
             return []
@@ -205,7 +229,10 @@ class ChromaTicketStore:
         for tid, dist in zip(ids, distances):
             if dist is None:
                 continue
-            sim = 1.0 / (1.0 + float(dist))
+            if self._embedding_mode in ("gemini", "local"):
+                sim = max(0.0, 1.0 - float(dist))
+            else:
+                sim = 1.0 / (1.0 + float(dist))
             ranked.append((tid, sim))
         ranked.sort(key=lambda x: -x[1])
         return ranked

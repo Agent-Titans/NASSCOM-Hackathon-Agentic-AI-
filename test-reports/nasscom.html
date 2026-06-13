@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NASSCOM Firm — Routing Test Report</title>
+<style>
+  :root { --pass: #0d7a3e; --fail: #c0392b; --bg: #f4f6f8; --card: #fff; --border: #dde3ea; --accent: #e65100; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a1a2e; padding: 2rem; line-height: 1.5; }
+  .header { background: linear-gradient(135deg, var(--accent) 0%, #12abdb 50%, #1a1a2e 100%); color: #fff; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .header p { opacity: 0.9; font-size: 0.95rem; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px; }
+  .stat .num { font-size: 1.75rem; font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.pass .num { color: var(--pass); }
+  .stat.fail .num { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 0.9rem; }
+  th { background: var(--accent); color: #fff; padding: 0.75rem 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr.pass td { background: #f0faf4; }
+  tr.fail td { background: #fef5f4; }
+  tr:hover td { filter: brightness(0.97); }
+  .desc { max-width: 340px; color: #444; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+  .badge.pass { background: #d4edda; color: var(--pass); }
+  .badge.fail { background: #f8d7da; color: var(--fail); }
+  .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>NASSCOM Firm — Routing Test Report</h1>
+  <p>20 IT helpdesk scenarios · Hands 1/2/3 · Set NS</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="num">20</div><div class="lbl">Total</div></div>
+  <div class="stat pass"><div class="num">18</div><div class="lbl">Passed</div></div>
+  <div class="stat fail"><div class="num">2</div><div class="lbl">Failed</div></div>
+  <div class="stat pass"><div class="num">90%</div><div class="lbl">Pass Rate</div></div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Title</th><th>Description</th>
+      <th>Exp Hand</th><th>Exp Dept</th><th>Act Hand</th><th>Act Dept</th><th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class="pass">
+  <td>NS01</td>
+  <td><strong>Forgot Password Cannot Login NASSCOM Member Portal</strong></td>
+  <td class="desc">Forgot my NASSCOM member portal password and self-service reset link expired. Cannot login to access event registration and industry reports. Need password reset before webinar tomorrow.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS02</td>
+  <td><strong>Conference Room Printer Paper Jam Red Light</strong></td>
+  <td class="desc">HP printer in NASSCOM Bangalore office conference room has paper jam. Red jam indicator on, cannot print attendee badges for tomorrow's DeepTech summit session.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS03</td>
+  <td><strong>Cisco VPN Error 807 Cannot Connect From Home</strong></td>
+  <td class="desc">Cisco AnyConnect VPN to NASSCOM corporate network fails with Error 807 from home office. Cannot access internal wiki or submit timesheet. Internet connection works fine.</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS04</td>
+  <td><strong>Google Chrome Shows Blank White Pages Only</strong></td>
+  <td class="desc">Google Chrome browser shows blank white page for all websites on work laptop. Microsoft Edge works fine on same machine. Cleared cache but issue persists.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS05</td>
+  <td><strong>Outlook Desktop Search Returns No Results</strong></td>
+  <td class="desc">Microsoft Outlook desktop search returns no results for any email in mailbox. Web Outlook search works correctly. Need to find NASSCOM leadership meeting invite from last week.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS06</td>
+  <td><strong>Wi-Fi Password Prompt Loop on MacBook</strong></td>
+  <td class="desc">Corporate Wi-Fi on MacBook keeps prompting for password in a loop. Credentials are correct but never connects. Wired ethernet port on desk works normally.</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS07</td>
+  <td><strong>Microsoft Teams Desktop Keeps Crashing on Launch</strong></td>
+  <td class="desc">Microsoft Teams desktop app crashes within 30 seconds of opening on Windows 11. Teams web version works in browser. Reinstall did not fix the issue.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS08</td>
+  <td><strong>New Intern AD Account and Email Provisioning</strong></td>
+  <td class="desc">New intern joining NASSCOM Mumbai office Monday — need Active Directory account, corporate email, and VPN access provisioned per HR onboarding checklist ONB-NS-112.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>NS09</td>
+  <td><strong>PostgreSQL Connection Pool Exhausted Member DB</strong></td>
+  <td class="desc">PostgreSQL member database connection pool exhausted on pg-member-prod. NASSCOM portal member login API returning HTTP 500 errors since 10 AM IST.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>NS10</td>
+  <td><strong>Laptop USB-C Dock Monitor Not Detected</strong></td>
+  <td class="desc">Dell USB-C docking station — external monitor not detected when laptop connected. Laptop screen works, dock power LED green. Needed for dual-screen policy work.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS11</td>
+  <td><strong>Firewall Whitelist Vendor API for Event Platform</strong></td>
+  <td class="desc">Need corporate firewall rule to allow outbound HTTPS to event registration vendor API events.nasscom-vendor.com port 443. Change request CR-NS-441 approved.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>NS12</td>
+  <td><strong>SharePoint Policy Document Library Access Denied</strong></td>
+  <td class="desc">Entire policy team getting Access Denied on NASSCOM SharePoint governance document library. Site worked yesterday. Need contributor access for 6 team members.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>NS13</td>
+  <td><strong>Snowflake Analytics Warehouse Credit Exhausted</strong></td>
+  <td class="desc">Snowflake warehouse WH_INDUSTRY_INSIGHTS auto-suspended due to credit quota exhaustion. Industry analytics dashboards and Tableau reports failing since midnight.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS14</td>
+  <td><strong>Resigned Employee Revoke All System Access</strong></td>
+  <td class="desc">Employee resigned effective today — immediate offboarding: disable AD account, revoke O365 license, VPN, Salesforce, and member portal admin access per HR ticket.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS15</td>
+  <td><strong>NetApp Snapshot Restore Deleted Research Data</strong></td>
+  <td class="desc">Industry research data accidentally deleted from NetApp NAS share. Need snapshot restore from last night before NASSCOM annual report publication deadline.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS16</td>
+  <td><strong>Phishing Email Targeting Finance Team</strong></td>
+  <td class="desc">Security incident: NASSCOM finance team received phishing email mimicking invoice vendor with malicious PDF attachment. Two staff opened file before SOC alert.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS17</td>
+  <td><strong>Ransomware Encryption on Shared Project Drive</strong></td>
+  <td class="desc">Security incident: files on shared project drive encrypted with .lockbit extension. CrowdStrike EDR alert on 3 workstations. Hackathon planning documents inaccessible.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS18</td>
+  <td><strong>Production API Keys Exposed in Public GitHub Repo</strong></td>
+  <td class="desc">Security incident: GitHub secret scanning detected production AWS access keys in public repository nasscom/event-platform. Repo was public for 6 hours before takedown.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS19</td>
+  <td><strong>Unauthorized Login From Foreign IP on Admin Console</strong></td>
+  <td class="desc">Security incident: SIEM alert shows successful login to member portal admin console from IP 91.219.236.11 (Eastern Europe) at 3:12 AM IST. No approved travel.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>NS20</td>
+  <td><strong>DLP Alert Member PII Data Sent to Personal Email</strong></td>
+  <td class="desc">Security incident: DLP flagged email containing member company PII database export sent to personal Gmail address. Employee attached CSV with 5000 member records by mistake.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr>
+  </tbody>
+</table>
+<p class="footer">Generated by SAARTHI routing test pipeline · Gemini classifier + RAG</p>
+</body>
+</html>

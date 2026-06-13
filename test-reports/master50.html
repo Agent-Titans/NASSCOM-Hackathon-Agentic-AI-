@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master 50 — 50 Distinct Firms</title>
+<style>
+  :root { --pass: #0d7a3e; --fail: #c0392b; --bg: #f4f6f8; --card: #fff; --border: #dde3ea; --accent: #0369a1; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a1a2e; padding: 2rem; line-height: 1.5; }
+  .header { background: linear-gradient(135deg, var(--accent) 0%, #12abdb 50%, #1a1a2e 100%); color: #fff; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .header p { opacity: 0.9; font-size: 0.95rem; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px; }
+  .stat .num { font-size: 1.75rem; font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.pass .num { color: var(--pass); }
+  .stat.fail .num { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 0.9rem; }
+  th { background: var(--accent); color: #fff; padding: 0.75rem 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr.pass td { background: #f0faf4; }
+  tr.fail td { background: #fef5f4; }
+  tr:hover td { filter: brightness(0.97); }
+  .desc { max-width: 340px; color: #444; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+  .badge.pass { background: #d4edda; color: var(--pass); }
+  .badge.fail { background: #f8d7da; color: var(--fail); }
+  .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+  .section-title { margin: 2rem 0 0.5rem; font-size: 1.25rem; color: #1a1a2e; }
+  .section-sub { margin-bottom: 1rem; color: #555; font-size: 0.9rem; max-width: 720px; }
+  .specialists-table th { background: #7c3aed; }
+  .firm-table th { background: #0369a1; }
+  .firm-table { margin-bottom: 1.5rem; max-width: 640px; }
+  .spec-path { color: #5b21b6; font-weight: 600; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Master 50 — 50 Distinct Firms</h1>
+  <p>One clear scenario per enterprise · Gemini classifier + RAG</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="num">50</div><div class="lbl">Total</div></div>
+  <div class="stat pass"><div class="num">43</div><div class="lbl">Passed</div></div>
+  <div class="stat fail"><div class="num">7</div><div class="lbl">Failed</div></div>
+  <div class="stat pass"><div class="num">86%</div><div class="lbl">Pass Rate</div></div>
+</div>
+
+<h2 class="section-title">Pass rate by firm</h2>
+<table class="firm-table">
+  <thead><tr><th>Firm</th><th>Passed</th><th>Total</th><th>Rate</th></tr></thead>
+  <tbody><tr><td>AMD</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>Accenture</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Adobe</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Amazon AWS</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>Atlassian</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>Barclays</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Boeing IT</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Capgemini</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Cisco</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>Citibank</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Cognizant</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Deloitte</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>EY</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Flipkart</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Freshworks</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>GitHub</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Goldman Sachs</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Google Workspace</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>HCL Tech</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>HDFC Bank</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>HSBC India</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>IBM</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>ICICI Bank</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>Infosys</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Intel</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>JP Morgan</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>KPMG</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>LTIMindtree</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>LinkedIn</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Microsoft</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Morgan Stanley</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Mphasis</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>NASSCOM</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Nvidia</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Oracle</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Paytm</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Persistent</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>PwC</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Red Hat</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>SAP</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Salesforce</td><td>0</td><td>1</td><td><strong>0%</strong></td></tr><tr><td>ServiceNow</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Slack</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Software Office</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Standard Chartered</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>TCS</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Tech Mahindra</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Wipro</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Zoho</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr><tr><td>Zoom</td><td>1</td><td>1</td><td><strong>100%</strong></td></tr></tbody>
+</table>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Firm</th><th>Title</th><th>Description</th>
+      <th>Exp Hand</th><th>Exp Dept</th><th>Act Hand</th><th>Act Dept</th><th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class="pass">
+  <td>F01</td>
+  <td>Capgemini</td>
+  <td><strong>Cannot Login to Capgemini MyWizard Portal</strong></td>
+  <td class="desc">Cannot login to Capgemini MyWizard employee portal after password reset. Self-service portal shows 'Invalid credentials'. Need access to submit weekly timesheet before Friday cutoff.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F02</td>
+  <td>Accenture</td>
+  <td><strong>Client VPN FortiClient Connection Failed Error 201</strong></td>
+  <td class="desc">FortiClient VPN to client Barclays environment fails with Error 201 authentication failed. Required for sprint demo with client stakeholders at 3 PM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F03</td>
+  <td>JP Morgan</td>
+  <td><strong>JPMorgan Markets Login Locked After Failed Attempts</strong></td>
+  <td class="desc">Cannot login to JPMorgan Markets trading platform — account locked after 5 failed password attempts. Need access restored before US market open at 7 PM IST.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F04</td>
+  <td>Goldman Sachs</td>
+  <td><strong>SQL Server Deadlock on Risk Reporting Database</strong></td>
+  <td class="desc">SQL Server risk reporting database showing persistent deadlocks on VaR calculation stored procedures. Risk reports delayed 3 hours for global risk committee.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F05</td>
+  <td>HSBC India</td>
+  <td><strong>HSBCnet Corporate Banking Login Locked</strong></td>
+  <td class="desc">Cannot login to HSBCnet corporate banking portal — account locked after 3 failed attempts. Need urgent access to approve supplier payment batch before 4 PM IST cutoff.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F06</td>
+  <td>Standard Chartered</td>
+  <td><strong>Oracle Flexcube Batch Job Failed EOD</strong></td>
+  <td class="desc">Oracle Flexcube end-of-day batch job FLEOD_BATCH failed at step 14 with ORA-01652 unable to extend temp segment. Core banking interest accrual not completed.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F07</td>
+  <td>TCS</td>
+  <td><strong>Cannot Login to Ultimatix Employee Portal</strong></td>
+  <td class="desc">Cannot login to Ultimatix employee self-service portal — password rejected after recent reset. Need access to submit timesheet before payroll cutoff today.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F08</td>
+  <td>Infosys</td>
+  <td><strong>Floor 12 Printer Toner Empty Cannot Print</strong></td>
+  <td class="desc">HP printer on Floor 12 Pune campus shows 'Replace toner cartridge' and will not print client deliverable documents. Red toner light blinking.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F09</td>
+  <td>NASSCOM</td>
+  <td><strong>Forgot Password Cannot Login NASSCOM Member Portal</strong></td>
+  <td class="desc">Forgot my NASSCOM member portal password and self-service reset link expired. Cannot login to access event registration and industry reports. Need password reset before webinar tomorrow.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F10</td>
+  <td>Wipro</td>
+  <td><strong>Outlook Desktop Search Returns No Results</strong></td>
+  <td class="desc">Microsoft Outlook desktop search returns no results for any email in mailbox. Web Outlook search works correctly. Need to find NASSCOM leadership meeting invite from last week.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F11</td>
+  <td>Microsoft</td>
+  <td><strong>Azure AD Conditional Access Blocking Teams Login</strong></td>
+  <td class="desc">Cannot sign in to Microsoft Teams on corporate laptop — Azure AD Conditional Access policy blocks login with error AADSTS53003. Need access for executive briefing in 30 minutes.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F12</td>
+  <td>Amazon AWS</td>
+  <td><strong>Visual Studio Enterprise License Activation Failed</strong></td>
+  <td class="desc">Visual Studio 2022 Enterprise fails activation with error 0x80070005 access denied. Developer needs build access for .NET 8 microservices release tonight.</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F13</td>
+  <td>HCL Tech</td>
+  <td><strong>Wipro VPN Authentication Failed Pune GDC</strong></td>
+  <td class="desc">Cisco AnyConnect VPN to Wipro Pune GDC fails with Error 691 authentication failed since morning IST. Cannot access client SAP landscape for release deployment tonight.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F14</td>
+  <td>Deloitte</td>
+  <td><strong>Wipro Phishing Campaign Targeting Delivery Managers</strong></td>
+  <td class="desc">Security incident: Wipro delivery managers received spear-phishing emails mimicking client PO approval with malicious macro attachment. Two managers enabled macros before SOC alert broadcast.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F15</td>
+  <td>Nvidia</td>
+  <td><strong>Nvidia NCCL Timeout Multi-Node Training</strong></td>
+  <td class="desc">NCCL all-reduce timeout on 8-node Nvidia DGX cluster during distributed training. InfiniBand link shows errors on leaf switch port 18. Job NV-CLUSTER-77 aborted.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F16</td>
+  <td>Software Office</td>
+  <td><strong>Outlook Desktop Crashes on Startup</strong></td>
+  <td class="desc">Microsoft Outlook desktop crashes immediately on launch with error 'Outlook could not start last time'. Safe mode also fails. Web Outlook works fine in browser.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F17</td>
+  <td>Google Workspace</td>
+  <td><strong>SAP GUI Session Times Out Every 5 Minutes</strong></td>
+  <td class="desc">SAP GUI desktop client disconnects every 5 minutes with message 'Session timed out'. Re-login works but session drops again during data entry.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F18</td>
+  <td>Cognizant</td>
+  <td><strong>Account Locked After Wrong Password</strong></td>
+  <td class="desc">Entered wrong password five times and Active Directory account is locked. Need unlock to access email.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F19</td>
+  <td>LTIMindtree</td>
+  <td><strong>Guest Wi-Fi Captive Portal Broken</strong></td>
+  <td class="desc">Guest Wi-Fi connects but captive portal page never loads. Visitors cannot get internet access in lobby.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F20</td>
+  <td>IBM</td>
+  <td><strong>Forgot BitLocker Recovery Key</strong></td>
+  <td class="desc">Locked out of company laptop after BitLocker prompt — recovery key not saved. Need access to files for client presentation today.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F21</td>
+  <td>Oracle</td>
+  <td><strong>Contractor AD Account Expired</strong></td>
+  <td class="desc">Contractor cannot log in — Active Directory account expired yesterday. Extension approved by sponsor for two more weeks.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F22</td>
+  <td>SAP</td>
+  <td><strong>YubiKey Not Recognized After Update</strong></td>
+  <td class="desc">YubiKey hardware security key not detected by laptop USB ports after Windows update. Cannot complete FIDO2 login to corporate apps.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F23</td>
+  <td>Salesforce</td>
+  <td><strong>Biometric Login Not Working Windows Hello</strong></td>
+  <td class="desc">Windows Hello fingerprint reader stopped working after driver update. PIN login still works.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F24</td>
+  <td>ServiceNow</td>
+  <td><strong>Password Expired Cannot Login Portal</strong></td>
+  <td class="desc">Corporate password expired and self-service reset link returns error 500. Cannot access email or Teams.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F25</td>
+  <td>Adobe</td>
+  <td><strong>MFA Push Notifications Not Received</strong></td>
+  <td class="desc">Duo MFA push notifications stopped arriving on iPhone. Approve request never shows up when logging into VPN portal.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F26</td>
+  <td>Flipkart</td>
+  <td><strong>Forgot Domain Password Cannot Login Laptop</strong></td>
+  <td class="desc">Forgot my Active Directory domain password and cannot login to Windows laptop. Self-service password reset portal says account not found. Need password reset to access email.</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td>H1</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F27</td>
+  <td>EY</td>
+  <td><strong>Firewall Whitelist Client API Endpoint Port 8443</strong></td>
+  <td class="desc">Need firewall rule to whitelist client API endpoint payments.clientcorp.com on port 8443 from Capgemini dev subnet. Approved in change request CR-CG-2290.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F28</td>
+  <td>KPMG</td>
+  <td><strong>Salesforce Lightning Page Blank After Sandbox Refresh</strong></td>
+  <td class="desc">Salesforce Lightning Experience loads blank white page after client sandbox refresh. Classic view works when switched manually. Affects CRM demo for client.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F29</td>
+  <td>PwC</td>
+  <td><strong>MFA Authenticator Lost Need Device Re-Enrollment</strong></td>
+  <td class="desc">Lost phone with Microsoft Authenticator MFA app. Cannot login to corporate email or client VPN until new device enrolled. Manager confirmed identity via HR.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F30</td>
+  <td>Barclays</td>
+  <td><strong>Ransomware Alert on Shared Drive P Drive</strong></td>
+  <td class="desc">Security incident: files on shared P drive encrypted with .ryuk extension. CrowdStrike EDR alert on 4 workstations. Project documentation inaccessible.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F31</td>
+  <td>Citibank</td>
+  <td><strong>Splunk Alert API Keys in Git Repository</strong></td>
+  <td class="desc">Security incident: Splunk secret scanning detected production API keys committed to internal Git repository in merge request. Repo has 25 developer access.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F32</td>
+  <td>ICICI Bank</td>
+  <td><strong>Mainframe CICS Transaction Abend S0C4</strong></td>
+  <td class="desc">CICS region PRODBANK showing repeated S0C4 abends on account inquiry transaction CIQRY. Customer-facing ATM balance inquiry failing across Maharashtra ATMs.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F33</td>
+  <td>HDFC Bank</td>
+  <td><strong>Trade Finance LC Module Screen Freeze</strong></td>
+  <td class="desc">Trade finance letter-of-credit module freezes on document submission screen. Spinning loader for 10+ minutes. Other trade finance screens work. Blocking USD 2M LC issuance.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F34</td>
+  <td>Tech Mahindra</td>
+  <td><strong>Visual Studio Enterprise License Expired</strong></td>
+  <td class="desc">Visual Studio Enterprise shows 'License expired' on developer workstation. Cannot build client .NET solution. License was valid last week before machine reimage.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F35</td>
+  <td>Persistent</td>
+  <td><strong>Employee Smart Badge Denied at Main Gate Turnstile</strong></td>
+  <td class="desc">Employee smart badge denied at Pune campus main gate turnstile with red LED. Badge works for cafeteria but not building entry since badge reprint yesterday.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F36</td>
+  <td>Zoho</td>
+  <td><strong>Laptop USB-C Dock Monitor Not Detected</strong></td>
+  <td class="desc">Dell USB-C docking station — external monitor not detected when laptop connected. Laptop screen works, dock power LED green. Needed for dual-screen policy work.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F37</td>
+  <td>Freshworks</td>
+  <td><strong>NetApp Snapshot Restore Deleted Research Data</strong></td>
+  <td class="desc">Industry research data accidentally deleted from NetApp NAS share. Need snapshot restore from last night before NASSCOM annual report publication deadline.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F38</td>
+  <td>LinkedIn</td>
+  <td><strong>Corporate Wi-Fi Certificate Expired on Surface Hub</strong></td>
+  <td class="desc">Surface Hub in conference room B12 cannot join corporate Wi-Fi — certificate expired on 802.1X authentication. Teams meetings on hub display fail with network error.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F39</td>
+  <td>GitHub</td>
+  <td><strong>Laptop Fan Noise and Thermal Shutdown</strong></td>
+  <td class="desc">Dell Latitude corporate laptop fan runs at maximum continuously and shuts down due to thermal protection during Teams video calls. Device only 14 months old.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F40</td>
+  <td>Intel</td>
+  <td><strong>Nvidia GitLab Runner Secret Leaked in CI Log</strong></td>
+  <td class="desc">Security incident: Nvidia GitLab CI pipeline log printed NVAPI deployment token in plain text on public runner job #88421. Token visible in build artifacts folder accessible to 40 engineers.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F41</td>
+  <td>AMD</td>
+  <td><strong>Deloitte SAP Fiori Launchpad 502 Bad Gateway</strong></td>
+  <td class="desc">SAP Fiori launchpad returns 502 Bad Gateway for all Deloitte consulting users in US practice. Reverse proxy shows upstream application server connection refused on port 44300.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F42</td>
+  <td>Slack</td>
+  <td><strong>Slack Desktop Notifications Not Appearing</strong></td>
+  <td class="desc">Slack desktop app installed but no popup notifications on Windows 11. Do Not Disturb is off. Slack web in browser shows notifications correctly.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F43</td>
+  <td>Zoom</td>
+  <td><strong>Jira Web Shows HTTP 500 on Issue Search</strong></td>
+  <td class="desc">Jira Cloud issue search returns HTTP 500 internal server error for all queries. Jira mobile app and direct issue links by key still work.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F44</td>
+  <td>Mphasis</td>
+  <td><strong>Headset Microphone Not Detected</strong></td>
+  <td class="desc">Jabra headset mic not detected in Windows sound settings. Headphones play audio but Teams cannot hear me.</td>
+  <td>H1</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F45</td>
+  <td>Red Hat</td>
+  <td><strong>Palo Alto GlobalProtect Profile Error</strong></td>
+  <td class="desc">GlobalProtect VPN client shows could not connect to gateway after firewall policy push. Entire sales team remote.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F46</td>
+  <td>Atlassian</td>
+  <td><strong>Multicast Storm on Access Switch</strong></td>
+  <td class="desc">Access switch stack on floor 9 showing high CPU from multicast storm. Users report severe network slowness.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F47</td>
+  <td>Boeing IT</td>
+  <td><strong>Unauthorized RDP Login From Foreign IP Address</strong></td>
+  <td class="desc">Security incident: SIEM alert shows successful RDP login to project jump server from IP 185.220.101.47 at 2:30 AM IST. No approved travel for that user.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>F48</td>
+  <td>Morgan Stanley</td>
+  <td><strong>EMEA MPLS Circuit Down Mumbai to London</strong></td>
+  <td class="desc">MPLS WAN circuit between Mumbai GIFT City and London data center down since 5 AM GMT. EMEA trading support team cannot reach London production systems.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>F49</td>
+  <td>Cisco</td>
+  <td><strong>SharePoint Project Site Access Denied for Team</strong></td>
+  <td class="desc">Entire project team getting 'Access Denied' on client SharePoint project site. Site worked yesterday. Need contributor access restored for 8 associates.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>F50</td>
+  <td>Paytm</td>
+  <td><strong>Production API Keys Exposed in Public GitHub Repo</strong></td>
+  <td class="desc">Security incident: GitHub secret scanning detected production AWS access keys in public repository nasscom/event-platform. Repo was public for 6 hours before takedown.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr>
+  </tbody>
+</table>
+
+<h2 class="section-title">Routing Specialists — SecOps-owned desk</h2>
+<p class="section-sub">Misroutes caught by automated tests. In production, any assignee sends these to the SecOps specialist desk for one-hop correction.</p>
+<table class="specialists-table">
+  <thead>
+    <tr>
+      <th>ID</th><th>Title</th><th>AI routed to</th><th>Correct dept</th><th>Specialist path</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+  <td>F12</td>
+  <td><strong>Visual Studio Enterprise License Activation Failed</strong></td>
+  <td>Access Management</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>F23</td>
+  <td><strong>Biometric Login Not Working Windows Hello</strong></td>
+  <td>Access Management</td>
+  <td>Hardware</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Hardware</td>
+</tr><tr>
+  <td>F32</td>
+  <td><strong>Mainframe CICS Transaction Abend S0C4</strong></td>
+  <td>DBA</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>F35</td>
+  <td><strong>Employee Smart Badge Denied at Main Gate Turnstile</strong></td>
+  <td>Software</td>
+  <td>Access Management</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Access Management</td>
+</tr><tr>
+  <td>F41</td>
+  <td><strong>Deloitte SAP Fiori Launchpad 502 Bad Gateway</strong></td>
+  <td>Network</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr><tr>
+  <td>F46</td>
+  <td><strong>Multicast Storm on Access Switch</strong></td>
+  <td>Access Management</td>
+  <td>Network</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Network</td>
+</tr><tr>
+  <td>F49</td>
+  <td><strong>SharePoint Project Site Access Denied for Team</strong></td>
+  <td>Access Management</td>
+  <td>Software</td>
+  <td class="spec-path">Agent → SecOps Routing Specialists → Software</td>
+</tr>
+  </tbody>
+</table>
+<p class="footer">Generated by SAARTHI routing test pipeline · Gemini classifier + RAG · SecOps Routing Specialists fallback</p>
+</body>
+</html>

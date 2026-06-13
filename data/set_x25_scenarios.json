@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "description": "25 diverse IT scenarios — Set X (post Gemini-first + supervisor fixes)",
+  "cases": [
+    {
+      "id": "X01",
+      "title": "YubiKey Not Recognized After Update",
+      "description": "YubiKey hardware security key not detected by laptop USB ports after Windows update. Cannot complete FIDO2 login to corporate apps.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / security key"
+    },
+    {
+      "id": "X02",
+      "title": "BEC Email Forwarding Rule Added",
+      "description": "Security incident: mailbox audit shows hidden inbox rule forwarding all mail to external Gmail. User did not create the rule.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / mailbox compromise"
+    },
+    {
+      "id": "X03",
+      "title": "Traceroute Shows High Latency to SaaS",
+      "description": "Traceroute to Salesforce shows 300ms+ latency via ISP hop. Only affecting users on guest Wi-Fi VLAN.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / latency"
+    },
+    {
+      "id": "X04",
+      "title": "Oracle RAC Instance Crash",
+      "description": "Oracle RAC node 2 crashed with ORA-00600. Application connection storms failing on remaining node.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / Oracle"
+    },
+    {
+      "id": "X05",
+      "title": "New Intern O365 License Assignment",
+      "description": "Intern starts Monday — need Microsoft 365 E3 license and Teams phone number assigned. HR ticket HR-8821 approved.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / provisioning"
+    },
+    {
+      "id": "X06",
+      "title": "AutoCAD License Checkout Failed",
+      "description": "AutoCAD network license checkout fails with all licenses in use. FlexLM server reachable but checkout times out.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / license server"
+    },
+    {
+      "id": "X07",
+      "title": "Rogue Access Point Detected",
+      "description": "Security incident: wireless IDS flagged rogue AP broadcasting CORP-SSID on parking garage level P2. Possible evil twin attack.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / wireless"
+    },
+    {
+      "id": "X08",
+      "title": "Site-to-Site IPsec Tunnel Down",
+      "description": "IPsec VPN tunnel between AWS VPC and on-prem datacenter down. Phase 2 negotiation failing after cipher suite change.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / VPN"
+    },
+    {
+      "id": "X09",
+      "title": "DynamoDB Throttling Errors",
+      "description": "Production API returning ProvisionedThroughputExceededException on DynamoDB table. Auto-scaling enabled but not keeping up.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / NoSQL cloud"
+    },
+    {
+      "id": "X10",
+      "title": "Biometric Login Not Working Windows Hello",
+      "description": "Windows Hello fingerprint reader stopped working after driver update. PIN login still works.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / biometric"
+    },
+    {
+      "id": "X11",
+      "title": "Slack Workflow Webhook Failing",
+      "description": "Slack workflow posting to internal webhook returns 500. Other Slack features work. Started after cert renewal on webhook endpoint.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / integration"
+    },
+    {
+      "id": "X12",
+      "title": "Shared Mailbox Delegation Missing",
+      "description": "Cannot send as shared mailbox support@company.com after team restructure. Full access works but Send As permission missing.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / mailbox"
+    },
+    {
+      "id": "X13",
+      "title": "NFS Mount Stale File Handle",
+      "description": "Linux app servers report Stale file handle on NFS mount to NetApp. Batch jobs failing to read input files.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Storage" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Storage / NFS"
+    },
+    {
+      "id": "X14",
+      "title": "CrowdStrike False Positive Blocked Build",
+      "description": "Security incident: CrowdStrike quarantined signed internal build agent. All CI pipelines blocked company-wide.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Security / EDR"
+    },
+    {
+      "id": "X15",
+      "title": "Multicast Storm on Access Switch",
+      "description": "Access switch stack on floor 9 showing high CPU from multicast storm. Users report severe network slowness.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / switching"
+    },
+    {
+      "id": "X16",
+      "title": "Python Pandas Script Memory Error",
+      "description": "Local Python pandas script crashes with MemoryError on 16GB laptop when processing 2GB CSV. Need guidance or server runtime.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / script"
+    },
+    {
+      "id": "X17",
+      "title": "Privileged SAP Role Assignment",
+      "description": "Need SAP_ALL role assigned for emergency production fix. CIO approval attached, time-bound 2 hour access required.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Access / privileged"
+    },
+    {
+      "id": "X18",
+      "title": "Tape Backup Library Door Open Alert",
+      "description": "Backup exec reports tape library door open sensor triggered. Physical tape library in datacenter row C.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Hardware / datacenter"
+    },
+    {
+      "id": "X19",
+      "title": "InfluxDB Retention Policy Deleting Data",
+      "description": "InfluxDB time-series data missing for last 48 hours. Retention policy may have dropped measurements prematurely.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / timeseries"
+    },
+    {
+      "id": "X20",
+      "title": "Microsoft Teams Live Event Failing",
+      "description": "Teams live event for all-hands fails at setup — producer cannot start broadcast. Standard Teams meetings work.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Application / Teams"
+    },
+    {
+      "id": "X21",
+      "title": "SSL Cert Pinning Failure Mobile App",
+      "description": "Security incident: corporate mobile app rejects API calls after cert rotation — certificate pinning mismatch in production.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Security / cert pinning"
+    },
+    {
+      "id": "X22",
+      "title": "802.1X Auth Failing New Laptops",
+      "description": "New laptop batch cannot authenticate on wired 802.1X ports. Certificate provisioning profile may not be deployed.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / 802.1x"
+    },
+    {
+      "id": "X23",
+      "title": "GPO Mapped Drive Not Appearing",
+      "description": "Group Policy mapped drive H: not appearing for users in new OU. gpresult shows GPO denied for drive maps.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / GPO"
+    },
+    {
+      "id": "X24",
+      "title": "Label Printer ZPL Garbled Output",
+      "description": "Zebra label printer printing garbled ZPL barcode labels in warehouse. USB connection, driver reinstalled twice.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / printer"
+    },
+    {
+      "id": "X25",
+      "title": "Splunk Forwarder Stopped Sending Logs",
+      "description": "Splunk universal forwarder on 200 Linux hosts stopped sending logs. License warning in Splunk master dashboard.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Application / observability"
+    }
+  ]
+}

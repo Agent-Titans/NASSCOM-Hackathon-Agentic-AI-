@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "description": "20 unique office IT scenarios — fresh set (not pallavi_30 or custom_25)",
+  "cases": [
+    {
+      "id": "U01",
+      "title": "Authenticator App Codes Not Accepted",
+      "description": "Microsoft Authenticator codes rejected when signing into O365. Phone time is correct but MFA verification fails on every attempt.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / MFA"
+    },
+    {
+      "id": "U02",
+      "title": "Ransomware Note on Shared Drive",
+      "description": "Security incident: users on finance share see .encrypted extension and ransom note README.txt. Multiple files inaccessible on \\\\fileserver\\finance.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security incident"
+    },
+    {
+      "id": "U03",
+      "title": "BGP Session Flapping Between Sites",
+      "description": "BGP peering between HQ and DR datacenter flapping every 2 minutes. WAN monitoring shows route withdraw/readvertise loop on edge routers.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network routing"
+    },
+    {
+      "id": "U04",
+      "title": "PostgreSQL Replication Lag Critical",
+      "description": "PostgreSQL streaming replica on reporting cluster is 45 minutes behind primary. Dashboard queries returning stale sales numbers.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database"
+    },
+    {
+      "id": "U05",
+      "title": "MacBook Battery Swelling",
+      "description": "MacBook Pro trackpad lifted and case bulging — battery swelling suspected. Device powered off for safety, need hardware replacement.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Hardware safety"
+    },
+    {
+      "id": "U06",
+      "title": "Salesforce SSO SAML Assertion Failed",
+      "description": "Salesforce login fails with SAML assertion invalid after IdP certificate rotation. Entire sales team blocked from CRM.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "SSO / identity"
+    },
+    {
+      "id": "U07",
+      "title": "Kubernetes Pod CrashLoopBackOff",
+      "description": "Production checkout service pods in CrashLoopBackOff on EKS cluster. Deployment rolled out 30 minutes ago, customers see 503 errors.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Application / DevOps"
+    },
+    {
+      "id": "U08",
+      "title": "FortiGate License Expired",
+      "description": "FortiGate perimeter firewall reports license expired. IPS and web filtering disabled — security policy degraded company-wide.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / firewall"
+    },
+    {
+      "id": "U09",
+      "title": "GitLab Runner Disk Full",
+      "description": "GitLab CI pipelines failing — runner VM /var partition 100% full. No builds completing for mobile app release branch.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "CI / application"
+    },
+    {
+      "id": "U10",
+      "title": "Okta Group Missing for New Project",
+      "description": "Added to new engineering project in HR system but Okta group PROJECT-PHOENIX not assigned. Cannot access Jira, GitHub, or Confluence for the project.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access provisioning"
+    },
+    {
+      "id": "U11",
+      "title": "NetApp Snapshot Restore Request",
+      "description": "Accidentally deleted quarterly report folder on NetApp NAS. Need storage team to restore from last night snapshot on vol_finance.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "DBA", "category": "Storage" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Storage / NAS"
+    },
+    {
+      "id": "U12",
+      "title": "Laptop Fan Running at Full Speed",
+      "description": "Dell Latitude fan constantly at maximum RPM and chassis hot to touch. CPU usage normal in Task Manager — possible thermal paste or fan failure.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware thermal"
+    },
+    {
+      "id": "U13",
+      "title": "Zoom Screen Share Shows Black Screen",
+      "description": "When sharing screen in Zoom meetings attendees see black screen. Camera and mic work fine. Issue started after macOS Sonoma update.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / conferencing"
+    },
+    {
+      "id": "U14",
+      "title": "Privileged DB Access for Incident",
+      "description": "Need temporary read-only production database access for P1 incident investigation. Manager approved — require break-glass privileged access for 4 hours.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Privileged access"
+    },
+    {
+      "id": "U15",
+      "title": "Employee Downloading Customer PII Bulk Export",
+      "description": "Security incident: DLP flagged employee downloading 50,000 customer records to personal USB drive. HR and legal notified — immediate investigation required.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / insider threat"
+    },
+    {
+      "id": "U16",
+      "title": "DHCP Scope Exhausted Floor 12",
+      "description": "New hires on floor 12 cannot get IP addresses. DHCP scope 10.12.0.0/24 shows 0 available leases. Wired and wireless affected.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network DHCP"
+    },
+    {
+      "id": "U17",
+      "title": "MySQL Table Corruption on Orders DB",
+      "description": "MySQL InnoDB corruption error on orders database table during nightly ETL. Order processing halted — error 145 Table is marked as crashed.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database corruption"
+    },
+    {
+      "id": "U18",
+      "title": "Second Monitor Not Detected HDMI",
+      "description": "Plugged second monitor via HDMI into docking station but Windows shows only one display. Monitor power light on, tried different cable.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware display"
+    },
+    {
+      "id": "U19",
+      "title": "Confluence Space Permission Denied",
+      "description": "Cannot edit pages in Confluence space ENG-WIKI after team reorg. View access works but all edit actions return permission denied.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application permissions"
+    },
+    {
+      "id": "U20",
+      "title": "Internal API TLS Certificate Expired",
+      "description": "Security incident: internal payment API TLS certificate expired yesterday. Microservices failing mutual TLS handshake — customer checkout impacted.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Security / cert expiry"
+    }
+  ]
+}

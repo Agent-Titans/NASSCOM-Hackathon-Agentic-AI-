@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "description": "15 clear mixed-department office scenarios — all 6 queues + Hands 1/2/3 (Set MX)",
+  "cases": [
+    {
+      "id": "MX01",
+      "title": "Forgot Domain Password Cannot Login Laptop",
+      "description": "Forgot my Active Directory domain password and cannot login to Windows laptop. Self-service password reset portal says account not found. Need password reset to access email.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / password reset H1"
+    },
+    {
+      "id": "MX02",
+      "title": "Phishing Email Link Clicked Credentials Entered",
+      "description": "Security incident: clicked phishing email link and entered O365 username and password on fake Microsoft login page. Received suspicious login alert 10 minutes later.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / phishing H3"
+    },
+    {
+      "id": "MX03",
+      "title": "Floor Printer Paper Jam Red Light On",
+      "description": "HP LaserJet on 4th floor has paper jam. Red jam indicator light on, print jobs stuck in queue. Need help clearing jam to print contract documents.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / printer jam H1"
+    },
+    {
+      "id": "MX04",
+      "title": "Cisco AnyConnect VPN Error 807",
+      "description": "Cisco AnyConnect VPN fails with Error 807 on Windows laptop from home. Cannot reach internal file server. Internet connection works normally.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / VPN H1"
+    },
+    {
+      "id": "MX05",
+      "title": "MySQL Primary Replica Replication Stopped",
+      "description": "MySQL replication stopped on reporting replica with error 1236 binlog position mismatch. Finance dashboards showing stale data since 4 AM.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / replication H2"
+    },
+    {
+      "id": "MX06",
+      "title": "Microsoft Teams Desktop Keeps Crashing",
+      "description": "Microsoft Teams desktop app crashes within 30 seconds of opening on Windows 11. Teams web version works in browser. Reinstall did not fix issue.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Teams crash H2"
+    },
+    {
+      "id": "MX07",
+      "title": "Laptop Fan Running Loud and Overheating",
+      "description": "Company laptop fan constantly at maximum speed and chassis very hot during normal email use. Thermal throttling warnings appearing. Laptop is 3 years old.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / thermal H2"
+    },
+    {
+      "id": "MX08",
+      "title": "Whitelist Vendor IP on Corporate Firewall",
+      "description": "Need firewall rule to whitelist vendor IP 203.0.113.45 for inbound HTTPS to staging API server. Vendor integration testing blocked since yesterday.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / firewall whitelist H2"
+    },
+    {
+      "id": "MX09",
+      "title": "New Contractor Okta and Jira Access",
+      "description": "New contractor starts Monday — need Okta SSO account, Jira project access, and VPN profile provisioned. Manager approval attached in onboarding ticket.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / provisioning H2"
+    },
+    {
+      "id": "MX10",
+      "title": "Ransomware Encryption Detected on Shared Drive",
+      "description": "Security incident: multiple files on shared drive renamed with .encrypted extension. CrowdStrike alert triggered on file server FS-PROD-02. Need immediate isolation.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / ransomware H3"
+    },
+    {
+      "id": "MX11",
+      "title": "Veeam Nightly Backup Job Failed Repository Full",
+      "description": "Veeam backup job failed at 1 AM — backup repository volume out of free space. Last successful full backup was 4 days ago. Need space recovery urgently.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Storage" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Storage / Veeam backup H2"
+    },
+    {
+      "id": "MX12",
+      "title": "Google Chrome Shows Blank White Pages",
+      "description": "Google Chrome browser shows blank white page for all internal and external websites. Edge browser works fine on same laptop. Cleared cache but issue persists.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Chrome H1"
+    },
+    {
+      "id": "MX13",
+      "title": "External Monitor No Signal Through USB-C Dock",
+      "description": "Dell USB-C docking station — external monitor shows no signal when laptop connected. Laptop screen works, dock power LED green. Tried different HDMI cable.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / dock monitor H2"
+    },
+    {
+      "id": "MX14",
+      "title": "Conference Room Wi-Fi Authentication Fails",
+      "description": "Corporate Wi-Fi in Conference Room 7 rejects valid credentials with 'Authentication failed'. Same credentials work in open office area and on wired port.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / Wi-Fi auth H2"
+    },
+    {
+      "id": "MX15",
+      "title": "PostgreSQL Connection Pool Exhausted API Errors",
+      "description": "PostgreSQL connection pool exhausted on pg-app-prod-03. Customer-facing API returning HTTP 500 database connection errors. Pool size 100, all connections in use.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / Postgres pool H2"
+    }
+  ]
+}

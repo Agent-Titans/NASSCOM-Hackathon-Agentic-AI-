@@ -1,4 +1,4 @@
-"""Find similar resolved tickets — Chroma BM25 + stemmed keywords + Gemini embeddings."""
+"""Find similar resolved tickets — ChromaDB (Gemini embeddings) + keyword fallback."""
 from __future__ import annotations
 
 import json
@@ -125,8 +125,20 @@ _KB_CORPUS: list[_CorpusRow] = [
 ]
 
 
+def _corpus_mode() -> str:
+    return get_settings().rag_corpus_mode.lower()
+
+
+def _legacy_corpus_rows() -> list[_CorpusRow]:
+    return _DEMO_CORPUS + _ENTERPRISE_CORPUS
+
+
 def _all_corpus_rows() -> list[_CorpusRow]:
-    return _KB_CORPUS + _DEMO_CORPUS + _ENTERPRISE_CORPUS
+    mode = _corpus_mode()
+    rows = list(_KB_CORPUS)
+    if mode in ("legacy", "both"):
+        rows.extend(_legacy_corpus_rows())
+    return rows
 
 
 def _is_corpus_id(doc_id: str) -> bool:
@@ -165,16 +177,57 @@ class TicketRetrievalService:
         self.chroma = chroma or ChromaTicketStore()
 
     def index_corpus(self) -> int:
-        """Load KB seeds + 45 demo tickets into ChromaDB. Returns document count."""
+        """Load KB seeds (+ legacy demo corpus when enabled) into ChromaDB."""
         if not self.chroma.available:
             return 0
         return self.chroma.reindex_all(chroma_corpus_entries())
+
+    def index_synthetic_chroma(self, entries: list[tuple[str, str, dict]]) -> int:
+        """Replace Chroma with KB seeds + synthetic tickets (local ST or Gemini)."""
+        from src.config.settings import get_settings
+        from src.services.chroma_indexing import embed_corpus_entries
+        from src.stores.embedding_cache_store import get_embedding_cache_store
+
+        payload = chroma_corpus_entries() + entries
+        settings = get_settings()
+
+        if settings.rag_embedding_backend.lower() == "local":
+            print(f"  Indexing {len(payload)} docs with local MiniLM (ONNX)…", flush=True)
+            count = self.chroma.reindex_documents(payload)
+            print(f"  Chroma indexed: {count}/{len(payload)}", flush=True)
+            return count
+
+        if not self.chroma.reset_collection():
+            return 0
+
+        ingest_batch = 50
+        total = len(payload)
+        indexed = 0
+
+        def _progress(done: int, batch_total: int) -> None:
+            print(f"  Gemini embed: {indexed + done}/{total}", flush=True)
+
+        for start in range(0, total, ingest_batch):
+            chunk = payload[start : start + ingest_batch]
+            embedded = embed_corpus_entries(chunk, on_progress=_progress)
+            self.chroma.upsert_gemini_batch(embedded)
+            indexed += len(embedded)
+            get_embedding_cache_store().flush()
+            print(f"  Chroma upserted: {self.chroma.count}/{total}", flush=True)
+
+        return self.chroma.count
 
     def ensure_index(self, session: Session) -> None:
         """Index resolved tickets + corpus into Chroma when available."""
         global _corpus_cache_hydrated, _ensure_index_done, _indexed_resolved_ids
 
-        if self.chroma.available and self.chroma.count == 0:
+        settings = get_settings()
+        if (
+            settings.rag_auto_seed
+            and settings.rag_corpus_mode.lower() != "synthetic"
+            and self.chroma.available
+            and self.chroma.count == 0
+        ):
             for doc_id, doc, meta in chroma_corpus_entries():
                 self.chroma.upsert(doc_id, doc, meta)
 
@@ -197,7 +250,7 @@ class TicketRetrievalService:
             .all()
         )
         pending = [t for t in tickets if t.ticket_id not in _indexed_resolved_ids]
-        if pending and self.chroma.available:
+        if pending and self.chroma.available and self.chroma.count < 50:
             ticket_ids = [t.ticket_id for t in pending]
             artifacts = {
                 row.ticket_id: row
@@ -300,12 +353,17 @@ class TicketRetrievalService:
             ).items():
                 candidates[doc_id] = max(candidates.get(doc_id, 0.0), sim)
 
+        resolved_limit = (
+            1000 if settings.rag_corpus_mode.lower() == "synthetic" else 100
+        )
+        resolved_q = session.query(Ticket).filter(Ticket.status == "RESOLVED")
+        if settings.rag_corpus_mode.lower() == "synthetic":
+            resolved_q = resolved_q.filter(Ticket.ticket_id.like("syn-%"))
         resolved = (
-            session.query(Ticket)
-            .filter(Ticket.status == "RESOLVED")
-            .order_by(Ticket.updated_at.desc())
-            .limit(100)
-            .all()
+            resolved_q.order_by(Ticket.updated_at.desc()).limit(resolved_limit).all()
+        )
+        min_resolved_overlap = (
+            0.12 if settings.rag_corpus_mode.lower() == "synthetic" else 0.0
         )
         for t in resolved:
             if exclude_ticket_id and t.ticket_id == exclude_ticket_id:
@@ -314,11 +372,19 @@ class TicketRetrievalService:
                 continue
             doc = f"{t.title} {t.description_sanitized or t.description_raw}"
             overlap = _keyword_overlap(text, doc)
-            if overlap > 0:
+            if overlap > min_resolved_overlap:
                 candidates[t.ticket_id] = max(candidates.get(t.ticket_id, 0.0), overlap)
 
         user_ids = {tid for tid in candidates if not _is_corpus_id(tid)}
-        if user_ids:
+        if len(user_ids) > settings.retrieval_semantic_candidate_cap:
+            user_ids = {
+                tid
+                for tid, _ in sorted(
+                    ((tid, candidates[tid]) for tid in user_ids),
+                    key=lambda item: -item[1],
+                )[: settings.retrieval_semantic_candidate_cap]
+            }
+        if user_ids and settings.rag_corpus_mode.lower() != "synthetic":
             user_docs: dict[str, str] = {}
             for t in resolved:
                 if t.ticket_id in user_ids:

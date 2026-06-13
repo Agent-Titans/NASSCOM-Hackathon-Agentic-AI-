@@ -1,10 +1,6 @@
 """SAARTHI login — welcome, sign-in, and workspace scope styles."""
 from __future__ import annotations
 
-from functools import lru_cache
-
-
-@lru_cache(maxsize=2)
 def login_css(dark: bool) -> str:
     if dark:
         bg = "linear-gradient(180deg, #0F172A 0%, #020617 100%)"
@@ -65,11 +61,16 @@ def login_css(dark: bool) -> str:
 
     return f"""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
     /* —— Shared auth canvas —— */
     [data-testid="stAppViewContainer"]:has(.welcome-scope),
-    [data-testid="stAppViewContainer"]:has(.workspace-scope),
+    [data-testid="stAppViewContainer"]:has(.workspace-scope) {{
+      background: #EFF2F6 !important;
+      min-height: 100vh;
+    }}
     [data-testid="stAppViewContainer"]:has(.signin-scope) {{
-      background: linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%) !important;
+      background: #F3F4F6 !important;
       min-height: 100vh;
     }}
     [data-testid="stAppViewContainer"]:has(.welcome-scope) {{
@@ -149,18 +150,6 @@ def login_css(dark: bool) -> str:
     }}
     {w} .login-page-root {{
       position: relative;
-      overflow: hidden;
-    }}
-    {w} .login-hero-glow {{
-      position: absolute;
-      top: -120px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 520px;
-      height: 320px;
-      background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.18) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
     }}
     {w} .hero-container {{
       position: relative;
@@ -191,26 +180,35 @@ def login_css(dark: bool) -> str:
       text-transform: uppercase;
       color: {eyebrow};
     }}
-    {w} .login-title {{
+    .brand-lockup .login-title {{
       margin: 0;
-      font-size: clamp(2.75rem, 8vw, 4.25rem);
-      font-weight: 800;
-      font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
-      letter-spacing: 0.14em;
-      line-height: 1.05;
-      text-transform: uppercase;
+      line-height: 1;
     }}
-    {w} .brand-name {{
-      background: linear-gradient(135deg, {brand_name} 0%, #4F46E5 45%, #0EA5E9 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 800;
+    .brand-wordmark {{
+      display: inline-block;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      white-space: nowrap;
     }}
-    {w} .brand-dot {{
-      color: {brand_dot};
+    .brand-wordmark-hero {{
+      font-size: clamp(3.25rem, 9vw, 4.75rem);
+    }}
+    .brand-wordmark-nav {{
+      font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: 0;
+      letter-spacing: -0.02em;
+    }}
+    .brand-wordmark .brand-name {{
+      color: #1E40AF;
+      font-family: inherit;
+      font-weight: inherit;
+    }}
+    .brand-wordmark .brand-dot {{
+      color: #2563EB;
+      font-family: inherit;
+      font-weight: inherit;
     }}
     {w} .login-warm-pill {{
       display: inline-flex;
@@ -238,11 +236,12 @@ def login_css(dark: bool) -> str:
     }}
     {w} .login-tagline {{
       margin: 0.75rem 0 0;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       color: {tagline};
       line-height: 1.5;
       max-width: 32rem;
       font-weight: 500;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
     }}
     {w} .login-caption {{
       margin: 0.55rem 0 0;
@@ -286,7 +285,7 @@ def login_css(dark: bool) -> str:
       font-size: 1rem !important;
       font-weight: 600 !important;
       border: none !important;
-      box-shadow: {pill_shadow} !important;
+      box-shadow: none !important;
       margin: 0 auto !important;
       width: auto !important;
       min-height: auto !important;
@@ -629,86 +628,299 @@ def login_css(dark: bool) -> str:
       font-weight: 500 !important;
     }}
 
-    /* —— Sign-in scope (email + password card) —— */
+    /* —— Sign-in scope (mockup: logo above card, pill buttons, gray inputs) —— */
+    .signin-layout-marker,
+    .signin-form-marker,
+    .signin-card-shell-marker {{
+      display: none !important;
+    }}
+    {ss} .login-toggle-wrap {{
+      display: none !important;
+    }}
     {ss} [data-testid="stMainBlockContainer"],
     {ss} .block-container {{
       max-width: 100% !important;
-      padding: 0 1rem 2rem !important;
+      padding: 2.5rem 1.25rem 3rem !important;
       background: transparent !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
     }}
-    {ss} [data-testid="stColumn"]:nth-child(2) {{
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-layout-marker),
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-scope) {{
+      align-items: center !important;
+      width: 100% !important;
+      max-width: 440px !important;
+      margin: 0 auto !important;
+      gap: 0 !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-layout-marker)
+      > [data-testid="stElementContainer"],
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-scope)
+      > [data-testid="stElementContainer"] {{
+      width: 100% !important;
+      max-width: 440px !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }}
+    /* Logo row — outside the white card */
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-layout-marker)
+      > [data-testid="stElementContainer"]:has(.signin-topnav-outside),
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-scope)
+      > [data-testid="stElementContainer"]:has(.signin-topnav-outside) {{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 0 1.35rem !important;
+      margin-bottom: 0 !important;
+    }}
+    /* One seamless white card — pseudo backdrop, transparent segment rows */
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker) {{
+      position: relative !important;
+      isolation: isolate !important;
+      gap: 0 !important;
+      row-gap: 0 !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)::before {{
+      content: "" !important;
+      position: absolute !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: 3rem !important;
+      bottom: 0 !important;
       background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      border-radius: 16px !important;
-      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06) !important;
-      padding: 0 2rem 1.75rem !important;
-      margin: 1.5rem auto 2rem !important;
-      max-width: 420px !important;
+      border: 1px solid #E8EAED !important;
+      border-radius: 18px !important;
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.1) !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
     }}
-    .signin-scope.signin-topbar {{
-      display: flex;
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"],
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"] > div,
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      [data-testid="stForm"],
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      [data-testid="stForm"] [data-testid="stElementContainer"] {{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"] {{
+      position: relative !important;
+      z-index: 1 !important;
+      margin: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"]:has(.signin-topnav-outside) {{
+      padding: 0 0 1.35rem !important;
+      z-index: 2 !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"]:not(:has(.signin-topnav-outside)),
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stLayoutWrapper"]:has(.signin-form-marker) {{
+      padding-left: 2rem !important;
+      padding-right: 2rem !important;
+      box-sizing: border-box !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stLayoutWrapper"]:has(.signin-form-marker) {{
+      width: 100% !important;
+      max-width: 440px !important;
+      margin: 0 auto 2.5rem !important;
+      padding-bottom: 2.65rem !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }}
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker) [data-testid="stForm"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stForm"] [data-testid="stVerticalBlock"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stTextInput"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stTextInput"] > div,
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stTextInput"] [data-baseweb="input"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stButton"],
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      [data-testid="stButton"] > div,
+    {ss} [data-testid="stLayoutWrapper"]:has(.signin-form-marker)
+      button[data-testid="stBaseButton-primaryFormSubmit"] {{
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      > [data-testid="stElementContainer"]:has(.signin-card-top) {{
+      padding-top: 2.35rem !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker) {{
+      border: none !important;
+      margin: 0 !important;
+      padding: 0 0 0.5rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }}
+    {ss} [data-testid="stVerticalBlock"]:has(.signin-card-shell-marker)
+      [data-testid="stVerticalBlock"] {{
+      gap: 0 !important;
+    }}
+    .signin-scope.signin-topnav-outside {{
+      width: 100%;
+      text-align: center;
+      padding: 0;
+    }}
+    .signin-scope.signin-topnav {{
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 1.25rem 0 0.5rem;
-      color: #0F172A;
-      font-weight: 700;
-      font-size: 1.05rem;
+      color: #111827;
     }}
-    .signin-scope.signin-card-header {{
+    .signin-scope.signin-card-top {{
+      width: 100%;
       text-align: center;
-      padding: 0.5rem 0 1.25rem;
+      padding: 0;
+      box-sizing: border-box;
     }}
     .signin-scope .signin-lock-icon {{
       width: 52px;
       height: 52px;
-      margin: 0 auto 1rem;
+      margin: 0 auto 1.35rem;
       border-radius: 999px;
-      background: #0F172A;
-      display: flex;
+      background: #111827;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
     }}
-    .signin-scope .signin-title {{
+    .signin-scope .signin-heading {{
       margin: 0;
-      font-size: 1.65rem;
-      font-weight: 800;
-      color: #0F172A;
+      font-size: 1.75rem;
+      font-weight: 700;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      color: #111827;
       letter-spacing: -0.02em;
     }}
     .signin-scope .signin-subtitle {{
-      margin: 0.45rem 0 0;
+      margin: 0.55rem auto 2.25rem;
       font-size: 0.92rem;
-      color: #64748B;
-      line-height: 1.45;
+      color: #6B7280;
+      line-height: 1.5;
+      max-width: 22rem;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
     }}
     .signin-scope.signin-error {{
       color: #DC2626;
       font-size: 0.85rem;
-      text-align: center;
-      margin: 0 0 0.75rem;
+      text-align: center !important;
+      margin: 0;
+      padding: 0.35rem 0 0.5rem;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker) > [data-testid="stVerticalBlock"] {{
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0 !important;
+      row-gap: 0 !important;
+      align-items: stretch !important;
+      width: 100% !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] {{
+      margin: 0 !important;
+      padding: 0 !important;
+      flex: 0 0 auto !important;
+      min-height: 0 !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"][class*="st-key-signin_email"] {{
+      margin-bottom: 0.5rem !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"][class*="st-key-signin_password"] {{
+      margin-bottom: 0.45rem !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"]:has(.signin-form-marker) {{
+      display: none !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"][class*="st-key-signin_email"] {{
+      padding-bottom: 0.1rem !important;
+    }}
+    {ss} [data-testid="stForm"]:has(.signin-form-marker)
+      [data-testid="stElementContainer"][class*="st-key-signin_password"] {{
+      padding-bottom: 0.1rem !important;
+    }}
+    {ss} [data-testid="stTextInput"] {{
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }}
+    {ss} label[data-testid="stWidgetLabel"] {{
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
     }}
     {ss} label[data-testid="stWidgetLabel"] p {{
-      font-size: 0.82rem !important;
+      font-size: 0.875rem !important;
       font-weight: 700 !important;
-      color: #0F172A !important;
+      color: #111827 !important;
+      text-align: left !important;
+      margin: 0 0 0.5rem !important;
+      line-height: 1.35 !important;
     }}
-  /* Single border on BaseWeb wrapper — fixes password field (eye icon) clipping */
+    {ss} [data-testid="stTextInput"] [data-baseweb="input"],
+    {ss} div[data-testid="stTextInput"] input,
+    {ss} [data-testid="stTextInput"] input {{
+      border-radius: 12px !important;
+    }}
     {ss} [data-testid="stTextInput"] [data-baseweb="input"] {{
-      border: 1.5px solid #94A3B8 !important;
-      border-radius: 10px !important;
-      background: #FFFFFF !important;
-      min-height: 2.75rem !important;
+      border: 1px solid #E5E7EB !important;
+      background-color: #F3F4F6 !important;
+      min-height: 3.125rem !important;
+      height: 3.125rem !important;
       box-shadow: none !important;
+    }}
+    {ss} [class*="st-key-signin_email"] [data-baseweb="input"] {{
+      padding-left: 2.65rem !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 7l9 6 9-6'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: 14px center !important;
+      background-size: 18px 18px !important;
+    }}
+    {ss} [class*="st-key-signin_password"] [data-baseweb="input"] {{
+      padding-left: 2.65rem !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 1 1 8 0v3'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: 14px center !important;
+      background-size: 18px 18px !important;
     }}
     {ss} [data-testid="stTextInput"] input {{
       border: none !important;
       background: transparent !important;
-      color: #0F172A !important;
+      color: #111827 !important;
       box-shadow: none !important;
+      font-size: 0.92rem !important;
     }}
     {ss} [data-testid="stTextInput"] [data-baseweb="input"]:focus-within {{
-      border-color: #2563EB !important;
+      border-color: #3B82F6 !important;
+      background-color: #FFFFFF !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
       outline: none !important;
     }}
     {ss} [data-testid="stTextInput"] [data-baseweb="input"] button {{
@@ -716,60 +928,40 @@ def login_css(dark: bool) -> str:
       border: none !important;
       box-shadow: none !important;
     }}
-    {ss} button[data-testid="stBaseButton-primary"] {{
-      background: #2563EB !important;
+    {ss} [data-testid="stForm"] [data-testid="stButton"],
+    {ss} [data-testid="stForm"] [data-testid="stButton"] > div,
+    {ss} [data-testid="stForm"] [data-testid="stButton"] button {{
+      width: 100% !important;
+      max-width: 100% !important;
+      display: flex !important;
+      box-sizing: border-box !important;
+    }}
+    {ss} button[data-testid="stBaseButton-primary"],
+    {ss} button[data-testid="stBaseButton-primaryFormSubmit"] {{
+      background: #3B82F6 !important;
+      background-image: none !important;
       color: #FFFFFF !important;
-      border-radius: 10px !important;
+      border-radius: 9999px !important;
       border: none !important;
-      font-weight: 700 !important;
-      min-height: 2.75rem !important;
+      font-weight: 600 !important;
+      font-family: "Inter", system-ui, sans-serif !important;
+      min-height: 3.125rem !important;
+      height: 3.125rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
       box-shadow: none !important;
+      margin: 0.5rem 0 0 !important;
+      padding: 0 1.25rem !important;
     }}
-    {ss} button[data-testid="stBaseButton-primary"]:hover {{
-      background: #1D4ED8 !important;
-    }}
-    {ss} button[data-testid="stBaseButton-secondary"][class*="st-key-signin_create"] {{
-      background: #FFFFFF !important;
-      color: #2563EB !important;
-      border: 1.5px solid #2563EB !important;
-      border-radius: 10px !important;
-      font-weight: 700 !important;
-      min-height: 2.75rem !important;
-    }}
-    .signin-scope.signin-divider {{
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 1rem 0;
-      color: #94A3B8;
-      font-size: 0.82rem;
-    }}
-    .signin-scope.signin-divider::before,
-    .signin-scope.signin-divider::after {{
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #E2E8F0;
-    }}
-    .signin-scope.signin-legal {{
-      text-align: center;
-      font-size: 0.75rem;
-      color: #94A3B8;
-      line-height: 1.5;
-      margin-top: 1.25rem;
+    {ss} button[data-testid="stBaseButton-primary"]:hover,
+    {ss} button[data-testid="stBaseButton-primaryFormSubmit"]:hover {{
+      background: #2563EB !important;
+      background-image: none !important;
     }}
     .signin-scope .signin-link {{
-      color: #2563EB;
-      text-decoration: none;
+      color: #3B82F6;
       font-weight: 600;
-    }}
-    {ss} button[kind="tertiary"][class*="st-key-signin_forgot"] {{
-      color: #2563EB !important;
-      font-size: 0.82rem !important;
-      font-weight: 600 !important;
-      width: auto !important;
-      margin-left: auto !important;
-      padding: 0 !important;
+      cursor: default;
     }}
     </style>
     """

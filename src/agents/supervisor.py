@@ -10,7 +10,11 @@ from __future__ import annotations
 
 from src.config.rag_policy import blocks_hand1_similarity, is_trusted_rag_match
 from src.config.settings import get_settings
-from src.config.supervisor_policy import get_supervisor_policy, matches_hand1_playbook
+from src.config.supervisor_policy import (
+    get_supervisor_policy,
+    matches_hand1_playbook,
+    min_hand_for_urgency,
+)
 from src.models.schemas import (
     ClassificationResult,
     ResolutionResult,
@@ -40,6 +44,21 @@ def _status_for_hand(hand: str, *, escalation: bool) -> str:
 
 
 class SupervisorAgent:
+    @staticmethod
+    def _apply_urgency_floor(
+        hand: str,
+        *,
+        urgency: str | None,
+        escalation: bool,
+    ) -> tuple[str, str, bool]:
+        """Raise hand when urgency policy requires specialist routing."""
+        min_hand = min_hand_for_urgency(urgency)
+        if int(hand) >= int(min_hand):
+            return hand, _status_for_hand(hand, escalation=escalation), escalation
+        hand = min_hand
+        escalation = hand == "3"
+        return hand, _status_for_hand(hand, escalation=escalation), escalation
+
     def decide(
         self,
         classification: ClassificationResult,
@@ -47,6 +66,7 @@ class SupervisorAgent:
         *,
         sentiment: float = 0.5,
         historical_success: float = 0.5,
+        urgency: str | None = "medium",
     ) -> SupervisorDecision:
         settings = get_settings()
         policy = get_supervisor_policy()
@@ -56,21 +76,28 @@ class SupervisorAgent:
         c_total = (similarity * 0.6) + (sentiment * 0.2) + (historical_success * 0.2)
 
         if classification.use_case_category in policy.force_hand3_categories:
+            hand, status, escalation = self._apply_urgency_floor(
+                "3", urgency=urgency, escalation=True
+            )
             return SupervisorDecision(
-                hand="3",
+                hand=hand,
                 c_total=c_total,
-                escalation_required=True,
-                status="ESCALATED",
+                escalation_required=escalation,
+                status=status,
                 policy_trigger="security_policy",
             )
 
         if resolution.low_grounding:
-            hand = policy.low_grounding_hand
+            hand, status, escalation = self._apply_urgency_floor(
+                policy.low_grounding_hand,
+                urgency=urgency,
+                escalation=policy.low_grounding_hand == "3",
+            )
             return SupervisorDecision(
                 hand=hand,
                 c_total=c_total,
-                escalation_required=hand == "3",
-                status=_status_for_hand(hand, escalation=hand == "3"),
+                escalation_required=escalation,
+                status=status,
                 policy_trigger="low_grounding",
             )
 
@@ -80,12 +107,18 @@ class SupervisorAgent:
             similarity=similarity,
             low_grounding=resolution.low_grounding,
         ):
+            hand, status, escalation = self._apply_urgency_floor(
+                "1", urgency=urgency, escalation=False
+            )
+            trigger = "hand1_playbook"
+            if hand != "1":
+                trigger = "urgency_min_hand"
             return SupervisorDecision(
-                hand="1",
+                hand=hand,
                 c_total=c_total,
-                escalation_required=False,
-                status="SELF_HELP",
-                policy_trigger="hand1_playbook",
+                escalation_required=escalation,
+                status=status,
+                policy_trigger=trigger,
             )
 
         if c_total >= settings.c_total_hand1:
@@ -113,11 +146,20 @@ class SupervisorAgent:
             status = _status_for_hand(hand, escalation=hand == "3")
             escalation = hand == "3"
 
+        hand_before = hand
+        hand, status, escalation = self._apply_urgency_floor(
+            hand, urgency=urgency, escalation=escalation
+        )
+        policy_trigger = (
+            "urgency_min_hand" if int(hand) > int(hand_before) else None
+        )
+
         return SupervisorDecision(
             hand=hand,
             c_total=c_total,
             escalation_required=escalation,
             status=status,
+            policy_trigger=policy_trigger,
         )
 
     def sentiment_from_classification(self, classification: ClassificationResult) -> float:

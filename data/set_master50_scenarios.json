@@ -1,0 +1,900 @@
+{
+  "version": 1,
+  "description": "Master 50 \u2014 one clear scenario per firm (50 distinct enterprises, unambiguous titles & descriptions)",
+  "cases": [
+    {
+      "id": "F01",
+      "title": "Cannot Login to Capgemini MyWizard Portal",
+      "description": "Cannot login to Capgemini MyWizard employee portal after password reset. Self-service portal shows 'Invalid credentials'. Need access to submit weekly timesheet before Friday cutoff.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / MyWizard login",
+      "firm": "Capgemini",
+      "source_id": "CG01"
+    },
+    {
+      "id": "F02",
+      "title": "Client VPN FortiClient Connection Failed Error 201",
+      "description": "FortiClient VPN to client Barclays environment fails with Error 201 authentication failed. Required for sprint demo with client stakeholders at 3 PM IST.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network / client VPN",
+      "firm": "Accenture",
+      "source_id": "CG02"
+    },
+    {
+      "id": "F03",
+      "title": "JPMorgan Markets Login Locked After Failed Attempts",
+      "description": "Cannot login to JPMorgan Markets trading platform \u2014 account locked after 5 failed password attempts. Need access restored before US market open at 7 PM IST.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / Markets login",
+      "firm": "JP Morgan",
+      "source_id": "JP01"
+    },
+    {
+      "id": "F04",
+      "title": "SQL Server Deadlock on Risk Reporting Database",
+      "description": "SQL Server risk reporting database showing persistent deadlocks on VaR calculation stored procedures. Risk reports delayed 3 hours for global risk committee.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "DBA",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Database / SQL deadlock",
+      "firm": "Goldman Sachs",
+      "source_id": "JP05"
+    },
+    {
+      "id": "F05",
+      "title": "HSBCnet Corporate Banking Login Locked",
+      "description": "Cannot login to HSBCnet corporate banking portal \u2014 account locked after 3 failed attempts. Need urgent access to approve supplier payment batch before 4 PM IST cutoff.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / HSBCnet lockout",
+      "firm": "HSBC India",
+      "source_id": "HI01"
+    },
+    {
+      "id": "F06",
+      "title": "Oracle Flexcube Batch Job Failed EOD",
+      "description": "Oracle Flexcube end-of-day batch job FLEOD_BATCH failed at step 14 with ORA-01652 unable to extend temp segment. Core banking interest accrual not completed.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "DBA",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Database / Flexcube EOD",
+      "firm": "Standard Chartered",
+      "source_id": "HI05"
+    },
+    {
+      "id": "F07",
+      "title": "Cannot Login to Ultimatix Employee Portal",
+      "description": "Cannot login to Ultimatix employee self-service portal \u2014 password rejected after recent reset. Need access to submit timesheet before payroll cutoff today.",
+      "urgency": "high",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / Ultimatix login",
+      "firm": "TCS",
+      "source_id": "TC01"
+    },
+    {
+      "id": "F08",
+      "title": "Floor 12 Printer Toner Empty Cannot Print",
+      "description": "HP printer on Floor 12 Pune campus shows 'Replace toner cartridge' and will not print client deliverable documents. Red toner light blinking.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / printer toner H1",
+      "firm": "Infosys",
+      "source_id": "TC08"
+    },
+    {
+      "id": "F09",
+      "title": "Forgot Password Cannot Login NASSCOM Member Portal",
+      "description": "Forgot my NASSCOM member portal password and self-service reset link expired. Cannot login to access event registration and industry reports. Need password reset before webinar tomorrow.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / portal password H1",
+      "firm": "NASSCOM",
+      "source_id": "NS01"
+    },
+    {
+      "id": "F10",
+      "title": "Outlook Desktop Search Returns No Results",
+      "description": "Microsoft Outlook desktop search returns no results for any email in mailbox. Web Outlook search works correctly. Need to find NASSCOM leadership meeting invite from last week.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / Outlook search H1",
+      "firm": "Wipro",
+      "source_id": "NS05"
+    },
+    {
+      "id": "F11",
+      "title": "Azure AD Conditional Access Blocking Teams Login",
+      "description": "Cannot sign in to Microsoft Teams on corporate laptop \u2014 Azure AD Conditional Access policy blocks login with error AADSTS53003. Need access for executive briefing in 30 minutes.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / Conditional Access",
+      "firm": "Microsoft",
+      "source_id": "MS01"
+    },
+    {
+      "id": "F12",
+      "title": "Visual Studio Enterprise License Activation Failed",
+      "description": "Visual Studio 2022 Enterprise fails activation with error 0x80070005 access denied. Developer needs build access for .NET 8 microservices release tonight.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Software / VS license self-help",
+      "firm": "Amazon AWS",
+      "source_id": "MS08"
+    },
+    {
+      "id": "F13",
+      "title": "Wipro VPN Authentication Failed Pune GDC",
+      "description": "Cisco AnyConnect VPN to Wipro Pune GDC fails with Error 691 authentication failed since morning IST. Cannot access client SAP landscape for release deployment tonight.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Wipro / VPN network",
+      "firm": "HCL Tech",
+      "source_id": "MX01"
+    },
+    {
+      "id": "F14",
+      "title": "Wipro Phishing Campaign Targeting Delivery Managers",
+      "description": "Security incident: Wipro delivery managers received spear-phishing emails mimicking client PO approval with malicious macro attachment. Two managers enabled macros before SOC alert broadcast.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Wipro / phishing SecOps",
+      "firm": "Deloitte",
+      "source_id": "MX05"
+    },
+    {
+      "id": "F15",
+      "title": "Nvidia NCCL Timeout Multi-Node Training",
+      "description": "NCCL all-reduce timeout on 8-node Nvidia DGX cluster during distributed training. InfiniBand link shows errors on leaf switch port 18. Job NV-CLUSTER-77 aborted.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Nvidia / InfiniBand network",
+      "firm": "Nvidia",
+      "source_id": "MX12"
+    },
+    {
+      "id": "F16",
+      "title": "Outlook Desktop Crashes on Startup",
+      "description": "Microsoft Outlook desktop crashes immediately on launch with error 'Outlook could not start last time'. Safe mode also fails. Web Outlook works fine in browser.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / Outlook crash",
+      "firm": "Software Office",
+      "source_id": "SW01"
+    },
+    {
+      "id": "F17",
+      "title": "SAP GUI Session Times Out Every 5 Minutes",
+      "description": "SAP GUI desktop client disconnects every 5 minutes with message 'Session timed out'. Re-login works but session drops again during data entry.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / SAP GUI",
+      "firm": "Google Workspace",
+      "source_id": "SW05"
+    },
+    {
+      "id": "F18",
+      "title": "Account Locked After Wrong Password",
+      "description": "Entered wrong password five times and Active Directory account is locked. Need unlock to access email.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / lockout",
+      "firm": "Cognizant",
+      "source_id": "A01"
+    },
+    {
+      "id": "F19",
+      "title": "Guest Wi-Fi Captive Portal Broken",
+      "description": "Guest Wi-Fi connects but captive portal page never loads. Visitors cannot get internet access in lobby.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network / wireless",
+      "firm": "LTIMindtree",
+      "source_id": "A08"
+    },
+    {
+      "id": "F20",
+      "title": "Forgot BitLocker Recovery Key",
+      "description": "Locked out of company laptop after BitLocker prompt \u2014 recovery key not saved. Need access to files for client presentation today.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Access / encryption",
+      "firm": "IBM",
+      "source_id": "W01"
+    },
+    {
+      "id": "F21",
+      "title": "Contractor AD Account Expired",
+      "description": "Contractor cannot log in \u2014 Active Directory account expired yesterday. Extension approved by sponsor for two more weeks.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / account",
+      "firm": "Oracle",
+      "source_id": "W10"
+    },
+    {
+      "id": "F22",
+      "title": "YubiKey Not Recognized After Update",
+      "description": "YubiKey hardware security key not detected by laptop USB ports after Windows update. Cannot complete FIDO2 login to corporate apps.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / security key",
+      "firm": "SAP",
+      "source_id": "X01"
+    },
+    {
+      "id": "F23",
+      "title": "Biometric Login Not Working Windows Hello",
+      "description": "Windows Hello fingerprint reader stopped working after driver update. PIN login still works.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / biometric",
+      "firm": "Salesforce",
+      "source_id": "X10"
+    },
+    {
+      "id": "F24",
+      "title": "Password Expired Cannot Login Portal",
+      "description": "Corporate password expired and self-service reset link returns error 500. Cannot access email or Teams.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / password",
+      "firm": "ServiceNow",
+      "source_id": "Y01"
+    },
+    {
+      "id": "F25",
+      "title": "MFA Push Notifications Not Received",
+      "description": "Duo MFA push notifications stopped arriving on iPhone. Approve request never shows up when logging into VPN portal.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / MFA",
+      "firm": "Adobe",
+      "source_id": "Z01"
+    },
+    {
+      "id": "F26",
+      "title": "Forgot Domain Password Cannot Login Laptop",
+      "description": "Forgot my Active Directory domain password and cannot login to Windows laptop. Self-service password reset portal says account not found. Need password reset to access email.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / password reset H1",
+      "firm": "Flipkart",
+      "source_id": "MX01"
+    },
+    {
+      "id": "F27",
+      "title": "Firewall Whitelist Client API Endpoint Port 8443",
+      "description": "Need firewall rule to whitelist client API endpoint payments.clientcorp.com on port 8443 from Capgemini dev subnet. Approved in change request CR-CG-2290.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Network / firewall whitelist",
+      "firm": "EY",
+      "source_id": "CG10"
+    },
+    {
+      "id": "F28",
+      "title": "Salesforce Lightning Page Blank After Sandbox Refresh",
+      "description": "Salesforce Lightning Experience loads blank white page after client sandbox refresh. Classic view works when switched manually. Affects CRM demo for client.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / Salesforce",
+      "firm": "KPMG",
+      "source_id": "CG15"
+    },
+    {
+      "id": "F29",
+      "title": "MFA Authenticator Lost Need Device Re-Enrollment",
+      "description": "Lost phone with Microsoft Authenticator MFA app. Cannot login to corporate email or client VPN until new device enrolled. Manager confirmed identity via HR.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / MFA re-enroll",
+      "firm": "PwC",
+      "source_id": "CG20"
+    },
+    {
+      "id": "F30",
+      "title": "Ransomware Alert on Shared Drive P Drive",
+      "description": "Security incident: files on shared P drive encrypted with .ryuk extension. CrowdStrike EDR alert on 4 workstations. Project documentation inaccessible.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security / ransomware",
+      "firm": "Barclays",
+      "source_id": "JP10"
+    },
+    {
+      "id": "F31",
+      "title": "Splunk Alert API Keys in Git Repository",
+      "description": "Security incident: Splunk secret scanning detected production API keys committed to internal Git repository in merge request. Repo has 25 developer access.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security / API key leak",
+      "firm": "Citibank",
+      "source_id": "JP15"
+    },
+    {
+      "id": "F32",
+      "title": "Mainframe CICS Transaction Abend S0C4",
+      "description": "CICS region PRODBANK showing repeated S0C4 abends on account inquiry transaction CIQRY. Customer-facing ATM balance inquiry failing across Maharashtra ATMs.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Application / mainframe CICS",
+      "firm": "ICICI Bank",
+      "source_id": "HI08"
+    },
+    {
+      "id": "F33",
+      "title": "Trade Finance LC Module Screen Freeze",
+      "description": "Trade finance letter-of-credit module freezes on document submission screen. Spinning loader for 10+ minutes. Other trade finance screens work. Blocking USD 2M LC issuance.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / trade finance LC",
+      "firm": "HDFC Bank",
+      "source_id": "HI12"
+    },
+    {
+      "id": "F34",
+      "title": "Visual Studio Enterprise License Expired",
+      "description": "Visual Studio Enterprise shows 'License expired' on developer workstation. Cannot build client .NET solution. License was valid last week before machine reimage.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / VS license",
+      "firm": "Tech Mahindra",
+      "source_id": "TC15"
+    },
+    {
+      "id": "F35",
+      "title": "Employee Smart Badge Denied at Main Gate Turnstile",
+      "description": "Employee smart badge denied at Pune campus main gate turnstile with red LED. Badge works for cafeteria but not building entry since badge reprint yesterday.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Access / smart badge",
+      "firm": "Persistent",
+      "source_id": "TC20"
+    },
+    {
+      "id": "F36",
+      "title": "Laptop USB-C Dock Monitor Not Detected",
+      "description": "Dell USB-C docking station \u2014 external monitor not detected when laptop connected. Laptop screen works, dock power LED green. Needed for dual-screen policy work.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / dock monitor H2",
+      "firm": "Zoho",
+      "source_id": "NS10"
+    },
+    {
+      "id": "F37",
+      "title": "NetApp Snapshot Restore Deleted Research Data",
+      "description": "Industry research data accidentally deleted from NetApp NAS share. Need snapshot restore from last night before NASSCOM annual report publication deadline.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "DBA",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Storage / NetApp restore H2",
+      "firm": "Freshworks",
+      "source_id": "NS15"
+    },
+    {
+      "id": "F38",
+      "title": "Corporate Wi-Fi Certificate Expired on Surface Hub",
+      "description": "Surface Hub in conference room B12 cannot join corporate Wi-Fi \u2014 certificate expired on 802.1X authentication. Teams meetings on hub display fail with network error.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network / Wi-Fi cert",
+      "firm": "LinkedIn",
+      "source_id": "MS12"
+    },
+    {
+      "id": "F39",
+      "title": "Laptop Fan Noise and Thermal Shutdown",
+      "description": "Dell Latitude corporate laptop fan runs at maximum continuously and shuts down due to thermal protection during Teams video calls. Device only 14 months old.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / thermal issue",
+      "firm": "GitHub",
+      "source_id": "MS15"
+    },
+    {
+      "id": "F40",
+      "title": "Nvidia GitLab Runner Secret Leaked in CI Log",
+      "description": "Security incident: Nvidia GitLab CI pipeline log printed NVAPI deployment token in plain text on public runner job #88421. Token visible in build artifacts folder accessible to 40 engineers.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Nvidia / credential leak SecOps",
+      "firm": "Intel",
+      "source_id": "MX08"
+    },
+    {
+      "id": "F41",
+      "title": "Deloitte SAP Fiori Launchpad 502 Bad Gateway",
+      "description": "SAP Fiori launchpad returns 502 Bad Gateway for all Deloitte consulting users in US practice. Reverse proxy shows upstream application server connection refused on port 44300.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Deloitte / SAP Fiori app",
+      "firm": "AMD",
+      "source_id": "MX15"
+    },
+    {
+      "id": "F42",
+      "title": "Slack Desktop Notifications Not Appearing",
+      "description": "Slack desktop app installed but no popup notifications on Windows 11. Do Not Disturb is off. Slack web in browser shows notifications correctly.",
+      "urgency": "low",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / Slack notifications",
+      "firm": "Slack",
+      "source_id": "SW10"
+    },
+    {
+      "id": "F43",
+      "title": "Jira Web Shows HTTP 500 on Issue Search",
+      "description": "Jira Cloud issue search returns HTTP 500 internal server error for all queries. Jira mobile app and direct issue links by key still work.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / Jira search",
+      "firm": "Zoom",
+      "source_id": "SW15"
+    },
+    {
+      "id": "F44",
+      "title": "Headset Microphone Not Detected",
+      "description": "Jabra headset mic not detected in Windows sound settings. Headphones play audio but Teams cannot hear me.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Hardware / headset",
+      "firm": "Mphasis",
+      "source_id": "A12"
+    },
+    {
+      "id": "F45",
+      "title": "Palo Alto GlobalProtect Profile Error",
+      "description": "GlobalProtect VPN client shows could not connect to gateway after firewall policy push. Entire sales team remote.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Network / VPN",
+      "firm": "Red Hat",
+      "source_id": "W15"
+    },
+    {
+      "id": "F46",
+      "title": "Multicast Storm on Access Switch",
+      "description": "Access switch stack on floor 9 showing high CPU from multicast storm. Users report severe network slowness.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Network / switching",
+      "firm": "Atlassian",
+      "source_id": "X15"
+    },
+    {
+      "id": "F47",
+      "title": "Unauthorized RDP Login From Foreign IP Address",
+      "description": "Security incident: SIEM alert shows successful RDP login to project jump server from IP 185.220.101.47 at 2:30 AM IST. No approved travel for that user.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security / unauthorized RDP",
+      "firm": "Boeing IT",
+      "source_id": "CG25"
+    },
+    {
+      "id": "F48",
+      "title": "EMEA MPLS Circuit Down Mumbai to London",
+      "description": "MPLS WAN circuit between Mumbai GIFT City and London data center down since 5 AM GMT. EMEA trading support team cannot reach London production systems.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Network / MPLS EMEA",
+      "firm": "Morgan Stanley",
+      "source_id": "JP20"
+    },
+    {
+      "id": "F49",
+      "title": "SharePoint Project Site Access Denied for Team",
+      "description": "Entire project team getting 'Access Denied' on client SharePoint project site. Site worked yesterday. Need contributor access restored for 8 associates.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application / SharePoint access",
+      "firm": "Cisco",
+      "source_id": "TC25"
+    },
+    {
+      "id": "F50",
+      "title": "Production API Keys Exposed in Public GitHub Repo",
+      "description": "Security incident: GitHub secret scanning detected production AWS access keys in public repository nasscom/event-platform. Repo was public for 6 hours before takedown.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security / secret leak H3",
+      "firm": "Paytm",
+      "source_id": "NS18"
+    }
+  ]
+}

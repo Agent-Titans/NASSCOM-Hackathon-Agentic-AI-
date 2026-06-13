@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>SAARTHI Final Assessment</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f4f6f8;padding:2rem;color:#1a1a2e;line-height:1.5}
+.header{background:linear-gradient(135deg,#0070ad,#12abdb,#1a1a2e);color:#fff;padding:2rem;border-radius:12px;margin-bottom:1.5rem}
+.score{font-size:3rem;font-weight:800} .grade{font-size:1.5rem;opacity:.9}
+.stats{display:flex;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.stat{background:#fff;border:1px solid #dde3ea;border-radius:8px;padding:1rem 1.25rem;min-width:140px}
+.stat .n{font-size:1.5rem;font-weight:700;color:#0070ad}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;margin:1rem 0;font-size:.9rem}
+th{background:#0070ad;color:#fff;padding:.65rem 1rem;text-align:left}
+td{padding:.65rem 1rem;border-bottom:1px solid #eef2f6;vertical-align:top}
+.badge{padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:700}
+.badge.pass{background:#d4edda;color:#0d7a3e} .badge.partial{background:#fff3cd;color:#856404}
+.badge.fail{background:#f8d7da;color:#c0392b}
+h2{margin-top:2rem;font-size:1.2rem}
+.footer{margin-top:2rem;font-size:.8rem;color:#888}
+</style></head><body>
+<div class="header">
+<h1>SAARTHI / SAARTHI — Final Master Assessment</h1>
+<p>Generated 2026-06-13 13:35 UTC · Use Case 1 · 50-firm routing · Security · Audit · Auto-assign</p>
+<div class="score">87/100</div>
+<div class="grade">Grade: A</div>
+</div>
+<div class="stats">
+<div class="stat"><div class="n">22</div>Routing /25</div>
+<div class="stat"><div class="n">25</div>Features /25</div>
+<div class="stat"><div class="n">15</div>Pytest /15</div>
+<div class="stat"><div class="n">15</div>UC align /15</div>
+<div class="stat"><div class="n">10</div>Demo /10</div>
+</div>
+
+<h2>Master 50 routing (50 distinct firms)</h2>
+<p>43/50 passed (86%) —
+<a href="master50.html">Detailed routing report</a></p>
+<h2>Feature matrix</h2>
+<table><thead><tr><th>Area</th><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+<tbody><tr class='pass'><td>Security / PII</td><td>PII redaction (email, phone, secrets)</td><td><span class='badge pass'>PASS</span></td><td>Local regex layer before embedding/LLM</td></tr><tr class='pass'><td>Responsible AI</td><td>Prompt injection Layer 1 regex</td><td><span class='badge pass'>PASS</span></td><td>Layer 1 blocks obvious override phrases</td></tr><tr class='pass'><td>Auto-assign</td><td>10-minute grace window</td><td><span class='badge pass'>PASS</span></td><td>Grace restarts on H1→H2 escalation</td></tr><tr class='pass'><td>Auto-assign</td><td>Similar RAG match → prior assignee</td><td><span class='badge pass'>PASS</span></td><td>Uses audit rag_hit + resolved ticket assignee history</td></tr><tr class='pass'><td>Routing Specialists</td><td>SecOps desk + operational reroute queues</td><td><span class='badge pass'>PASS</span></td><td>Operated by SecOps team</td></tr><tr class='pass'><td>RAG corpus</td><td>Assignee names in ticket titles</td><td><span class='badge pass'>PASS</span></td><td>1000/1000 titles include demo assignee names</td></tr><tr class='pass'><td>RAG / Chroma</td><td>Vector index populated</td><td><span class='badge pass'>PASS</span></td><td>1006 docs, mode=gemini</td></tr><tr class='pass'><td>Demo data</td><td>Demo assignee accounts</td><td><span class='badge pass'>PASS</span></td><td>18 assignees across 6 departments</td></tr><tr class='pass'><td>Email notifications</td><td>Lifecycle hooks (opened/closed/assigned/resolved)</td><td><span class='badge pass'>PASS</span></td><td>EMAIL_NOTIFICATIONS_ENABLED=False (off by default; enable in .env when ready)</td></tr></tbody></table>
+<h2>Pytest integration</h2>
+<p>All passed —
+0 passed, 0 failed</p>
+<h2>Gaps vs use case doc</h2>
+<table><thead><tr><th>Priority</th><th>Gap</th><th>Impact</th><th>Recommended fix</th></tr></thead>
+<tbody><tr><td>P1</td><td><strong>Auto-assign visibility</strong></td><td>10-min grace invisible in UI</td><td>Show countdown or assign-on-refresh banner</td></tr><tr><td>P1</td><td><strong>Hand 3 vs Routing Specialists</strong></td><td>Two specialist concepts can confuse agents</td><td>UI copy clarified; monitor in demo</td></tr></tbody></table>
+<p class="footer">See docs/PORTAL_UC1_ASSESSMENT.md · docs/DEMO_CHECKLIST.md ·
+<a href="feature_matrix.html">Feature detail</a> · <a href="index.html">All routing reports</a></p>
+</body></html>

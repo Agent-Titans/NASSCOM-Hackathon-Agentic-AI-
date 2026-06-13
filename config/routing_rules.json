@@ -19,17 +19,21 @@
       "strict_lld": {
         "lld_section": "#supervisor-agent",
         "low_grounding_hand": "2",
-        "apply_similarity_hand1_cap": false,
+        "apply_similarity_hand1_cap": true,
+        "urgency_min_hand": {
+          "low": "1",
+          "medium": "1",
+          "high": "2"
+        },
         "policy_hand1_playbook": {
           "enabled": true,
           "categories": [
             "Application",
             "Access Management",
-            "Network",
-            "Infrastructure"
+            "Network"
           ],
           "min_source_hand": "1",
-          "min_similarity": 0.55
+          "min_similarity": 0.70
         }
       },
       "demo": {

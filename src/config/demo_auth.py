@@ -12,19 +12,24 @@ EMPLOYEE_PORTAL_EMAILS = frozenset(
         "imran@user",
         "naveen@user",
         "santhosh@user",
+        "requester@demo.local",
     }
 )
 
 AGENT_WORKSPACE_EMAILS = frozenset(
     {
         "sree@employee",
+        "kiran@employee",
         "subbu@employee",
         "sruthi@employee",
+        "meena@employee",
         "shashi@employee",
+        "rahul@employee",
         "narsimha@employee",
         "chandana@employee",
         "satya@employee",
         "sagar@employee",
+        "priya@employee",
         "admin@employee",
     }
 )

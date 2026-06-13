@@ -1,71 +1,96 @@
-# ClearHand — IT ticket routing (Nascom final round)
+# SAARTHI — IT ticket routing
 
-**ClearHand** · Five AI agents → Three Hands. Build tracker: [`docs/BACKLOG.md`](docs/BACKLOG.md)
+**SAARTHI** · Five AI agents → Three Hands. Nascom final round hackathon.
+
+Colleague setup: [`docs/COLLEAGUE_SETUP.md`](docs/COLLEAGUE_SETUP.md)
 
 ## Folder map
 
 ```
 ├── design/              # Submitted LLD & architecture (source of truth)
-│   ├── LLD.html
-│   ├── architecture.html
-│   ├── product-overview.md
-│   └── expectations.md
 ├── docs/
-│   ├── BACKLOG.md       # ★ progress — update every task
-│   ├── BUILD.md         # phases & team split
-│   ├── TEAM.md          # Copilot teammates
-│   └── SECURITY.md
-├── standards/           # Apple HIG rules (not a new architecture)
-│   ├── apple-design.md
-│   └── apple-ui.md
+│   ├── COLLEAGUE_SETUP.md   # ★ clone → bootstrap → demo (share with team)
+│   ├── DEMO_CHECKLIST.md    # Jury walkthrough
+│   ├── PORTAL_UC1_ASSESSMENT.md
+│   ├── test-reports/        # HTML routing test reports (open index.html)
+│   └── JUDGE_SETUP.md       # Short pointer → COLLEAGUE_SETUP
 ├── src/                 # Application code
-├── scripts/             # init_db, seed, ingest, check models
-├── config/              # routing rules, settings
-├── data/                # sqlite + chroma (gitignored)
+├── scripts/             # bootstrap, ingest, seed, run_app
+├── data/
+│   ├── synthetic/       # tickets_1000.json + tickets_1000.csv (RAG corpus)
+│   ├── app.db           # gitignored — local tickets
+│   └── chroma/          # gitignored — vector index
 └── tests/
 ```
 
 ## Quick start
 
-**Python 3.10+ required** (`pyproject.toml`). On Mac: `brew install python@3.11` then:
+**Python 3.10+** (`pyproject.toml`). On Mac:
 
 ```bash
-brew install python@3.11      # once per machine (already done if setup succeeded)
-bash scripts/setup_venv.sh    # creates .venv with Python 3.11
+brew install python@3.11
+bash scripts/setup_venv.sh
 source .venv/bin/activate
-cp .env.example .env          # GOOGLE_API_KEY from lead
+cp .env.example .env          # set GOOGLE_API_KEY
 pip install -r requirements-ai.txt
-python scripts/init_db.py
-python scripts/seed_users.py
-pytest tests/ -q              # verify pipeline
-bash scripts/run_app.sh       # or: streamlit run src/ui/app.py
+python scripts/bootstrap_rag_environment.py   # SQLite + Chroma + 1k corpus
+bash scripts/run_app.sh
 ```
 
-**Demo logins:** `requester@demo.local` · `hardware@demo.local` · `secops@demo.local` · `admin@demo.local`
+**Stop Streamlit** before bootstrap if the app is already running.
 
-**Try these subjects:**
-- Password reset → **Self-Help** (guided steps)
-- Printer issue → **Team Assist** (Hardware queue)
-- Security breach → **Specialist** (SecOps, no auto steps)
+Models: `gemini-2.5-flash` (classify/resolve) · Chroma uses **Gemini** `gemini-embedding-001` (default). Set `RAG_EMBEDDING_BACKEND=local` only for offline fallback.
 
-Models: `gemini-2.5-flash` + `gemini-embedding-001` — run `python scripts/check_gemini_models.py`
+## Demo logins
+
+**Password:** `1234` for all accounts.
+
+| Portal | Example emails |
+|--------|----------------|
+| Employee | `pallavi@user`, `gajanan@user`, `requester@demo.local` |
+| Agent | `sree@employee` (Hardware), `narsimha@employee` (SecOps) |
+| Admin | `admin@employee` |
+
+Full list: `src/config/demo_auth.py`
+
+## Try these subjects
+
+- **Password reset** → Hand 1 Self-Help (guided steps)
+- **Printer jam** → Hand 2 Team Assist (department queue)
+- **Security breach** → Hand 3 Specialist (SecOps, no auto steps)
+
+## RAG corpus
+
+- **1,000 synthetic RESOLVED tickets** in `data/synthetic/tickets_1000.json` (+ **`tickets_1000.csv`** for Excel)
+- **SQLite** — transactional + RESOLVED metadata
+- **ChromaDB** — **Gemini** embedding vectors for retrieval (`RAG_EMBEDDING_BACKEND=gemini`)
+
+Sample titles reference demo assignees (Sree, Subbu, Narsimha, etc.) for realistic RAG matches.
+
+Re-ingest only:
+
+```bash
+python scripts/ingest_synthetic_corpus.py          # rebuild Chroma + SQLite syn-*
+python scripts/ingest_synthetic_corpus.py --smoke  # + retrieval smoke test
+python scripts/export_synthetic_corpus_csv.py      # refresh CSV from JSON
+```
 
 ## New teammate
 
-1. `docs/BACKLOG.md` — where we are  
-2. `design/LLD.html` — what we build  
-3. `docs/TEAM.md` — if using Copilot  
+1. **`docs/COLLEAGUE_SETUP.md`** — environment + bootstrap (share this)
+2. **`test-reports/index.html`** — routing accuracy reports
+3. `design/LLD.html` — architecture source of truth
 
 ## Git sync
 
 Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
 
-## Local database (simple)
+**Committed:** code, `data/synthetic/tickets_1000.json`, scripts, tests  
+**Not committed:** `data/app.db`, `data/chroma/`, `.env` — each machine runs `bootstrap_rag_environment.py` locally.
 
-Git shares **code + RAG recipes** (`src/data/*.json`, seed scripts).  
-Each laptop keeps its own **`data/app.db`** (tickets you submit) and **`.env`** (API key).
+## Tests
 
-- Teammates sync code with `git pull` / `git push`
-- Tickets you create in the UI **stay on your machine** — that is normal
-- Re-run `python scripts/seed_rag_demo_tickets.py` after corpus changes
-- Past “worked / failed” feedback in your DB can nudge routing scores — use `scripts/clear_user_tickets.py` for a clean demo slate
+```bash
+pytest tests/ -m "not slow" -q
+pytest tests/test_golden_set.py -v
+```

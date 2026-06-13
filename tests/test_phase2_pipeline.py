@@ -73,6 +73,45 @@ def test_classifier_uses_rag_when_gemini_unavailable():
     assert r.source == "rag"
 
 
+def test_classifier_gemini_first_overrides_trusted_rag():
+    """Gemini category wins when RAG similar ticket disagrees."""
+    from unittest.mock import patch
+
+    from src.models.schemas import (
+        ClassificationResult,
+        ResolutionResult,
+        SanitizedText,
+        SimilarTicketMatch,
+    )
+
+    similar = SimilarTicketMatch(
+        ticket_id="syn-0576",
+        title="NAS quota exceeded",
+        similarity_score=0.83,
+        classification=ClassificationResult(
+            "Storage", confidence_hint="high", source="rag"
+        ),
+        resolution=ResolutionResult(steps=["Expand NAS quota"], low_grounding=False),
+        department_queue="DBA",
+    )
+    agent = ClassifierAgent()
+    gemini_payload = {
+        "use_case_category": "Security",
+        "subcategory": "ransomware",
+        "confidence_hint": "high",
+    }
+    with patch.object(agent.gemini, "classify_ticket", return_value=gemini_payload):
+        r = agent.classify(
+            SanitizedText(
+                "Security incident: finance share shows encrypted files and ransom note."
+            ),
+            similar=similar,
+        )
+    assert r.use_case_category == "Security"
+    assert r.source == "gemini"
+    assert r.confidence_hint == "low"
+
+
 def test_requester_escalation_targets_hand3():
     from src.ui.app import _escalate
     from src.db.models import Ticket, User
@@ -147,13 +186,8 @@ def test_resolver_rag_password_hand1_when_similarity_high():
         sentiment=sentiment,
         historical_success=0.65,
     )
-    c_total = (res.similarity_score * 0.6) + (sentiment * 0.2) + (0.65 * 0.2)
-    from src.config.settings import get_settings
-
-    h1 = get_settings().c_total_hand1
-    expected_hand = "1" if c_total >= h1 else "2" if c_total >= 0.60 else "3"
-    assert dec.hand == expected_hand
-    assert dec.policy_trigger != "hand1_playbook"
+    assert dec.hand == "1"
+    assert dec.policy_trigger == "hand1_playbook"
 
 
 def test_weak_rag_match_not_hand1():
@@ -245,6 +279,24 @@ def test_strict_lld_low_grounding_routes_hand2(strict_lld_mode):
     )
     assert dec.hand == "2"
     assert dec.policy_trigger == "low_grounding"
+
+
+def test_strict_lld_high_urgency_floors_hand1_to_hand2(strict_lld_mode):
+    """High-urgency tickets must not self-resolve at Hand 1."""
+    dec = SupervisorAgent().decide(
+        ClassificationResult("Network", confidence_hint="high"),
+        ResolutionResult(
+            steps=["step"],
+            similarity_score=0.85,
+            low_grounding=False,
+            matched_source_hand="1",
+        ),
+        sentiment=0.85,
+        historical_success=0.65,
+        urgency="high",
+    )
+    assert dec.hand == "2"
+    assert dec.policy_trigger == "urgency_min_hand"
 
 
 def test_strict_lld_password_reset_hand1_playbook(strict_lld_mode):
@@ -388,11 +440,15 @@ def test_sql_null_issues_routes_hand2_dba():
     from src.services.rag_gate import evaluate_rag_match
     from src.services.ticket_retrieval import TicketRetrievalService
 
+    class _NoChroma:
+        available = False
+        count = 0
+
     text = "SQL Null Issues\n[Other] There are some errors in SQL file i recieved"
     init_db()
     Session = get_session_factory()
     with Session() as session:
-        raw = TicketRetrievalService().find_similar(session, text)
+        raw = TicketRetrievalService(chroma=_NoChroma()).find_similar(session, text)
     gate = evaluate_rag_match(raw)
     assert gate.trusted is None
 
@@ -453,7 +509,7 @@ def test_medium_rag_similarity_capped_at_hand2(demo_mode):
 
 
 def test_supervisor_does_not_inherit_matched_ticket_hand(strict_lld_mode):
-    """Hand follows c_total bands — not the hand of a similar resolved/RAG ticket."""
+    """High c_total cannot promote Hand-2 RAG match to Hand 1."""
     sup = SupervisorAgent()
     clf = ClassificationResult("Application", confidence_hint="high", source="rag")
     res = ResolutionResult(
@@ -463,7 +519,5 @@ def test_supervisor_does_not_inherit_matched_ticket_hand(strict_lld_mode):
         matched_source_hand="2",
     )
     decision = sup.decide(clf, res, sentiment=0.85, historical_success=0.65)
-    from src.config.settings import get_settings
-
-    assert decision.hand == "1"
-    assert decision.c_total >= get_settings().c_total_hand1
+    assert decision.hand == "2"
+    assert decision.policy_trigger != "hand1_playbook"

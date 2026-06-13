@@ -1,4 +1,4 @@
-"""Unified catalog of every document in the IntelliQ RAG corpus."""
+"""Unified catalog of every document in the SAARTHI RAG corpus."""
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -23,11 +23,17 @@ def _run_disk_warm() -> int:
     from src.db.session import get_session_factory, init_db
     from src.services.ticket_retrieval import TicketRetrievalService
 
+    from src.config.settings import get_settings
+
     init_db()
     Session = get_session_factory()
     with Session() as session:
         svc = TicketRetrievalService()
         if svc.chroma.available and svc.chroma.count > 0:
+            svc.ensure_index(session)
+            return svc.chroma.count
+        settings = get_settings()
+        if not settings.rag_auto_seed or settings.rag_corpus_mode.lower() == "synthetic":
             svc.ensure_index(session)
             return svc.chroma.count
         count = svc.index_corpus()

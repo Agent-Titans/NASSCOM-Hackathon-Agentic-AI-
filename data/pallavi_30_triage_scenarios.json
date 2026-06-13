@@ -1,0 +1,483 @@
+{
+  "version": 1,
+  "description": "30-ticket triage validation suite (subset of Set D)",
+  "cases": [
+    {
+      "id": "N01",
+      "title": "VPN Split Tunnel Not Routing",
+      "description": "Cisco AnyConnect connects but internal subnets 10.20.0.0/16 are unreachable. Split tunnel policy may be misapplied on the VPN gateway.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N02",
+      "title": "Corporate DNS MX Record Failure",
+      "description": "Inbound email bouncing \u2014 external DNS MX records for mail.corp.local not resolving. nslookup fails from office network.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N03",
+      "title": "Firewall Blocking HTTPS Egress",
+      "description": "Outbound HTTPS on port 443 to api.partner.com blocked by perimeter firewall. Need allow rule for integration.",
+      "urgency": "low",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N04",
+      "title": "Guest Wi-Fi Captive Portal Loop",
+      "description": "Guest Wi-Fi connects but captive portal page reloads endlessly. Users cannot complete network authentication.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N05",
+      "title": "Load Balancer Pool Unhealthy",
+      "description": "F5 load balancer marks all nodes in checkout-pool unhealthy. Users see 502 bad gateway at the edge.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N06",
+      "title": "Zscaler PAC File Misconfiguration",
+      "description": "Zscaler PAC file sending traffic to wrong proxy port. Internal Jenkins agents cannot reach artifact repo.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N07",
+      "title": "MPLS Circuit Packet Loss",
+      "description": "MPLS WAN link between HQ and DR site showing 8% packet loss. Latency spikes on VoIP and replication traffic.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "N08",
+      "title": "SSL VPN Certificate Trust Error",
+      "description": "VPN client shows untrusted server certificate when connecting remotely. Corporate root CA may have expired on gateway.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Network scenario"
+    },
+    {
+      "id": "I01",
+      "title": "Docking Station Display Not Detected",
+      "description": "Thunderbolt dock powers laptop but external Dell monitor shows no signal. USB-C display path not enumerating.",
+      "urgency": "low",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I02",
+      "title": "Laptop Keyboard Keys Unresponsive",
+      "description": "Several keys on company MacBook Pro keyboard stopped registering input. Physical keyboard hardware failure suspected.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2",
+        "3"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I03",
+      "title": "Server Rack PDU Tripped",
+      "description": "PDU in rack A3 tripped breaker. Three production servers powered off unexpectedly in datacenter row 4.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I04",
+      "title": "Secure Boot Blocking Driver",
+      "description": "Windows laptop blocks new Wi-Fi driver install \u2014 Secure Boot policy prevents unsigned driver load after firmware update.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I05",
+      "title": "Hyper-V Host CPU Thermal Alert",
+      "description": "Hyper-V host HV-PROD-03 reporting CPU thermal throttling. Virtual machines experiencing performance degradation.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I06",
+      "title": "Fleet Printer Toner Critical",
+      "description": "Floor 5 HP printer fleet reports critical toner on 6 devices. Print queue backing up for finance department.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I07",
+      "title": "Laptop SMART Disk Failure Warning",
+      "description": "Dell laptop BIOS reports SMART disk failure imminent. User cannot boot reliably \u2014 hardware replacement needed.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "I08",
+      "title": "UPS Battery Replacement Overdue",
+      "description": "UPS in server room B reporting end-of-life battery. Runtime under 3 minutes on simulated power fail test.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Hardware",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "1",
+        "2",
+        "3"
+      ],
+      "notes": "Infrastructure scenario"
+    },
+    {
+      "id": "A01",
+      "title": "Outlook Calendar Not Syncing",
+      "description": "Microsoft Outlook desktop client stopped syncing calendar events. Web Outlook works but desktop shows stale meetings.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A02",
+      "title": "Chrome Extension Crash Loop",
+      "description": "Internal Chrome extension causes browser crash on launch. Desktop client unusable for procurement portal.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A03",
+      "title": "Jira Workflow Transition Error",
+      "description": "Jira ticket workflow transition fails with script error when moving from In Review to Done. Application workflow bug.",
+      "urgency": "low",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A04",
+      "title": "Slack Desktop Notifications Silent",
+      "description": "Slack desktop app not showing notifications on Windows 11. Messages arrive but no toast or badge updates.",
+      "urgency": "low",
+      "expect": {
+        "hand": "1",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A05",
+      "title": "Java Runtime Missing for ERP Client",
+      "description": "Internal ERP desktop client fails to launch \u2014 Java Runtime Environment not found after workstation image refresh.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A06",
+      "title": "Mobile Push Notifications Failed",
+      "description": "Corporate mobile app push notifications stopped on iOS devices after certificate rotation. Application backend integration issue.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A07",
+      "title": "Power BI Dataset Refresh Error",
+      "description": "Power BI scheduled dataset refresh fails with gateway timeout. Report shows stale data in executive dashboard.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "A08",
+      "title": "IDE Build Toolchain Failure",
+      "description": "Visual Studio build fails with MSB4018 task error after NuGet package update. Local development toolchain broken.",
+      "urgency": "low",
+      "expect": {
+        "hand": "2",
+        "department": "Software",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Application scenario"
+    },
+    {
+      "id": "S01",
+      "title": "Suspicious Login from Foreign IP",
+      "description": "Security incident: multiple failed and one successful login for finance user from IP in unfamiliar country. Suspected account compromise.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security scenario"
+    },
+    {
+      "id": "S02",
+      "title": "USB Malware Scan Positive",
+      "description": "Endpoint protection flagged malware on USB drive inserted into workstation WS-HR-19. Quarantine and forensics required.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Security scenario"
+    },
+    {
+      "id": "S03",
+      "title": "Spear Phishing Targeting Executive",
+      "description": "CFO received targeted phishing email with malicious attachment disguised as board report. Security incident \u2014 do not open.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security scenario"
+    },
+    {
+      "id": "S04",
+      "title": "DLP Credit Card Data Export Alert",
+      "description": "Data loss prevention alert: user attempted to email file containing credit card numbers to external address.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security scenario"
+    },
+    {
+      "id": "S05",
+      "title": "Compromised Service Account Detected",
+      "description": "Security incident: service account SVC-BILLING shows impossible travel logins. Credential compromise suspected \u2014 rotate immediately.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security scenario"
+    },
+    {
+      "id": "S06",
+      "title": "SQL Injection in Web Access Logs",
+      "description": "WAF detected SQL injection attempts against customer portal. Active attack pattern in Apache access logs \u2014 investigate source IPs.",
+      "urgency": "high",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Security scenario"
+    }
+  ]
+}

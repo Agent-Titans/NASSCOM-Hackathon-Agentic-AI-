@@ -19,6 +19,7 @@ def reset_auto_assign_throttle() -> None:
     _last_auto_assign_run = 0.0
 
 from src.config.departments import canonical_department, department_queue_aliases
+from src.config.specialists import SPECIALISTS_QUEUE, STATUS_ROUTING_REVIEW
 from src.config.settings import get_settings
 from src.db.models import AuditLog, Ticket, User
 from src.stores.audit_store import AuditLogStore
@@ -172,6 +173,11 @@ def _auto_assign_eligible_at(session: Session, ticket: Ticket) -> datetime:
     return created
 
 
+def is_specialists_desk_ticket(ticket: Ticket) -> bool:
+    """SecOps-owned routing review queue — misroutes from any department."""
+    return ticket.department_queue == SPECIALISTS_QUEUE or ticket.status == STATUS_ROUTING_REVIEW
+
+
 def is_triage_ticket(ticket: Ticket) -> bool:
     """Hand 3 / human review — may be owned by any assignee on the triage roster."""
     return (
@@ -244,6 +250,27 @@ def pick_agent_for_ticket(session: Session, ticket: Ticket) -> Optional[User]:
     return pick_least_loaded_agent(session, department)
 
 
+def assign_escalated_ticket(session: Session, ticket: Ticket) -> bool:
+    """
+    Assign a Hand 2 ticket immediately after requester escalation (skip grace window).
+    """
+    if ticket.assignee_id or ticket.hand != "2" or not ticket.department_queue:
+        return False
+    agent = pick_agent_for_ticket(session, ticket)
+    if not agent:
+        return False
+    store = TicketStore(session)
+    audit = AuditLogStore(session)
+    store.assign(ticket, agent)
+    audit.record(
+        ticket,
+        "auto_assigned",
+        agent="router",
+        details=f"assignee={agent.email} dept={ticket.department_queue} reason=h1_feedback_escalation",
+    )
+    return True
+
+
 def run_auto_assignments(session: Session, *, force: bool = False) -> int:
     """
     Assign tickets with no owner after the grace window to a team agent.
@@ -288,7 +315,11 @@ def run_auto_assignments(session: Session, *, force: bool = False) -> int:
     assigned = 0
 
     for ticket in candidates:
-        if is_triage_ticket(ticket):
+        if is_specialists_desk_ticket(ticket):
+            agents = _agents_for_department(session, "SecOps")
+            agent = pick_least_loaded_among(session, agents)
+            reason = f"specialists_desk_{settings.auto_assign_grace_minutes}m"
+        elif is_triage_ticket(ticket):
             agents = _all_assignees(session)
             agent = pick_triage_agent(session, ticket)
             prior = _prior_assignee_from_similar(session, ticket, agents)

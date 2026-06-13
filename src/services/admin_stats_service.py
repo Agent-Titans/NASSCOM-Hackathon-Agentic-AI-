@@ -9,8 +9,13 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.config.departments import DEPARTMENT_QUEUES, canonical_department, display_department
+from src.config.specialists import (
+    EVENT_SPECIALIST_REQUESTED,
+    SPECIALISTS_QUEUE,
+    STATUS_ROUTING_REVIEW,
+)
 from src.config.demo_profiles import AGENT_QUEUE_LABELS
-from src.db.models import Ticket, User
+from src.db.models import AuditLog, Ticket, User
 
 _CLOSED = frozenset({"RESOLVED", "CLOSED"})
 _OPEN = frozenset(
@@ -21,6 +26,7 @@ _OPEN = frozenset(
         "IN_PROGRESS",
         "HUMAN_REVIEW",
         "ESCALATED",
+        "ROUTING_REVIEW",
     }
 )
 
@@ -61,6 +67,8 @@ class AdminDashboardStats:
     triage_tickets: list[Ticket] = field(default_factory=list)
     requester_emails: dict[str, str] = field(default_factory=dict)
     assignee_emails: dict[str, str] = field(default_factory=dict)
+    specialists_open: int = 0
+    specialists_routing_resolved: int = 0
 
 
 def _resolution_hours(ticket: Ticket) -> Optional[float]:
@@ -163,7 +171,12 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
         status_key = _status_bucket(t.status)
         stats.status_counts[status_key] = stats.status_counts.get(status_key, 0) + 1
 
-        if t.hand == "3" or t.status in ("HUMAN_REVIEW", "ESCALATED") or t.escalation_required:
+        if (
+            t.hand == "3"
+            or t.status in ("HUMAN_REVIEW", "ESCALATED", STATUS_ROUTING_REVIEW)
+            or t.escalation_required
+            or t.department_queue == SPECIALISTS_QUEUE
+        ):
             stats.triage_tickets.append(t)
 
     stats.open_count = len(open_tickets)
@@ -172,15 +185,16 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
         1 for t in open_tickets if not t.assignee_id and t.hand != "1"
     )
     stats.triage_count = len(
-        [
-            t
+        {
+            t.ticket_id
             for t in open_tickets
             if t.hand == "3"
-            or t.status in ("HUMAN_REVIEW", "ESCALATED")
+            or t.status in ("HUMAN_REVIEW", "ESCALATED", STATUS_ROUTING_REVIEW)
             or t.escalation_required
-        ]
+            or t.department_queue == SPECIALISTS_QUEUE
+        }
     )
-    stats.in_triage_status = stats.status_counts.get("In Triage", 0)
+    stats.in_triage_status = stats.status_counts.get("Routing Specialists", 0)
 
     hand1 = stats.hand_counts.get("1", 0)
     routed = stats.hand_counts.get("1", 0) + stats.hand_counts.get("2", 0) + stats.hand_counts.get("3", 0)
@@ -202,13 +216,23 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
     )
 
     dept_open: Counter[str] = Counter()
+    specialists_open = 0
     for t in open_tickets:
+        if t.department_queue == SPECIALISTS_QUEUE:
+            specialists_open += 1
+            continue
         raw = t.department_queue or "Unassigned"
         dept = canonical_department(raw) if raw != "Unassigned" else raw
         dept_open[dept] += 1
 
     unassigned_triage = sum(
-        1 for t in stats.triage_tickets if not t.assignee_id and t.status not in _CLOSED
+        1
+        for t in stats.triage_tickets
+        if (
+            t.department_queue == SPECIALISTS_QUEUE or t.status == STATUS_ROUTING_REVIEW
+        )
+        and not t.assignee_id
+        and t.status not in _CLOSED
     )
     triage_agents = max(sum(agents_by_dept.values()), 1)
 
@@ -247,7 +271,34 @@ def get_admin_dashboard_stats(session: Session) -> AdminDashboardStats:
         team_name = f"{label} Team" if not label.endswith("Team") else label
         _append_team(team_name, open_count, max(agents, 1))
 
-    _append_team("Triage Queue", unassigned_triage, triage_agents, triage=True)
+    _append_team(
+        "Routing Specialists (SecOps)",
+        specialists_open,
+        agents_by_dept.get("SecOps", 1),
+        triage=True,
+    )
+
+    stats.specialists_open = specialists_open
+    requested_ids = [
+        row[0]
+        for row in session.query(AuditLog.ticket_id)
+        .filter(AuditLog.event_type == EVENT_SPECIALIST_REQUESTED)
+        .distinct()
+        .all()
+        if row[0]
+    ]
+    if requested_ids:
+        stats.specialists_routing_resolved = (
+            session.query(Ticket)
+            .filter(
+                Ticket.ticket_id.in_(requested_ids),
+                ~Ticket.ticket_id.like("syn-%"),
+                Ticket.status.in_(("RESOLVED", "CLOSED")),
+            )
+            .count()
+        )
+    else:
+        stats.specialists_routing_resolved = 0
 
     return stats
 
@@ -261,4 +312,6 @@ def _status_bucket(status: str) -> str:
         return "Closed"
     if status in ("HUMAN_REVIEW", "ESCALATED"):
         return "In Triage"
+    if status == STATUS_ROUTING_REVIEW:
+        return "Routing Specialists"
     return "Open"

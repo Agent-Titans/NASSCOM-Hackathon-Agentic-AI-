@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JP Morgan Technology — Routing Test Report</title>
+<style>
+  :root { --pass: #0d7a3e; --fail: #c0392b; --bg: #f4f6f8; --card: #fff; --border: #dde3ea; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a1a2e; padding: 2rem; line-height: 1.5; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .header p { opacity: 0.85; font-size: 0.95rem; }
+  .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; min-width: 120px; }
+  .stat .num { font-size: 1.75rem; font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.pass .num { color: var(--pass); }
+  .stat.fail .num { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 0.9rem; }
+  th { background: #1a1a2e; color: #fff; padding: 0.75rem 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr.pass td { background: #f0faf4; }
+  tr.fail td { background: #fef5f4; }
+  tr:hover td { filter: brightness(0.97); }
+  .desc { max-width: 340px; color: #444; font-size: 0.85rem; }
+  .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+  .badge.pass { background: #d4edda; color: var(--pass); }
+  .badge.fail { background: #f8d7da; color: var(--fail); }
+  .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #888; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>JP Morgan Technology — Routing Test Report</h1>
+  <p>30 investment banking & enterprise IT scenarios · Set JP</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="num">30</div><div class="lbl">Total</div></div>
+  <div class="stat pass"><div class="num">27</div><div class="lbl">Passed</div></div>
+  <div class="stat fail"><div class="num">3</div><div class="lbl">Failed</div></div>
+  <div class="stat pass"><div class="num">90%</div><div class="lbl">Pass Rate</div></div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Exp Hand</th>
+      <th>Exp Dept</th>
+      <th>Act Hand</th>
+      <th>Act Dept</th>
+      <th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class="pass">
+  <td>JP01</td>
+  <td><strong>JPMorgan Markets Login Locked After Failed Attempts</strong></td>
+  <td class="desc">Cannot login to JPMorgan Markets trading platform — account locked after 5 failed password attempts. Need access restored before US market open at 7 PM IST.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP02</td>
+  <td><strong>Murex Trade Booking Interface Timeout</strong></td>
+  <td class="desc">Murex front-office trade booking screen times out on submit for FX derivatives. Other Murex modules load normally. Blocking EMEA desk trade capture.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP03</td>
+  <td><strong>Spear Phishing Targeting Equities Trading Desk</strong></td>
+  <td class="desc">Security incident: equities trading desk received targeted phishing email with fake compliance PDF attachment. One trader opened file before SOC alert broadcast.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP04</td>
+  <td><strong>Trading Floor Bloomberg Keyboard Unresponsive</strong></td>
+  <td class="desc">Bloomberg terminal keyboard not responding on Mumbai BKC trading floor. Market data displays but cannot execute BLAST or run analytics functions.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP05</td>
+  <td><strong>SQL Server Deadlock on Risk Reporting Database</strong></td>
+  <td class="desc">SQL Server risk reporting database showing persistent deadlocks on VaR calculation stored procedures. Risk reports delayed 3 hours for global risk committee.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP06</td>
+  <td><strong>GlobalProtect VPN Gateway Unreachable From Home</strong></td>
+  <td class="desc">GlobalProtect VPN to JPMC corporate network shows 'Gateway unreachable' from home office. Required for after-hours production support on payments platform.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP07</td>
+  <td><strong>Confluence Page Blank After Chrome Update</strong></td>
+  <td class="desc">Atlassian Confluence pages load blank white screen in Google Chrome after corporate browser update. Confluence works in Edge on same machine.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H1</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP08</td>
+  <td><strong>New Associate Onboarding AD and Trading IDs</strong></td>
+  <td class="desc">New associate joining Mumbai Technology team Monday — need AD account, JPMorgan SSO, Murex read access, and ServiceNow profile per HR ticket ONB-JPM-882.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP09</td>
+  <td><strong>FIX Protocol Gateway Connection Dropped</strong></td>
+  <td class="desc">FIX protocol gateway connection to external broker dropped at 3 PM IST. Electronic equity orders not reaching exchange. Session shows LOGOUT received unexpectedly.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP10</td>
+  <td><strong>Ransomware Alert on Shared Drive P Drive</strong></td>
+  <td class="desc">Security incident: files on shared P drive encrypted with .ryuk extension. CrowdStrike EDR alert on 4 workstations. Project documentation inaccessible.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP11</td>
+  <td><strong>Oracle Exadata Tablespace Full on Payments DB</strong></td>
+  <td class="desc">Oracle Exadata PAYMENTS_PROD tablespace 99% full. Real-time payment posting failing with ORA-01653. Transaction volume spike since morning.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP12</td>
+  <td><strong>Microsoft Teams Screen Share Black for Clients</strong></td>
+  <td class="desc">Microsoft Teams screen share shows black screen to external client attendees during deal review. Presenter sees content normally on Windows 11 laptop.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP13</td>
+  <td><strong>Laptop Docking Station USB Ports Not Working</strong></td>
+  <td class="desc">Lenovo USB-C docking station USB ports not detecting keyboard and mouse on trading desk. Laptop built-in ports work. Dock power LED is green.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP14</td>
+  <td><strong>Firewall Rule Blocking SWIFT Alliance Access</strong></td>
+  <td class="desc">Corporate firewall change blocking outbound connectivity to SWIFT Alliance Access server. Cross-border payment messages queuing since 9 AM IST.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP15</td>
+  <td><strong>Splunk Alert API Keys in Git Repository</strong></td>
+  <td class="desc">Security incident: Splunk secret scanning detected production API keys committed to internal Git repository in merge request. Repo has 25 developer access.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP16</td>
+  <td><strong>Kafka Consumer Lag on Trade Events Topic</strong></td>
+  <td class="desc">Apache Kafka consumer group lag exceeding 2 million messages on trade-events topic. Downstream risk engine not receiving real-time trade data.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP17</td>
+  <td><strong>Resigned VP Revoke All Trading System Access</strong></td>
+  <td class="desc">VP resigned effective today — immediate offboarding: disable AD, revoke Murex, Bloomberg, FIX terminal, VPN, and mainframe access per HR exit clearance.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP18</td>
+  <td><strong>Snowflake Warehouse Suspended Credit Exhausted</strong></td>
+  <td class="desc">Snowflake analytics warehouse WH_RISK suspended — credit quota exhausted. Regulatory reporting ETL and Tableau dashboards failing since midnight batch.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP19</td>
+  <td><strong>ServiceNow Catalog Request Form Spinner</strong></td>
+  <td class="desc">ServiceNow software catalog request form submit button spins indefinitely. No confirmation or error. Incident and change modules work in same browser session.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP20</td>
+  <td><strong>EMEA MPLS Circuit Down Mumbai to London</strong></td>
+  <td class="desc">MPLS WAN circuit between Mumbai GIFT City and London data center down since 5 AM GMT. EMEA trading support team cannot reach London production systems.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP21</td>
+  <td><strong>Tableau Server Extract Refresh Failed</strong></td>
+  <td class="desc">Tableau Server scheduled extract refresh failed for executive risk dashboard. Error: 'Unable to connect to datasource'. Manual refresh also fails.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>JP22</td>
+  <td><strong>Trading Workstation Blue Screen MEMORY_MANAGEMENT</strong></td>
+  <td class="desc">Trading workstation BSOD with stop code MEMORY_MANAGEMENT during market hours. Machine reboots but crashes again within 15 minutes. Need urgent replacement.</td>
+  <td>H2</td>
+  <td>Hardware</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>JP23</td>
+  <td><strong>MongoDB Atlas Cluster Connection Timeout</strong></td>
+  <td class="desc">MongoDB Atlas cluster connection timeouts from client onboarding microservice. API returning HTTP 500. Cluster shows primary node CPU at 95%.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP24</td>
+  <td><strong>Unauthorized RDP to Jump Server From Foreign IP</strong></td>
+  <td class="desc">Security incident: SIEM detected successful RDP login to production jump server from IP 45.142.212.73 at 1:15 AM IST. User has no approved travel.</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP25</td>
+  <td><strong>Power BI Gateway Offline Cannot Refresh</strong></td>
+  <td class="desc">On-premises Power BI data gateway shows offline in Power BI Service. All enterprise dashboards failed refresh since 6 AM IST. Gateway service running on host.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP26</td>
+  <td><strong>NetApp Snapshot Restore Deleted Trade Files</strong></td>
+  <td class="desc">Trade confirmation files accidentally deleted from NetApp NAS share. Need snapshot restore from last night 11 PM before regulatory filing deadline Friday.</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td>H2</td>
+  <td>DBA</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>JP27</td>
+  <td><strong>Intune Non-Compliant Device Blocking Outlook Mobile</strong></td>
+  <td class="desc">Intune marks iPhone as non-compliant — Outlook mobile cannot sync corporate email. Device encryption enabled but compliance policy shows jailbreak false positive.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H3</td>
+  <td>SecOps</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr><tr class="pass">
+  <td>JP28</td>
+  <td><strong>BKC Office Wi-Fi Slow Packet Loss Floor 22</strong></td>
+  <td class="desc">Corporate Wi-Fi on Mumbai BKC office Floor 22 showing 35% packet loss and speeds under 2 Mbps. Wired connection on same desk works at full speed.</td>
+  <td>H2</td>
+  <td>Network</td>
+  <td>H1</td>
+  <td>Network</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="pass">
+  <td>JP29</td>
+  <td><strong>Jenkins CI Pipeline Failing on Maven Build</strong></td>
+  <td class="desc">Jenkins CI pipeline for payments microservice failing at Maven compile step with dependency resolution error. Last successful build was 2 days ago.</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge pass">PASS</span></td>
+</tr><tr class="fail">
+  <td>JP30</td>
+  <td><strong>Smart Badge Denied at Mumbai Office Turnstile</strong></td>
+  <td class="desc">Employee smart badge denied at BKC main entrance turnstile with red LED since badge reissue yesterday. Badge works for cafeteria payment system.</td>
+  <td>H2</td>
+  <td>Access Management</td>
+  <td>H2</td>
+  <td>Software</td>
+  <td><span class="badge fail">FAIL</span></td>
+</tr>
+  </tbody>
+</table>
+<p class="footer">Generated by SAARTHI routing test pipeline · Gemini classifier + RAG</p>
+</body>
+</html>

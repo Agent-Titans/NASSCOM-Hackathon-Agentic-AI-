@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "description": "20 diverse IT scenarios — Set W (post supervisor policy fixes)",
+  "cases": [
+    {
+      "id": "W01",
+      "title": "Forgot BitLocker Recovery Key",
+      "description": "Locked out of company laptop after BitLocker prompt — recovery key not saved. Need access to files for client presentation today.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Access / encryption"
+    },
+    {
+      "id": "W02",
+      "title": "CEO Impersonation Wire Transfer Email",
+      "description": "Security incident: finance received urgent wire transfer request email spoofing CEO domain. No funds sent yet — need fraud investigation.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / BEC"
+    },
+    {
+      "id": "W03",
+      "title": "SD-WAN Tunnel Down Branch Office",
+      "description": "SD-WAN overlay tunnel to Austin branch down 3 hours. Users cannot reach file shares or VoIP over corporate network.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / SD-WAN"
+    },
+    {
+      "id": "W04",
+      "title": "MongoDB Atlas Cluster Auto-Scale Stuck",
+      "description": "MongoDB Atlas cluster failed to auto-scale during traffic spike. Application writes timing out with connection pool exhausted.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / cloud"
+    },
+    {
+      "id": "W05",
+      "title": "Request Figma Enterprise License",
+      "description": "Design team needs Figma Enterprise seat for new UX lead starting next week. Standard license request through IT procurement.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Software license"
+    },
+    {
+      "id": "W06",
+      "title": "USB-C Hub Overheating and Disconnecting",
+      "description": "USB-C hub gets very hot and disconnects all peripherals every 20 minutes. Laptop charging also interrupted.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / dock"
+    },
+    {
+      "id": "W07",
+      "title": "Zero-Day Chrome Vulnerability Advisory",
+      "description": "Security incident: CISA advisory on active Chrome zero-day exploited in the wild. Need emergency patch rollout guidance for 800 endpoints.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / vuln"
+    },
+    {
+      "id": "W08",
+      "title": "Intermittent Packet Loss VoIP Calls",
+      "description": "VoIP calls dropping every few minutes on floor 6. Ping to gateway shows 15% packet loss during business hours only.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / VoIP"
+    },
+    {
+      "id": "W09",
+      "title": "Tableau Server Extract Refresh Failed",
+      "description": "Tableau Server nightly extract refresh failed with database connection error. Executive dashboards show stale data.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / BI"
+    },
+    {
+      "id": "W10",
+      "title": "Contractor AD Account Expired",
+      "description": "Contractor cannot log in — Active Directory account expired yesterday. Extension approved by sponsor for two more weeks.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / account"
+    },
+    {
+      "id": "W11",
+      "title": "Isilon Storage Pool Nearly Full",
+      "description": "Dell Isilon storage pool at 96% capacity. Research datasets share growing 50GB daily — need expansion or tiering plan.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "DBA", "category": "Storage" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Storage / capacity"
+    },
+    {
+      "id": "W12",
+      "title": "Laptop Screen Flickering After Drop",
+      "description": "Laptop screen flickers and shows horizontal lines after minor drop. External monitor works fine via HDMI.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / display"
+    },
+    {
+      "id": "W13",
+      "title": "SAP GUI Transaction Timeout",
+      "description": "SAP GUI freezes on VA01 sales order transaction for all users in EU region. SAP portal web transactions work.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Application / ERP"
+    },
+    {
+      "id": "W14",
+      "title": "Suspicious RDP Login from Foreign IP",
+      "description": "Security incident: SIEM alert shows successful RDP login to jump server from IP in unknown country at 3am local time.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / RDP"
+    },
+    {
+      "id": "W15",
+      "title": "Palo Alto GlobalProtect Profile Error",
+      "description": "GlobalProtect VPN client shows could not connect to gateway after firewall policy push. Entire sales team remote.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / VPN"
+    },
+    {
+      "id": "W16",
+      "title": "Disable MFA for Break Glass Admin",
+      "description": "Emergency break-glass admin account locked by MFA during datacenter outage. Need controlled MFA bypass per security policy.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Access / break-glass"
+    },
+    {
+      "id": "W17",
+      "title": "Cassandra Node Down in Ring",
+      "description": "Cassandra cluster shows one node down — UN status. Write consistency errors in checkout microservice.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / NoSQL"
+    },
+    {
+      "id": "W18",
+      "title": "Notepad++ Install Request Standard User",
+      "description": "Developer needs Notepad++ installed for log analysis. Standard user cannot install from Software Center catalog.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Software install"
+    },
+    {
+      "id": "W19",
+      "title": "Wireless Presentation Clicker Dead",
+      "description": "Logitech presentation remote not pairing with conference room PC. Tried new batteries, USB receiver not detected.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / peripheral"
+    },
+    {
+      "id": "W20",
+      "title": "GitHub Org 2FA Enforcement Gap",
+      "description": "Security incident: audit found 15 GitHub org members without 2FA enabled on repos with production deployment keys.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / compliance"
+    }
+  ]
+}

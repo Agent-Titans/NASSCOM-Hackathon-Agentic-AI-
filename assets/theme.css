@@ -1,4 +1,4 @@
-/* IntelliQ — SaaS dashboard theme (Streamlit design-system style) */
+/* SAARTHI — SaaS dashboard theme (Streamlit design-system style) */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
@@ -718,4 +718,53 @@ a.portal-pending-row:hover {
 }
 [data-testid="stAppViewContainer"]:has(.portal-logged-in-marker) button[data-testid="baseButton-tertiary"]:hover {
   color: #2563eb !important;
+}
+
+/* —— Sign-in page overrides (beat global input/button radii) —— */
+[data-testid="stAppViewContainer"]:has(.signin-scope) div[data-testid="stTextInput"] input,
+[data-testid="stAppViewContainer"]:has(.signin-scope) [data-testid="stTextInput"] [data-baseweb="input"] {
+  border-radius: 12px !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope) .main .stButton > button[kind="primary"],
+[data-testid="stAppViewContainer"]:has(.signin-scope) button[data-testid="stBaseButton-primary"],
+[data-testid="stAppViewContainer"]:has(.signin-scope) button[data-testid="stBaseButton-primaryFormSubmit"] {
+  border-radius: 9999px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background: #3B82F6 !important;
+  background-image: none !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope) .main .stButton > button[kind="secondary"],
+[data-testid="stAppViewContainer"]:has(.signin-scope) [class*="st-key-signin_create_account"] button {
+  border-radius: 9999px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Sign-in form field rhythm */
+[data-testid="stAppViewContainer"]:has(.signin-scope)
+  [data-testid="stForm"]:has(.signin-form-marker)
+  label[data-testid="stWidgetLabel"] {
+  margin-bottom: 0.4rem !important;
+  padding-bottom: 0 !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope)
+  [data-testid="stForm"]:has(.signin-form-marker)
+  [data-testid="stElementContainer"][class*="st-key-signin_email"] {
+  margin-bottom: 0.5rem !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope)
+  [data-testid="stForm"]:has(.signin-form-marker)
+  [data-testid="stElementContainer"][class*="st-key-signin_password"] {
+  margin-bottom: 0.45rem !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope)
+  [data-testid="stForm"]:has(.signin-form-marker)
+  label[data-testid="stWidgetLabel"] p {
+  margin-bottom: 0 !important;
+}
+[data-testid="stAppViewContainer"]:has(.signin-scope)
+  [data-testid="stTextInput"] [data-baseweb="input"] {
+  min-height: 3.125rem !important;
+  height: 3.125rem !important;
 }

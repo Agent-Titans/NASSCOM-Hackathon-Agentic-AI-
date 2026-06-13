@@ -6,6 +6,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.config.departments import department_queue_aliases
+from src.config.specialists import SPECIALISTS_QUEUE, STATUS_ROUTING_REVIEW
 from src.db.models import Ticket, User
 
 _PRIORITY_ORDER = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -49,6 +50,7 @@ class TicketStore:
             .filter(
                 Ticket.department_queue.in_(queues),
                 Ticket.hand.in_(("2", "3")),
+                Ticket.department_queue != SPECIALISTS_QUEUE,
             )
         )
         if not include_resolved:
@@ -60,20 +62,37 @@ class TicketStore:
         from src.services.auto_assign_service import run_auto_assignments
 
         run_auto_assignments(self.session)
-        queues = department_queue_aliases(department)
-        all_dept = (
+        queues = list(department_queue_aliases(department))
+        # Operational assignee inbox — excludes Routing Specialists misroute desk.
+        operational = (
             self.session.query(Ticket)
             .filter(
                 Ticket.department_queue.in_(queues),
+                Ticket.department_queue != SPECIALISTS_QUEUE,
                 Ticket.hand.in_(("2", "3")),
             )
             .all()
         )
         tickets = sorted(
-            (t for t in all_dept if t.status not in ("RESOLVED", "CLOSED")),
+            (t for t in operational if t.status not in ("RESOLVED", "CLOSED")),
             key=self._queue_sort_key,
         )
-        resolved = [t for t in all_dept if t.status == "RESOLVED"]
+        # Live resolved only — exclude syn-* RAG history from agent UI.
+        resolved = [
+            t
+            for t in operational
+            if t.status == "RESOLVED" and not str(t.ticket_id).startswith("syn-")
+        ]
+        specialists_count = 0
+        if department == "SecOps":
+            specialists_count = (
+                self.session.query(Ticket)
+                .filter(
+                    Ticket.department_queue == SPECIALISTS_QUEUE,
+                    Ticket.status.notin_(("RESOLVED", "CLOSED")),
+                )
+                .count()
+            )
         unassigned = [t for t in tickets if not t.assignee_id]
         mine = [t for t in tickets if t.assignee_id == assignee_id]
         at_risk = [t for t in tickets if self.sla_at_risk(t)]
@@ -86,6 +105,7 @@ class TicketStore:
             "mine": len(mine),
             "at_risk": len(at_risk),
             "escalations": len(escalations),
+            "specialists_count": specialists_count,
             "resolved": len(resolved),
             "tickets": tickets,
             "resolved_tickets": resolved,
@@ -115,31 +135,45 @@ class TicketStore:
 
     def assign(self, ticket: Ticket, assignee: User) -> Ticket:
         ticket.assignee_id = assignee.user_id
-        if ticket.status in ("ROUTED", "HUMAN_REVIEW", "ESCALATED"):
+        if ticket.status in ("ROUTED", "HUMAN_REVIEW", "ESCALATED", STATUS_ROUTING_REVIEW):
             ticket.status = "IN_PROGRESS"
         self.session.commit()
         self.session.refresh(ticket)
+        from src.services.notification_service import NotificationService
+
+        NotificationService().notify_ticket_assigned(self.session, ticket, assignee)
         return ticket
 
     def release(self, ticket: Ticket) -> Ticket:
         ticket.assignee_id = None
         if ticket.status == "IN_PROGRESS":
-            ticket.status = "ROUTED" if ticket.hand == "2" else "HUMAN_REVIEW"
+            if ticket.department_queue == SPECIALISTS_QUEUE:
+                ticket.status = STATUS_ROUTING_REVIEW
+            else:
+                ticket.status = "ROUTED" if ticket.hand == "2" else "HUMAN_REVIEW"
         self.session.commit()
         self.session.refresh(ticket)
         return ticket
 
     def resolve(self, ticket: Ticket) -> Ticket:
         ticket.status = "RESOLVED"
+        assignee = (
+            self.session.get(User, ticket.assignee_id) if ticket.assignee_id else None
+        )
         self.session.commit()
         self.session.refresh(ticket)
         from src.services.historical_success_service import invalidate_historical_cache
+        from src.services.notification_service import NotificationService
         from src.services.process_cache import invalidate_retrieval_cache
         from src.services.ticket_retrieval import mark_resolved_ticket_for_index
 
         mark_resolved_ticket_for_index(ticket.ticket_id)
         invalidate_retrieval_cache()
         invalidate_historical_cache()
+        notifications = NotificationService()
+        notifications.notify_ticket_closed(self.session, ticket)
+        if assignee:
+            notifications.notify_ticket_resolved(self.session, ticket, assignee)
         return ticket
 
     def update_hand(
@@ -158,9 +192,12 @@ class TicketStore:
         ticket.hand = hand
         ticket.confidence = confidence
         ticket.status = status
-        ticket.department_queue = department_queue
-        ticket.priority = priority
-        ticket.sla_hours = sla_hours
+        if department_queue is not None:
+            ticket.department_queue = department_queue
+        if priority is not None:
+            ticket.priority = priority
+        if sla_hours is not None:
+            ticket.sla_hours = sla_hours
         ticket.escalation_required = escalation_required
         if sanitized is not None:
             ticket.description_sanitized = sanitized

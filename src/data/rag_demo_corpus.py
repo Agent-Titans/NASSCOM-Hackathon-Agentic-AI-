@@ -637,6 +637,7 @@ _DEPARTMENT_TO_ASSIGNEE_EMAIL: dict[str, str] = {
     "Network": "shashi@employee",
     "Access Management": "satya@employee",
     "DBA": "sagar@employee",
+    "Storage": "sagar@employee",
 }
 
 _REQUESTER_EMAILS: tuple[str, ...] = (

@@ -468,11 +468,50 @@ def employee_portal_css() -> str:
     {s} .itsm-meta-cell:nth-child(2n) {{ border-right: none; }}
     {s} .itsm-meta-lbl {{ font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94A3B8; margin: 0 0 0.25rem; }}
     {s} .itsm-meta-val {{ font-size: 0.92rem; font-weight: 600; color: #0F172A; margin: 0; }}
-    {s} .itsm-banner {{ margin: 1rem 1.25rem 0; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.88rem; }}
-    {s} .itsm-banner-info {{ background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }}
+    {s} .itsm-banner {{ margin: 1rem 1.25rem 0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.88rem; line-height: 1.45; }}
+    {s} .itsm-banner-info {{ background: #F8FAFC; border: 1px solid #E2E8F0; color: #334155; }}
     {s} .itsm-banner-warn {{ background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }}
-    {s} .itsm-banner-ok {{ background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }}
-    {s} .itsm-banner-ref {{ background: #F5F3FF; border: 1px solid #DDD6FE; color: #5B21B6; margin: 0 0 1rem; }}
+    {s} .itsm-banner-ok {{ background: #F8FAFC; border: 1px solid #E2E8F0; color: #334155; }}
+    {s} .itsm-banner-ref {{ background: #FAFAFA; border: 1px solid #E8ECF1; color: #475569; margin: 0 0 1rem; }}
+    {s} .itsm-notice {{
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      margin: 0 0 1.15rem;
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      border: 1px solid #E8ECF1;
+      background: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }}
+    {s} .itsm-notice-icon {{
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      line-height: 1;
+    }}
+    {s} .itsm-notice-success .itsm-notice-icon {{ background: #ECFDF5; color: #047857; }}
+    {s} .itsm-notice-routed .itsm-notice-icon {{ background: #EEF2FF; color: #4338CA; }}
+    {s} .itsm-notice-info .itsm-notice-icon {{ background: #F1F5F9; color: #475569; }}
+    {s} .itsm-notice-title {{
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -0.01em;
+    }}
+    {s} .itsm-notice-sub {{
+      margin: 0.3rem 0 0;
+      font-size: 0.86rem;
+      color: #64748B;
+      line-height: 1.45;
+    }}
     {s} .itsm-section {{
       background: #FAFAFA;
       border: 1px solid #E2E8F0;

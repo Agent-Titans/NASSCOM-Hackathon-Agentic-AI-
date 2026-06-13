@@ -1,5 +1,5 @@
 """
-IntelliQ — SaaS-style Streamlit dashboard.
+SAARTHI — SaaS-style Streamlit dashboard.
 Inspired by production Streamlit patterns (sidebar nav, KPIs, wide layout).
 """
 from __future__ import annotations
@@ -389,6 +389,9 @@ def _escalate(ticket_id: str) -> None:
                 hand="3",
                 confidence=t.confidence or 0.5,
                 status="HUMAN_REVIEW",
+                department_queue=t.department_queue,
+                priority=t.priority,
+                sla_hours=t.sla_hours,
                 escalation_required=True,
             )
 

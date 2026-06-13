@@ -134,9 +134,9 @@ def _hand_chip_label(ticket: Ticket) -> str:
 
 def _routing_copy(ticket: Ticket) -> dict[str, str]:
     hand = ticket.hand or ""
-    dept = ticket.department_queue or "—"
+    dept_display = department_label(ticket)
     if hand == "3":
-        team = dept if dept != "—" else "Specialist Desk"
+        team = dept_display if dept_display != "—" else "Specialist Desk"
         return {
             "badge": "Human Verification",
             "headline": "Routed to human specialist",
@@ -145,19 +145,19 @@ def _routing_copy(ticket: Ticket) -> dict[str, str]:
                 "A human agent will verify and resolve this request."
             ),
             "team": team,
-            "status": _status_label(ticket),
+            "status": _status_short_label(ticket.status),
             "banner_cls": "itsm-banner-warn",
         }
     if hand == "2":
         return {
             "badge": "Team Queue",
-            "headline": f"Routed to {dept}",
+            "headline": f"Routed to {dept_display}",
             "body": (
-                f"In the {dept} queue · Priority {ticket.priority or 'P2'} · "
+                f"In the {dept_display} queue · Priority {ticket.priority or 'P2'} · "
                 f"SLA {ticket.sla_hours or '—'}h."
             ),
-            "team": dept,
-            "status": _status_label(ticket),
+            "team": dept_display,
+            "status": _status_short_label(ticket.status),
             "banner_cls": "itsm-banner-info",
         }
     if hand == "1":
@@ -166,7 +166,7 @@ def _routing_copy(ticket: Ticket) -> dict[str, str]:
             "headline": "Self-help guidance available",
             "body": "Follow the recommended steps below. Escalate if you still need help.",
             "team": "Self-Service",
-            "status": _status_label(ticket),
+            "status": _status_short_label(ticket.status),
             "banner_cls": "itsm-banner-ok",
         }
     return {
@@ -174,9 +174,33 @@ def _routing_copy(ticket: Ticket) -> dict[str, str]:
         "headline": "Routing in progress",
         "body": "Your request is being classified and routed.",
         "team": "—",
-        "status": _status_label(ticket),
+        "status": _status_short_label(ticket.status),
         "banner_cls": "itsm-banner-info",
     }
+
+
+def _premium_notice_html(
+    title: str,
+    subtitle: str = "",
+    *,
+    kind: str = "info",
+) -> str:
+    icon = {
+        "success": "✓",
+        "routed": "→",
+        "info": "i",
+    }.get(kind, "i")
+    subtitle_html = (
+        f'<p class="itsm-notice-sub">{html.escape(subtitle)}</p>' if subtitle else ""
+    )
+    return (
+        f'<div class="itsm-notice itsm-notice-{html.escape(kind)}">'
+        f'<span class="itsm-notice-icon" aria-hidden="true">{html.escape(icon)}</span>'
+        f'<div class="itsm-notice-copy">'
+        f'<p class="itsm-notice-title">{html.escape(title)}</p>'
+        f"{subtitle_html}"
+        f"</div></div>"
+    )
 
 
 def _portal_scope_open() -> None:
@@ -368,16 +392,21 @@ def _submit_feedback(session, ticket_id: str, outcome: str) -> None:
     session.commit()
 
 
-def _escalate_ticket(session, ticket_id: str) -> None:
+def _escalate_ticket(session, ticket_id: str) -> Ticket | None:
     """Hand 1 self-help failed → route to team assist (Hand 2)."""
+    from src.services.auto_assign_service import assign_escalated_ticket, run_auto_assignments
+
     ticket = TicketStore(session).get(ticket_id)
     if not ticket:
-        return
+        return None
     TicketStore(session).update_hand(
         ticket,
         hand="2",
         confidence=ticket.confidence or 0.5,
         status="ROUTED",
+        department_queue=ticket.department_queue,
+        priority=ticket.priority,
+        sla_hours=ticket.sla_hours,
         escalation_required=False,
     )
     AuditLogStore(session).record(
@@ -386,6 +415,10 @@ def _escalate_ticket(session, ticket_id: str) -> None:
         details="outcome=failed hand=1_to_2",
     )
     session.commit()
+    if not assign_escalated_ticket(session, ticket):
+        run_auto_assignments(session, force=True)
+    session.refresh(ticket)
+    return ticket
 
 
 def _open_ticket(ticket_id: str) -> None:
@@ -485,9 +518,9 @@ def render_portal_home(user: User, session) -> None:
     )
 
     if flash:
-        cls = "itsm-banner-ok" if flash_type == "success" else "itsm-banner-info"
+        kind = "success" if flash_type == "success" else "routed" if flash_type == "human" else "info"
         st.markdown(
-            _wrap(f'<div class="itsm-banner {cls}">{html.escape(flash)}</div>'),
+            _wrap(_premium_notice_html(flash, kind=kind)),
             unsafe_allow_html=True,
         )
 
@@ -634,9 +667,23 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
     elif st.button("← Back to workspace", key="portal_detail_back", type="tertiary"):
         st.session_state.pop("portal_return_ticket_id", None)
         st.session_state.pop("portal_reference_view", None)
+        st.session_state.pop("portal_detail_notice", None)
         st.session_state["portal_view"] = "home"
         st.session_state["page"] = "portal"
         st.rerun()
+
+    route_notice = st.session_state.pop("portal_detail_notice", None)
+    if route_notice:
+        st.markdown(
+            _wrap(
+                _premium_notice_html(
+                    route_notice["title"],
+                    route_notice.get("subtitle", ""),
+                    kind=route_notice.get("kind", "routed"),
+                )
+            ),
+            unsafe_allow_html=True,
+        )
 
     if reference_view or corpus_ref:
         st.markdown(
@@ -759,10 +806,16 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
             with fb2:
                 if st.button("Did not work", key=f"portal_fb_failed_{ticket_id}", use_container_width=True):
                     _submit_feedback(session, ticket_id, "failed")
-                    _escalate_ticket(session, ticket_id)
-                    st.session_state["portal_flash"] = "Routed to your team queue for follow-up."
-                    st.session_state["portal_flash_type"] = "human"
-                    st.session_state["portal_view"] = "home"
+                    escalated = _escalate_ticket(session, ticket_id)
+                    dept = department_label(escalated) if escalated else "your support team"
+                    st.session_state["portal_detail_notice"] = {
+                        "title": f"Routed to {dept}",
+                        "subtitle": (
+                            "Self-help steps did not resolve your issue. "
+                            f"A {dept} team member will follow up on this request."
+                        ),
+                        "kind": "routed",
+                    }
                     st.rerun()
 
     render_ticket_comments(session, ticket_id, user, _wrap, "portal")

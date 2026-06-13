@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "description": "10 different IT scenarios — Set Z",
+  "cases": [
+    {
+      "id": "Z01",
+      "title": "MFA Push Notifications Not Received",
+      "description": "Duo MFA push notifications stopped arriving on iPhone. Approve request never shows up when logging into VPN portal.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / MFA"
+    },
+    {
+      "id": "Z02",
+      "title": "Ransomware Detected on File Server",
+      "description": "Security incident: EDR alert on file server FS-PROD-03 — ransomware behavior detected, files being encrypted on finance share.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / ransomware"
+    },
+    {
+      "id": "Z03",
+      "title": "DNS Resolution Failing Internal Apps",
+      "description": "Internal apps cannot resolve hostnames on corp.local domain. nslookup times out from all VLANs since DNS server patch.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / DNS"
+    },
+    {
+      "id": "Z04",
+      "title": "SQL Server TempDB Full",
+      "description": "SQL Server alert tempdb data file full on PROD-SQL-01. All queries failing with insufficient space in tempdb.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / SQL Server"
+    },
+    {
+      "id": "Z05",
+      "title": "Teams Status Stuck on Away",
+      "description": "Microsoft Teams presence stuck on Away even when actively working. Calendar integration and status reset did not help.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Teams"
+    },
+    {
+      "id": "Z06",
+      "title": "Monitor Stand Broken Adjustment Knob",
+      "description": "Dell monitor arm adjustment knob snapped — monitor tilts down and cannot stay in position. Need replacement stand or arm.",
+      "urgency": "low",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / monitor"
+    },
+    {
+      "id": "Z07",
+      "title": "Compromised Service Account Login",
+      "description": "Security incident: SIEM detected successful login for svc-backup account from unknown IP at 2am. Account should be disabled.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / service account"
+    },
+    {
+      "id": "Z08",
+      "title": "Firewall Blocking Vendor SFTP",
+      "description": "Perimeter firewall blocking inbound SFTP from approved vendor IP 203.0.113.50. Need rule added for nightly file exchange.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / firewall"
+    },
+    {
+      "id": "Z09",
+      "title": "Disable User Leaving Company Friday",
+      "description": "Employee last day Friday — need AD account disabled, mailbox converted to shared, and all system access revoked per offboarding SOP.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Access / offboarding"
+    },
+    {
+      "id": "Z10",
+      "title": "Chrome Browser Extensions Disabled",
+      "description": "All Chrome extensions disabled by new GPO. Need approved password manager extension whitelisted for engineering team.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / browser"
+    }
+  ]
+}

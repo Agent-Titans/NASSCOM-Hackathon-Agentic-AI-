@@ -1,7 +1,7 @@
 """Product name and copy — single place for UI strings."""
 
 PRODUCT_NAME = "SAARTHI"
-ORG_NAME = "SAARTHI Systems"
+ORG_NAME = "SAARTHI"
 PRODUCT_ABBREVIATION = (
     "Smart Assignment, Auto-Route, Triage & Handoff Intelligence"
 )

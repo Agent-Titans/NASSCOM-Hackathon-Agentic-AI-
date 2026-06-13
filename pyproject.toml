@@ -7,3 +7,6 @@ description = "Nascom final round — five agents, three hands"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "slow: full pipeline / golden-set tests (may call Gemini)",
+]

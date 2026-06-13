@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.config.specialists import SPECIALISTS_DISPLAY, SPECIALISTS_QUEUE
+
 ACCESS_MANAGEMENT = "Access Management"
 _LEGACY_IDENTITY = "Identity"
 
@@ -15,11 +17,18 @@ DEPARTMENT_QUEUES: tuple[str, ...] = (
     "DBA",
 )
 
+# Operational queues agents may reroute to (excludes SecOps / specialist desk).
+OPERATIONAL_DEPARTMENT_QUEUES: tuple[str, ...] = tuple(
+    q for q in DEPARTMENT_QUEUES if q != "SecOps"
+)
+
 
 def display_department(name: str | None) -> str:
     """Normalize legacy DB values and return user-facing department label."""
     if not name:
         return "Pending"
+    if name == SPECIALISTS_QUEUE:
+        return SPECIALISTS_DISPLAY
     if name == _LEGACY_IDENTITY:
         return ACCESS_MANAGEMENT
     return name
@@ -27,6 +36,8 @@ def display_department(name: str | None) -> str:
 
 def canonical_department(name: str) -> str:
     """Map legacy stored values to the canonical department queue name."""
+    if name == SPECIALISTS_QUEUE:
+        return SPECIALISTS_QUEUE
     if name == _LEGACY_IDENTITY:
         return ACCESS_MANAGEMENT
     if name == "Storage":

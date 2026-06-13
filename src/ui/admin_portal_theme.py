@@ -22,7 +22,7 @@ def admin_portal_css() -> str:
     {pp} [data-testid="stMainBlockContainer"],
     {pp} .block-container {{
       max-width: 1280px !important;
-      padding: 7.5rem 2rem 2.5rem !important;
+      padding: 5.25rem 2rem 2rem !important;
       margin: 0 auto !important;
     }}
     {pp} [data-testid="stVerticalBlock"] > div,
@@ -31,7 +31,7 @@ def admin_portal_css() -> str:
       background: transparent !important;
     }}
 
-    /* Fixed top bar — IntelliQ brand always visible (Employee / Agent parity) */
+    /* Fixed top bar — SAARTHI brand always visible (Employee / Agent parity) */
     {s} .admin-topnav {{
       position: fixed;
       top: 0;
@@ -91,15 +91,54 @@ def admin_portal_css() -> str:
       background: #F8FAFC !important;
     }}
     /* Horizontal nav row below brand bar */
+    {s} .admin-nav-row {{
+      margin: 0 0 0.85rem;
+    }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_nav_"]) {{
+      margin: 0 !important;
+      gap: 0.5rem !important;
+      align-items: stretch !important;
+    }}
     {pp} [class*="st-key-admin_nav_"] {{
-      margin-bottom: 0.15rem !important;
+      margin: 0 !important;
+    }}
+    {pp} [class*="st-key-admin_nav_"] button {{
+      min-height: 2.35rem !important;
+      border-radius: 8px !important;
+      font-size: 0.82rem !important;
+      font-weight: 600 !important;
+    }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_hdr_export"]),
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_hdr_refresh"]) {{
+      align-items: flex-end !important;
+      margin-top: 0 !important;
+      margin-bottom: 0.85rem !important;
+      gap: 0.5rem !important;
+    }}
+    {pp} [class*="st-key-admin_hdr_export"],
+    {pp} [class*="st-key-admin_hdr_refresh"] {{
+      margin: 0 !important;
+      padding-top: 0 !important;
+    }}
+    {pp} [class*="st-key-admin_hdr_export"] button,
+    {pp} [class*="st-key-admin_hdr_refresh"] button {{
+      min-height: 2.35rem !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+    }}
+    {pp} [class*="st-key-admin_pick_ticket"] {{
+      margin: 0 0 0.5rem !important;
+    }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_pick_view"]) {{
+      margin: 0 0 0.5rem !important;
+      align-items: flex-end !important;
     }}
 
     {s} .admin-header {{
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 1.35rem;
+      margin-bottom: 0;
     }}
     {s} .admin-header h1 {{
       font-size: 1.65rem;
@@ -570,37 +609,18 @@ def admin_portal_css() -> str:
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     }}
     {s} .admin-table-data-html {{
-      padding: 0 0.55rem 0.35rem;
+      padding: 0;
       overflow-x: auto;
     }}
-    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_open_"]) {{
-      border-bottom: 1px solid #F1F5F9 !important;
-      border-left: 1px solid #E8ECF1 !important;
-      border-right: 1px solid #E8ECF1 !important;
-      align-items: center !important;
-      min-height: 2.35rem !important;
-      margin: 0 !important;
-      gap: 0 !important;
-      padding: 0 !important;
-      background: #FFFFFF !important;
+    {s} .admin-table-data-html .admin-table td {{
+      padding: 0.65rem 0.75rem;
     }}
-    {s} .admin-table-data-footer {{
-      border: 1px solid #E8ECF1;
-      border-top: none;
-      border-radius: 0 0 12px 12px;
-      height: 0;
-      margin: 0 0 0.75rem;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    }}
-    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_open_"]) > [data-testid="column"] {{
-      display: flex !important;
-      align-items: center !important;
-      padding: 0 0.55rem !important;
-      border-right: 1px solid #F8FAFC !important;
-      box-sizing: border-box !important;
-    }}
-    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_open_"]) > [data-testid="column"]:last-child {{
-      border-right: none !important;
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-admin_col_hdr_all_"]) {{
+      border-top: none !important;
+      min-height: 2.15rem !important;
+      max-height: 2.15rem !important;
+      background: #F8FAFC !important;
+      border-bottom: 1px solid #E8ECF1 !important;
     }}
     {s} .admin-row-text {{
       font-size: 0.78rem;
@@ -721,8 +741,26 @@ def admin_portal_css() -> str:
     }}
     {s} .admin-id {{
       font-weight: 700;
-      color: #6366F1;
+      color: #4338CA;
       font-size: 0.78rem;
+    }}
+    {s} .admin-id-link {{
+      text-decoration: none;
+      color: #4338CA;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }}
+    {s} .admin-id-link:hover {{
+      color: #312E81;
+      text-decoration: underline;
+    }}
+    {s} .admin-table td:nth-child(3) {{
+      text-align: center;
+    }}
+    {s} .admin-table td:nth-child(4),
+    {s} .admin-table td:nth-child(5) {{
+      text-align: right;
     }}
     {s} .admin-pill {{
       display: inline-block;

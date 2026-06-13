@@ -8,10 +8,25 @@ from typing import Optional
 import streamlit as st
 
 from src.config.brand import HAND_DISPLAY, ORG_NAME, PRODUCT_NAME
-from src.config.departments import departments_match, display_department
+from src.config.departments import (
+    OPERATIONAL_DEPARTMENT_QUEUES,
+    departments_match,
+    display_department,
+)
 from src.config.demo_profiles import demo_person_name
+from src.config.specialists import SPECIALISTS_CAPTION, SPECIALISTS_DISPLAY, STATUS_ROUTING_REVIEW
 from src.services.reference_ticket_loader import load_reference_ticket, normalize_reference_ticket_id
 from src.services.resolution_steps_codec import decode_steps
+from src.services.specialists_desk_service import (
+    can_request_specialist,
+    get_specialist_context,
+    is_specialists_ticket,
+    keep_specialist_ticket_in_secops,
+    list_specialists_history,
+    list_specialists_queue,
+    request_specialist_review,
+    reroute_from_specialists,
+)
 from src.db.models import ClassificationArtifact, ResolutionArtifact, Ticket, User
 from src.stores.artifact_store import ArtifactStore
 from src.stores.ticket_store import TicketStore
@@ -72,6 +87,7 @@ def _status_chip_class(status: str) -> str:
         "IN_PROGRESS": "portal-chip portal-chip-status-info",
         "HUMAN_REVIEW": "portal-chip portal-chip-status-warn",
         "ESCALATED": "portal-chip portal-chip-status-warn",
+        "ROUTING_REVIEW": "portal-chip portal-chip-status-warn",
         "RESOLVED": "portal-chip portal-chip-status",
     }
     return mapping.get(status, "portal-chip portal-chip-status")
@@ -83,6 +99,7 @@ def _status_short_label(status: str) -> str:
         "IN_PROGRESS": "In progress",
         "HUMAN_REVIEW": "Specialist review",
         "ESCALATED": "Needs specialist",
+        "ROUTING_REVIEW": "Routing review",
         "RESOLVED": "Closed",
         "RECEIVED": "New",
         "SELF_HELP": "Self-help",
@@ -167,7 +184,15 @@ def _profile_card_html(name: str, email: str, department: str) -> str:
     )
 
 
-def _queue_summary_html(department: str, total: int, mine: int) -> str:
+def _queue_summary_html(
+    department: str, total: int, mine: int, *, specialists: int = 0
+) -> str:
+    extra = ""
+    if specialists:
+        extra = (
+            f'<p class="agent-queue-mine" style="margin-top:0.35rem;">'
+            f"{specialists} in Routing Specialists desk</p>"
+        )
     return _wrap(
         '<div class="agent-queue-card">'
         '<p class="agent-queue-lbl">Department queue</p>'
@@ -175,15 +200,23 @@ def _queue_summary_html(department: str, total: int, mine: int) -> str:
         f'<p class="agent-queue-val">{total}</p>'
         f'<p class="agent-queue-sub">active incident{"s" if total != 1 else ""}</p>'
         f'<p class="agent-queue-mine">{mine} assigned to you</p>'
+        f"{extra}"
         "</div>"
     )
 
 
-def _metrics_html(stats: dict) -> str:
+def _metrics_html(stats: dict, *, is_secops: bool = False) -> str:
     unassigned = stats["unassigned"]
     mine = stats["mine"]
     at_risk = stats["at_risk"]
-    escalations = stats["escalations"]
+    if is_secops:
+        fourth_val = stats.get("specialists_count", 0)
+        fourth_lbl = "Routing desk"
+        fourth_hint = "Misroute review"
+    else:
+        fourth_val = stats["escalations"]
+        fourth_lbl = "Specialist queue"
+        fourth_hint = "Needs expert review"
     return _wrap(
         '<div class="portal-dash">'
         '<p class="portal-dash-heading">Team dashboard</p>'
@@ -209,9 +242,9 @@ def _metrics_html(stats: dict) -> str:
         '<div class="portal-metric portal-metric-escalation">'
         '<div class="portal-metric-icon portal-metric-icon-escalation">⚠️</div>'
         '<div class="portal-metric-body">'
-        f'<p class="portal-metric-val">{escalations}</p>'
-        '<p class="portal-metric-lbl">Specialist queue</p>'
-        '<p class="portal-metric-hint">Needs expert review</p></div></div>'
+        f'<p class="portal-metric-val">{fourth_val}</p>'
+        f'<p class="portal-metric-lbl">{fourth_lbl}</p>'
+        f'<p class="portal-metric-hint">{fourth_hint}</p></div></div>'
         "</div></div>"
     )
 
@@ -301,6 +334,39 @@ def _resolve_ticket(session, ticket: Ticket) -> None:
     TicketStore(session).resolve(ticket)
     _agent_toast(f"Ticket INC-{_ticket_key(ticket)} marked resolved.")
     st.session_state["agent_view"] = "home"
+    st.rerun()
+
+
+def _keep_specialist_in_secops(session, ticket: Ticket, user: User) -> None:
+    ok, msg = keep_specialist_ticket_in_secops(session, ticket, user)
+    if ok:
+        _agent_toast(msg)
+        st.session_state["agent_view"] = "home"
+        st.rerun()
+    else:
+        st.error(msg)
+
+
+def _send_to_specialists(session, ticket: Ticket, user: User, reason: str) -> None:
+    ok, msg = request_specialist_review(session, ticket, user, reason)
+    if ok:
+        _agent_toast(msg, icon="🛡️")
+        st.session_state["agent_view"] = "home"
+        st.session_state.pop("specialist_reason_open", None)
+        st.rerun()
+    else:
+        st.error(msg)
+
+
+def _confirm_specialist_reroute(
+    session, ticket: Ticket, user: User, target_department: str
+) -> None:
+    ok, msg = reroute_from_specialists(session, ticket, user, target_department)
+    if ok:
+        _agent_toast(msg, icon="🛡️")
+        st.session_state["agent_view"] = "home"
+    else:
+        st.error(msg)
     st.rerun()
 
 
@@ -456,12 +522,17 @@ def render_agent_home(user: User, session) -> None:
         st.markdown(_profile_card_html(name, user.email, dept_label), unsafe_allow_html=True)
     with top_col2:
         st.markdown(
-            _queue_summary_html(dept_label, stats["total"], stats["mine"]),
+            _queue_summary_html(
+                dept_label,
+                stats["total"],
+                stats["mine"],
+                specialists=stats.get("specialists_count", 0) if dept == "SecOps" else 0,
+            ),
             unsafe_allow_html=True,
         )
 
     st.markdown('<div style="margin-top: 2rem;"></div>', unsafe_allow_html=True)
-    st.markdown(_metrics_html(stats), unsafe_allow_html=True)
+    st.markdown(_metrics_html(stats, is_secops=(dept == "SecOps")), unsafe_allow_html=True)
 
     filt = st.session_state.get("agent_filter", "All")
     st.markdown(
@@ -482,6 +553,38 @@ def render_agent_home(user: User, session) -> None:
 
     with st.expander(f"Department inbox ({len(filtered)})", expanded=True):
         _render_queue_rows(filtered, user, session, "inbox")
+
+    if dept == "SecOps":
+        specialists = list_specialists_queue(session)
+        spec_count = len(specialists)
+        with st.expander(
+            f"Routing Specialists desk ({spec_count})",
+            expanded=bool(specialists),
+        ):
+            st.markdown(
+                _wrap(
+                    '<p style="margin:0 0 0.5rem;font-size:0.8rem;font-weight:600;'
+                    'color:#64748b;">Operated by SecOps team</p>'
+                ),
+                unsafe_allow_html=True,
+            )
+            if specialists:
+                st.caption(
+                    "Misrouted tickets from other teams awaiting correct department assignment."
+                )
+                _render_queue_rows(specialists, user, session, "specialists")
+            else:
+                st.caption("No tickets awaiting routing specialist review.")
+
+        history = list_specialists_history(session)
+        with st.expander(f"Routing desk history ({len(history)})", expanded=False):
+            if history:
+                st.caption(
+                    "Tickets that passed through the routing specialists desk (audit trail)."
+                )
+                _render_resolved_rows(history[:12], user, session, "routing_hist")
+            else:
+                st.caption("No routing desk history yet.")
 
     resolved = stats.get("resolved_tickets") or []
     if resolved:
@@ -507,11 +610,19 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
     if not ticket:
         st.error("Ticket not found.")
         return
+
+    specialists_view = is_specialists_ticket(ticket)
+    secops_user = (user.department or "") == "SecOps"
+
     if not (reference_view or corpus_ref):
-        if not departments_match(ticket.department_queue, dept):
+        if specialists_view:
+            if not secops_user:
+                st.error("This ticket is in the SecOps Routing Specialists desk.")
+                return
+        elif not departments_match(ticket.department_queue, dept):
             st.error("Ticket not found or not in your department queue.")
             return
-        if ticket.hand not in ("2", "3"):
+        elif ticket.hand not in ("2", "3"):
             st.error("This ticket is not in the assignee queue.")
             return
 
@@ -544,23 +655,29 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
             _wrap(
                 '<div class="itsm-banner itsm-banner-ref">'
                 "<strong>Reference ticket</strong> — "
-                "Opened from AI resolution sources. Use for context when handling the active incident."
+                "Opened from resolution sources. Use for context when handling the active incident."
                 "</div>"
             ),
             unsafe_allow_html=True,
         )
 
-    banner_cls = "itsm-banner-warn" if ticket.hand == "3" else "itsm-banner-info"
-    banner_head = (
-        "Human escalation — specialist review required"
-        if ticket.hand == "3"
-        else f"Routed assist — {dept_label} queue"
-    )
-    banner_body = (
-        "This incident needs specialist review before acting."
-        if ticket.hand == "3"
-        else "AI suggested resolution available below. Validate before closing with requester."
-    )
+    banner_cls = "itsm-banner-warn" if ticket.hand == "3" or specialists_view else "itsm-banner-info"
+    if specialists_view:
+        banner_head = "Routing Specialists — SecOps-owned desk"
+        banner_body = (
+            "An agent flagged a possible misroute. Confirm the correct department queue below."
+        )
+    elif ticket.hand == "3":
+        banner_head = "Hand 3 — security specialist review"
+        banner_body = (
+            "Security escalation requires expert review before acting. "
+            "Not the same as the Routing Specialists misroute desk."
+        )
+    else:
+        banner_head = f"Routed assist — {dept_label} queue"
+        banner_body = (
+            "Resolution steps available below. Validate before closing with requester."
+        )
 
     owner_lbl = _assignee_label(ticket, user, session)
 
@@ -622,7 +739,27 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
             unsafe_allow_html=True,
         )
 
-    if res and ticket.hand in ("1", "2"):
+    if specialists_view and not (reference_view or corpus_ref):
+        ctx = get_specialist_context(session, ticket_id)
+        orig = ctx.get("original_department") or "—"
+        reason = ctx.get("reason") or "—"
+        req_by = ctx.get("requested_by") or "—"
+        st.markdown(
+            _wrap(
+                '<div class="itsm-section itsm-specialists-panel">'
+                '<p class="itsm-section-title">Routing context</p>'
+                f'<p class="itsm-meta-val"><strong>Originally routed to:</strong> '
+                f"{html.escape(str(orig))}</p>"
+                f'<p class="itsm-meta-val"><strong>Flagged by:</strong> '
+                f"{html.escape(str(req_by))}</p>"
+                f'<p class="itsm-meta-val"><strong>Agent reason:</strong> '
+                f"{html.escape(str(reason))}</p>"
+                "</div>"
+            ),
+            unsafe_allow_html=True,
+        )
+
+    if res and ticket.hand in ("1", "2") and not specialists_view:
         _req_steps, assignee_steps = decode_steps(res.steps_json)
         steps = assignee_steps or _req_steps
         references = ArtifactStore.load_references(res)
@@ -633,7 +770,7 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
             st.markdown(
                 _wrap(
                     f'<div class="itsm-section"><p class="itsm-section-title">'
-                    f"AI suggested resolution</p>"
+                    f"Resolution steps</p>"
                     f"<ol style='margin:0 0 0.75rem;padding-left:1.2rem;color:#475569;"
                     f"font-size:0.9rem;'>{step_items}</ol></div>"
                 ),
@@ -650,24 +787,132 @@ def render_agent_detail(user: User, session, ticket_id: Optional[str]) -> None:
 
     if not (reference_view or corpus_ref):
         st.markdown(_wrap('<p class="itsm-section-title">Actions</p>'), unsafe_allow_html=True)
-        ac1, ac2, ac3 = st.columns(3)
-        with ac1:
-            if not ticket.assignee_id:
-                if st.button("Assign to me", key="agent_detail_assign", type="primary", use_container_width=True):
-                    _assign_ticket(session, ticket, user)
-            elif ticket.assignee_id == user.user_id:
-                if st.button("Release to queue", key="agent_detail_release", use_container_width=True):
-                    _release_ticket(session, ticket)
-            else:
-                st.caption(f"Owned by {_assignee_label(ticket, user, session)}")
-        with ac2:
-            if ticket.status != "RESOLVED":
-                if st.button("Mark resolved", key="agent_detail_resolve", type="primary", use_container_width=True):
-                    _resolve_ticket(session, ticket)
-        with ac3:
-            if st.button("Back to inbox", key="agent_detail_inbox", use_container_width=True):
-                st.session_state["agent_view"] = "home"
-                st.rerun()
+
+        if specialists_view and secops_user and ticket.status not in ("RESOLVED", "CLOSED"):
+            st.markdown(
+                _wrap(
+                    '<div class="itsm-section itsm-specialists-panel">'
+                    f'<p class="itsm-section-title">{html.escape(SPECIALISTS_DISPLAY)}</p>'
+                    "<p style='margin:0 0 0.75rem;color:#64748b;font-size:0.85rem;'>"
+                    "Take as SecOps security work, confirm another department, or resolve."
+                    "</p></div>"
+                ),
+                unsafe_allow_html=True,
+            )
+            ac1, ac2, ac3 = st.columns(3)
+            with ac1:
+                if not ticket.assignee_id or ticket.department_queue == SPECIALISTS_QUEUE:
+                    if st.button(
+                        "Assign to me (SecOps)",
+                        key="specialist_keep_secops",
+                        type="primary",
+                        use_container_width=True,
+                    ):
+                        if ticket.department_queue == SPECIALISTS_QUEUE:
+                            _keep_specialist_in_secops(session, ticket, user)
+                        else:
+                            _assign_ticket(session, ticket, user)
+                elif ticket.assignee_id == user.user_id:
+                    if st.button(
+                        "Release to queue",
+                        key="specialist_release",
+                        use_container_width=True,
+                    ):
+                        _release_ticket(session, ticket)
+            with ac2:
+                if ticket.status != "RESOLVED":
+                    if st.button(
+                        "Mark resolved",
+                        key="specialist_resolve",
+                        type="primary",
+                        use_container_width=True,
+                    ):
+                        _resolve_ticket(session, ticket)
+            with ac3:
+                if st.button("Back to inbox", key="specialist_inbox", use_container_width=True):
+                    st.session_state["agent_view"] = "home"
+                    st.rerun()
+
+            target = st.selectbox(
+                "Route to department",
+                OPERATIONAL_DEPARTMENT_QUEUES,
+                key="specialist_reroute_dept",
+            )
+            if st.button(
+                "Confirm route",
+                key="specialist_reroute_confirm",
+                type="secondary",
+                use_container_width=True,
+            ):
+                _confirm_specialist_reroute(session, ticket, user, target)
+        else:
+            ac1, ac2, ac3 = st.columns(3)
+            with ac1:
+                if not ticket.assignee_id:
+                    if st.button(
+                        "Assign to me",
+                        key="agent_detail_assign",
+                        type="primary",
+                        use_container_width=True,
+                    ):
+                        _assign_ticket(session, ticket, user)
+                elif ticket.assignee_id == user.user_id:
+                    if st.button(
+                        "Release to queue",
+                        key="agent_detail_release",
+                        use_container_width=True,
+                    ):
+                        _release_ticket(session, ticket)
+                else:
+                    st.caption(f"Owned by {_assignee_label(ticket, user, session)}")
+            with ac2:
+                if ticket.status != "RESOLVED":
+                    if st.button(
+                        "Mark resolved",
+                        key="agent_detail_resolve",
+                        type="primary",
+                        use_container_width=True,
+                    ):
+                        _resolve_ticket(session, ticket)
+            with ac3:
+                if st.button("Back to inbox", key="agent_detail_inbox", use_container_width=True):
+                    st.session_state["agent_view"] = "home"
+                    st.rerun()
+
+            if can_request_specialist(ticket, user):
+                st.markdown(
+                    _wrap(
+                        '<div class="itsm-section itsm-specialists-panel" style="margin-top:1rem;">'
+                        '<p class="itsm-section-title">Routing review</p>'
+                        f'<p style="margin:0;font-size:0.8rem;font-weight:600;color:#64748b;">'
+                        f"{html.escape(SPECIALISTS_CAPTION)}</p>"
+                        "</div>"
+                    ),
+                    unsafe_allow_html=True,
+                )
+                show_reason = st.session_state.get("specialist_reason_open", False)
+                if st.button(
+                    "Route",
+                    key="specialist_send_btn",
+                    type="secondary",
+                    use_container_width=True,
+                ):
+                    st.session_state["specialist_reason_open"] = True
+                    st.rerun()
+                if show_reason or st.session_state.get("specialist_reason_open"):
+                    reason = st.text_area(
+                        "Why is this misrouted?",
+                        key="specialist_reason_text",
+                        placeholder="e.g. This is a network VPN issue, not a software bug…",
+                        height=80,
+                    )
+                    if st.button(
+                        "Submit to specialists desk",
+                        key="specialist_submit",
+                        type="primary",
+                    ):
+                        _send_to_specialists(session, ticket, user, reason)
+                        st.session_state.pop("specialist_reason_open", None)
 
     render_ticket_comments(session, ticket_id, user, _wrap, "agent")
 

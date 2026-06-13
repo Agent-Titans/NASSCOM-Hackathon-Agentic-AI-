@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "description": "Pallavi 10-ticket validation set",
+  "cases": [
+    {
+      "id": "T01",
+      "title": "VPN Authentication Timeout",
+      "description": "VPN drops connection every 30 minutes with an Auth-Timeout error.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "VPN connectivity"
+    },
+    {
+      "id": "T02",
+      "title": "Wi-Fi Signal Dead Zone",
+      "description": "Wi-Fi signal is non-existent in Conference Room B on the 3rd floor.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Wi-Fi coverage"
+    },
+    {
+      "id": "T03",
+      "title": "Login Portal 403 Error",
+      "description": "Mobile users on Safari report a 403 Forbidden error when trying to access the login portal.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Web app / portal error"
+    },
+    {
+      "id": "T04",
+      "title": "Application Startup Crash",
+      "description": "Application consistently freezes and crashes at the splash screen on macOS Sonoma.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Desktop app crash"
+    },
+    {
+      "id": "T05",
+      "title": "Unauthorized Data Access",
+      "description": "User reported seeing sensitive project folders they do not have permissions to access.",
+      "urgency": "medium",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Security incident"
+    },
+    {
+      "id": "T06",
+      "title": "Phishing Email Report",
+      "description": "Several employees reported receiving suspicious emails with a fake link disguised as IT Support.",
+      "urgency": "low",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Phishing"
+    },
+    {
+      "id": "T07",
+      "title": "Database Connection Pool Exhausted",
+      "description": "The application is throwing Too many connections errors during peak business hours.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "DB connection limits"
+    },
+    {
+      "id": "T08",
+      "title": "ETL Import Process Failure",
+      "description": "The nightly CSV import job is failing midway with a memory overflow error.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "ETL / import pipeline"
+    },
+    {
+      "id": "T09",
+      "title": "New Hire Provisioning Request",
+      "description": "Need a new Active Directory account and email access for a new hire starting Monday.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Onboarding"
+    },
+    {
+      "id": "T10",
+      "title": "Production System Access Request",
+      "description": "Requesting temporary sudo access to the production jump server to investigate a critical bug.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2", "3"],
+      "notes": "Privileged access request"
+    }
+  ]
+}

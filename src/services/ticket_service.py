@@ -146,7 +146,9 @@ class TicketService:
         classification = self._timed(
             ticket,
             "classifier",
-            lambda: self.classifier.classify(sanitized, trusted_similar),
+            lambda: self.classifier.classify(
+                sanitized, trusted_similar, title=ticket.title
+            ),
         )
         self.agent_runs.mark_classification(agent_run, ok=True)
         self.audit.record(
@@ -211,6 +213,7 @@ class TicketService:
                 resolution,
                 sentiment=sentiment,
                 historical_success=historical,
+                urgency=ticket.urgency,
             ),
         )
         self.agent_runs.mark_supervisor(agent_run, ok=True)
@@ -247,6 +250,7 @@ class TicketService:
         self.notifications.send_hand_message(
             ticket.ticket_id, decision, requester_email
         )
+        self.notifications.notify_ticket_opened(self.session, ticket)
 
         return PipelineResult(
             sanitized=sanitized,
@@ -336,6 +340,7 @@ class TicketService:
             self.notifications.send_hand_message(
                 ticket.ticket_id, decision, user.email
             )
+            self.notifications.notify_ticket_opened(self.session, ticket)
 
         return PipelineResult(
             sanitized=empty_sanitized,

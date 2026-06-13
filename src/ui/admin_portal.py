@@ -135,6 +135,7 @@ def _time_ago(ticket: Ticket) -> str:
 def _ticket_row_data(ticket: Ticket, stats: AdminDashboardStats) -> dict[str, Any]:
     return {
         "ticket": ticket,
+        "created_at": ticket.created_at.strftime("%Y-%m-%d %H:%M") if ticket.created_at else "—",
         "id": _ticket_inc(ticket),
         "subject": ticket.title,
         "status": _status_label(ticket.status),
@@ -156,13 +157,16 @@ def _unique_sorted(rows: list[dict[str, Any]], key: str) -> list[str]:
 
 # (field_key, header_label, filter_kind: "list" | "text")
 _ALL_TICKETS_COLUMN_FILTERS: list[tuple[str, str, str]] = [
-    ("id", "ID", "list"),
-    ("subject", "Subject", "text"),
+    ("created_at", "Created", "list"),
+    ("id", "Ticket", "list"),
+    ("subject", "Title", "text"),
     ("status", "Status", "list"),
-    ("department", "Department", "list"),
+    ("hand", "Hand", "list"),
+    ("department", "Team", "list"),
     ("assignee", "Assignee", "list"),
+    ("priority", "Prio", "list"),
 ]
-_ALL_TICKETS_COL_WIDTHS = [1.05, 2.45, 1.0, 1.15, 1.15]
+_ALL_TICKETS_COL_WIDTHS = [1.05, 0.95, 1.7, 0.82, 0.72, 0.95, 1.0, 0.82]
 
 _AUDIT_COLUMN_FILTERS: list[tuple[str, str, str]] = [
     ("created_at", "Created", "list"),
@@ -438,7 +442,8 @@ def _render_topnav(user: User) -> None:
 
 def _render_nav_bar(stats: AdminDashboardStats, view: str) -> None:
     """Horizontal nav — matches Employee / Agent top-level pattern (no left sidebar)."""
-    cols = st.columns(len(_NAV_ITEMS))
+    st.markdown(_wrap('<div class="admin-nav-row">'), unsafe_allow_html=True)
+    cols = st.columns(len(_NAV_ITEMS), gap="small")
     for col, (key, _section, label, badge_key) in zip(cols, _NAV_ITEMS):
         badge_val = getattr(stats, badge_key, None) if badge_key else None
         btn_label = f"{label} ({badge_val})" if badge_val is not None else label
@@ -452,6 +457,7 @@ def _render_nav_bar(stats: AdminDashboardStats, view: str) -> None:
                 st.session_state["admin_view"] = key
                 st.session_state.pop("admin_ticket_id", None)
                 st.rerun()
+    st.markdown(_wrap("</div>"), unsafe_allow_html=True)
 
 
 def _header(title: str, subtitle: str, export_csv: str) -> None:
@@ -507,7 +513,8 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
             f'<p class="sub">{trend_total}</p></div>'
             f'<div class="admin-kpi"><p class="label">Open</p>'
             f'<p class="value">{stats.open_count}</p>'
-            f'<p class="sub">{stats.with_agent} with agent · {stats.pending_user} pending user</p></div>'
+            f'<p class="sub">{stats.with_agent} with agent · {stats.pending_user} pending user'
+            f' · {stats.specialists_open} routing desk</p></div>'
             f'<div class="admin-kpi"><p class="label">Avg Resolution Time</p>'
             f'<p class="value">{stats.avg_resolution_hours}h</p>'
             f'<p class="sub">{trend_res}</p></div>'
@@ -527,7 +534,8 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
     res_c = stats.status_counts.get("Resolved", 0)
     closed_c = stats.status_counts.get("Closed", 0)
     triage_c = stats.status_counts.get("In Triage", 0)
-    status_max = max(open_c, res_c, closed_c, triage_c, 1)
+    routing_c = stats.status_counts.get("Routing Specialists", 0)
+    status_max = max(open_c, res_c, closed_c, triage_c, routing_c, 1)
 
     routed = h1 + h2 + h3 or 1
     high_pct = int(stats.confidence_high / routed * 100)
@@ -554,6 +562,7 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
                     ("Resolved", res_c, "fill-resolved"),
                     ("Closed", closed_c, "fill-closed"),
                     ("In Triage", triage_c, "fill-triage"),
+                    ("Routing Specialists", routing_c, "fill-triage"),
                 ],
                 status_max,
             )
@@ -589,6 +598,33 @@ def _render_dashboard(stats: AdminDashboardStats) -> None:
     schedule_presence_rerun()
 
 
+def _render_admin_html_table(
+    rows: list[dict[str, Any]],
+    col_widths: list[float],
+    *,
+    build_cells: Any,
+    empty_colspan: int,
+) -> None:
+    lines = []
+    for r in rows:
+        t = r["ticket"]
+        lines.append("<tr>" + build_cells(r, t) + "</tr>")
+    colgroup = _colgroup_html(col_widths)
+    body = "".join(lines) if lines else (
+        f"<tr><td colspan='{empty_colspan}' style='color:#94A3B8;padding:1rem'>"
+        "No tickets match your filters.</td></tr>"
+    )
+    st.markdown(
+        _wrap(
+            '<div class="admin-table-data admin-table-data-html">'
+            f"<table class='admin-table admin-table-body-only admin-table-fixed'>"
+            f"<colgroup>{colgroup}</colgroup><tbody>{body}</tbody></table>"
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
 def _render_all_tickets(stats: AdminDashboardStats) -> None:
     _header(
         "All Tickets",
@@ -597,52 +633,54 @@ def _render_all_tickets(stats: AdminDashboardStats) -> None:
     )
     row_data = [_ticket_row_data(t, stats) for t in stats.all_tickets]
     filtered = _render_filterable_table_shell(
-        "All Tickets",
+        "All tickets",
         "all",
         row_data,
         _ALL_TICKETS_COLUMN_FILTERS,
         _ALL_TICKETS_COL_WIDTHS,
     )
 
-    if not filtered:
-        st.markdown(
-            _wrap(
-                '<div class="admin-table-data">'
-                '<p class="admin-empty-rows">No tickets match your filters.</p>'
-                "</div>"
-            ),
-            unsafe_allow_html=True,
-        )
-    for r in filtered:
-        t = r["ticket"]
-        cols = st.columns(_ALL_TICKETS_COL_WIDTHS)
-        with cols[0]:
-            if st.button(
-                r["id"],
-                key=f"admin_open_{t.ticket_id}",
-                type="tertiary",
-                use_container_width=True,
-            ):
-                _open_admin_ticket(t.ticket_id)
-        with cols[1]:
-            st.markdown(
-                _wrap(f'<span class="admin-row-text">{html.escape(r["subject"][:72])}</span>'),
-                unsafe_allow_html=True,
-            )
-        with cols[2]:
-            st.markdown(_wrap(_status_pill(t.status)), unsafe_allow_html=True)
-        with cols[3]:
-            st.markdown(
-                _wrap(f'<span class="admin-row-text">{html.escape(r["department"])}</span>'),
-                unsafe_allow_html=True,
-            )
-        with cols[4]:
-            st.markdown(
-                _wrap(f'<span class="admin-row-text">{html.escape(r["assignee"])}</span>'),
-                unsafe_allow_html=True,
-            )
     if filtered:
-        st.markdown(_wrap('<div class="admin-table-data-footer" aria-hidden="true"></div>'), unsafe_allow_html=True)
+        open_options = {
+            f"{r['id']} — {r['subject'][:48]}": r["ticket"].ticket_id for r in filtered
+        }
+        pick_col, view_col = st.columns([5, 1], gap="small")
+        with pick_col:
+            choice = st.selectbox(
+                "Open ticket detail",
+                list(open_options.keys()),
+                key="admin_pick_ticket",
+                index=None,
+                placeholder="Select a ticket to view details…",
+                label_visibility="collapsed",
+            )
+        with view_col:
+            if st.button(
+                "View",
+                key="admin_pick_view",
+                use_container_width=True,
+                disabled=choice is None,
+            ):
+                _open_admin_ticket(open_options[choice])
+
+    def _all_ticket_cells(r: dict[str, Any], t: Ticket) -> str:
+        return (
+            f"<td>{html.escape(r['created_at'])}</td>"
+            f'<td><span class="admin-id">{html.escape(r["id"])}</span></td>'
+            f'<td class="admin-cell-wrap">{html.escape(r["subject"][:64])}</td>'
+            f"<td>{_status_pill(t.status)}</td>"
+            f"<td>{_hand_pill(t.hand)}</td>"
+            f"<td>{html.escape(r['department'])}</td>"
+            f"<td>{html.escape(r['assignee'])}</td>"
+            f"<td>{html.escape(r['priority'])}</td>"
+        )
+
+    _render_admin_html_table(
+        filtered,
+        _ALL_TICKETS_COL_WIDTHS,
+        build_cells=_all_ticket_cells,
+        empty_colspan=len(_ALL_TICKETS_COLUMN_FILTERS),
+    )
     _close_admin_table_panel()
 
 
@@ -720,7 +758,7 @@ def _render_admin_ticket_detail(user: User, session, ticket_id: str) -> None:
             )
             st.markdown(
                 _wrap(
-                    f'<div class="admin-card"><h3>AI suggested resolution</h3>'
+                    f'<div class="admin-card"><h3>Resolution steps</h3>'
                     f"<ol class='admin-resolution-steps'>{step_items}</ol></div>"
                 ),
                 unsafe_allow_html=True,
@@ -837,11 +875,8 @@ def _render_audit(session, stats: AdminDashboardStats) -> None:
         _AUDIT_COL_WIDTHS,
     )
 
-    lines = []
-    for r in filtered:
-        t = r["ticket"]
-        lines.append(
-            "<tr>"
+    def _audit_cells(r: dict[str, Any], t: Ticket) -> str:
+        return (
             f"<td>{html.escape(r['created_at'])}</td>"
             f'<td><span class="admin-id">{html.escape(r["ticket_ref"])}</span></td>'
             f'<td class="admin-cell-wrap">{html.escape(r["subject"][:64])}</td>'
@@ -851,21 +886,13 @@ def _render_audit(session, stats: AdminDashboardStats) -> None:
             f"<td>{html.escape(r['assignee'])}</td>"
             f"<td>{html.escape(r['sla'])}</td>"
             f"<td>{html.escape(r['priority'])}</td>"
-            "</tr>"
         )
-    colgroup = _colgroup_html(_AUDIT_COL_WIDTHS)
-    body = "".join(lines) if lines else (
-        "<tr><td colspan='9' style='color:#94A3B8;padding:1rem'>"
-        "No tickets match your filters.</td></tr>"
-    )
-    st.markdown(
-        _wrap(
-            '<div class="admin-table-data admin-table-data-html">'
-            f"<table class='admin-table admin-table-body-only admin-table-fixed'>"
-            f"<colgroup>{colgroup}</colgroup><tbody>{body}</tbody></table>"
-            "</div>"
-        ),
-        unsafe_allow_html=True,
+
+    _render_admin_html_table(
+        filtered,
+        _AUDIT_COL_WIDTHS,
+        build_cells=_audit_cells,
+        empty_colspan=len(_AUDIT_COLUMN_FILTERS),
     )
     _close_admin_table_panel()
 

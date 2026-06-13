@@ -1,16 +1,3 @@
-from src.agents.classifier import ClassifierAgent
-from src.agents.guardrail import GuardrailAI, GuardrailAgent
-from src.agents.guardrail_exceptions import SecurityGuardrailException
-from src.agents.resolver import ResolverAgent
-from src.agents.router import RouterAgent
-from src.agents.supervisor import SupervisorAgent
+"""Agent layer — import submodules directly to avoid circular imports."""
 
-__all__ = [
-    "GuardrailAI",
-    "GuardrailAgent",
-    "SecurityGuardrailException",
-    "ClassifierAgent",
-    "RouterAgent",
-    "ResolverAgent",
-    "SupervisorAgent",
-]
+__all__: list[str] = []

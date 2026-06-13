@@ -60,6 +60,36 @@ CLASSIFIER_PROMPT_CONFIG: dict[str, object] = {
             "desktop client",
             "local tool",
         ],
+        "Network": [
+            "load balancer",
+            "reverse proxy",
+            "gateway timeout",
+            "504",
+            "502",
+            "traffic spike",
+            "packet loss",
+            "firewall rule",
+            "zscaler",
+            "nginx",
+            "f5",
+        ],
+        "Security": [
+            "unauthorized file access",
+            "privilege escalation",
+            "inappropriate access",
+            "ssl certificate",
+            "certificate expiry",
+            "phishing",
+            "malware",
+        ],
+        "Database": [
+            "etl",
+            "csv import",
+            "bulk-copy",
+            "bcp",
+            "deadlock",
+            "transaction log",
+        ],
         "context_secondary_rule": (
             "If system updates or policy changes merely provide timing context, "
             "classify by WHAT BROKE (the engine/app/hardware), not the update."
@@ -86,7 +116,8 @@ CORE failures → classify by the broken layer:
 - Application crash, IDE/tool failure, desktop client error → Application
 - Infrastructure breakdown, hypervisor/virtualization fault, BIOS restriction,
   Docker/VM/local engine blocked, hardware virtualization → Infrastructure
-- Network connectivity, VPN, DNS, Wi-Fi → Network
+- Network connectivity, VPN, DNS, Wi-Fi, load balancer / reverse proxy /
+  gateway 504-502 at the edge, traffic spikes on LB tier → Network
 - Database query, replication, SQL engine → Database
 - Storage, backup, file share → Storage
 - Login, MFA, password, account access → Access Management
@@ -113,12 +144,59 @@ Reserve Security ONLY for active structural security events:
 - Phishing incident (clicked link, suspicious email)
 - Malware / ransomware / unauthorized software
 - Leaked passwords, API keys, secrets, credential compromise
-- Unauthorized access, VPN breach, account takeover
+- Unauthorized access, unauthorized file/folder access, privilege escalation,
+  VPN breach, account takeover
+- SSL/TLS certificate expiry or renewal (compliance risk) → Security
 
-## Step 5 — Multi-class disambiguation
+## Step 5 — Failure owner (WHO owns the broken layer?)
+Ask: "Which team owns fixing the ROOT system — not a symptom or side mention?"
+Classify by the NAMED failing component, not adjacent keywords (connection, policy,
+account, GPO, microservice).
+
+Application vs Database vs Storage:
+- Named desktop/SaaS app or its job/UI/client failing (Tableau, Power BI, OneNote,
+  Outlook, Teams, SAP GUI, Excel, Chrome, SharePoint app feature, Slack workflow)
+  → Application, EVEN IF logs mention "database connection", "sync to SharePoint",
+  or "timeout talking to backend"
+- Named database engine, cluster, or cache tier failing (Postgres, MySQL, Oracle,
+  MongoDB, Redis, Cassandra, DynamoDB, Elasticsearch, SQL Server, InfluxDB,
+  connection pool exhausted on DB, replication, failover loop) → Database
+- File/NAS/backup platform failing (NetApp, Veeam, NFS stale handle, snapshot,
+  SAN LUN, volume full) → Storage
+
+Security vs Access Management vs Network:
+- Active security incident (SIEM alert, DLP, breach, compromise, malware, phishing,
+  ransomware, leaked secrets, unauthorized login from foreign IP, RDP intrusion)
+  → Security, EVEN IF the ticket says "disable account" or mentions firewall/VPN
+- Routine identity work (password reset, MFA enrollment, new hire account, group
+  membership, mailbox delegation, offboarding) WITHOUT an active incident
+  → Access Management
+- Network path, DNS, Wi-Fi, VPN client, firewall rule, routing, LB health
+  → Network (NOT Security unless an active breach is the incident)
+
+Application vs Access Management:
+- App or SaaS permission/feature inside a named product (Confluence space, Jira
+  board, SharePoint external sharing, Chrome extension whitelist) → Application
+- Identity/AD/Okta/SAML account provisioning or credential lifecycle → Access Management
+- Browser extension blocked by GPO for a desktop app → Application (NOT Access Management)
+
+Infrastructure (hardware) vs Application:
+- Physical device or peripheral (laptop, dock, printer, monitor, stand, headset,
+  microphone, keyboard, USB receiver, smart card reader, presentation clicker)
+  → Infrastructure, EVEN IF Teams/Zoom/Windows cannot detect it
+
+## Step 6 — Multi-class disambiguation
 - Docker, Hypervisors, VMs, BIOS, hardware virtualization, DEP/HVCI blocking
   a local engine → Infrastructure (subcategory e.g. virtualization, docker_desktop)
 - Core code exceptions, compilation failures, script runtime errors → Application
+- Load balancer CPU/latency, 504/502 gateway timeouts at proxy/LB tier,
+  traffic spikes on LB nodes → Network (NOT Application), even when end-users
+  report slowness
+- User viewing folders/files they should not access, NTFS permission violations,
+  privilege escalation → Security (NOT Access Management provisioning)
+- ETL jobs, CSV/data import pipelines, bulk-copy (bcp) performance → Database
+  (NOT Application), even when described as a script or job
+- Password reset, new hire AD account, disable terminated user → Access Management
 - System updates breaking a local engine → updates are context; classify by the
   engine that broke (Infrastructure or Application)
 

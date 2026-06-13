@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "description": "30 clear TCS-style enterprise IT helpdesk scenarios — final mixed bag (Set TC)",
+  "cases": [
+    {
+      "id": "TC01",
+      "title": "Cannot Login to Ultimatix Employee Portal",
+      "description": "Cannot login to Ultimatix employee self-service portal — password rejected after recent reset. Need access to submit timesheet before payroll cutoff today.",
+      "urgency": "high",
+      "expect": { "hand": "1", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / Ultimatix login"
+    },
+    {
+      "id": "TC02",
+      "title": "Client Site GlobalProtect VPN Connection Failed",
+      "description": "GlobalProtect VPN to client Citibank environment fails with 'Gateway unreachable' from home office. Required for daily standup and code commit access.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / client VPN"
+    },
+    {
+      "id": "TC03",
+      "title": "Fake HR Payroll Phishing Email Reported",
+      "description": "Security incident: multiple associates received fake HR payroll email with malicious link. Three employees clicked link before warning sent. Need SecOps investigation.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / HR phishing"
+    },
+    {
+      "id": "TC04",
+      "title": "Company Laptop Battery Not Charging Past 15 Percent",
+      "description": "TCS-issued Dell Latitude battery stuck at 15% and not charging. Power adapter connected, LED shows charging but percentage never increases. Need replacement for client demo.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / battery"
+    },
+    {
+      "id": "TC05",
+      "title": "SAP S4HANA Fiori App Transaction Timeout",
+      "description": "SAP S/4HANA Fiori purchase requisition app times out after 60 seconds on submit. Other Fiori tiles load fine. Blocking month-end procurement for client project.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / SAP Fiori"
+    },
+    {
+      "id": "TC06",
+      "title": "SQL Server Blocking Queries on Client Reporting DB",
+      "description": "SQL Server client reporting database showing severe blocking chains. Dashboard queries timing out after 5 minutes. Blocking session SPID 284 holding locks since 7 AM.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / SQL blocking"
+    },
+    {
+      "id": "TC07",
+      "title": "New Joiner Laptop Email and AD Account Setup",
+      "description": "New associate joining Pune DC on Monday — need laptop image, Active Directory account, corporate email, and Ultimatix ID provisioned per onboarding checklist HR-2291.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / new joiner"
+    },
+    {
+      "id": "TC08",
+      "title": "Floor 12 Printer Toner Empty Cannot Print",
+      "description": "HP printer on Floor 12 Pune campus shows 'Replace toner cartridge' and will not print client deliverable documents. Red toner light blinking.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / printer toner H1"
+    },
+    {
+      "id": "TC09",
+      "title": "Microsoft Teams Screen Share Frozen for Client",
+      "description": "Microsoft Teams screen share freezes during client review call — attendees see static image. Camera and audio work. Teams version 24127, Windows 11.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Teams share"
+    },
+    {
+      "id": "TC10",
+      "title": "Firewall Whitelist Request for Client API Endpoint",
+      "description": "Need corporate firewall rule to allow outbound HTTPS from dev subnet to client API endpoint api.clientbank.com port 443. Change request CR-8842 approved by client IT.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / firewall whitelist"
+    },
+    {
+      "id": "TC11",
+      "title": "Ransomware Detected on Project Shared Folder",
+      "description": "Security incident: files on project shared drive P:\\ClientABC encrypted with .lockbit extension. CrowdStrike alert on file server. Five team members cannot access deliverables.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / ransomware"
+    },
+    {
+      "id": "TC12",
+      "title": "Oracle RMAN Backup Failed Archive Log Missing",
+      "description": "Oracle RMAN nightly backup failed with ORA-00257 archiver error. Archive log destination full on client DB server orcl-prod-01. Client SLA backup window missed.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / Oracle backup"
+    },
+    {
+      "id": "TC13",
+      "title": "Lost Phone Need MFA Authenticator Re-Enrollment",
+      "description": "Lost personal phone with Microsoft Authenticator MFA app. Cannot login to corporate email or VPN until new device enrolled. Manager verified identity via HR.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / MFA re-enroll"
+    },
+    {
+      "id": "TC14",
+      "title": "Campus Wi-Fi Extremely Slow in Block C",
+      "description": "Corporate Wi-Fi in Pune campus Block C extremely slow — under 2 Mbps and high latency. Wired ethernet desk port in same cubicle works at full speed.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Network / campus Wi-Fi"
+    },
+    {
+      "id": "TC15",
+      "title": "Visual Studio Enterprise License Expired",
+      "description": "Visual Studio Enterprise shows 'License expired' on developer workstation. Cannot build client .NET solution. License was valid last week before machine reimage.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / VS license"
+    },
+    {
+      "id": "TC16",
+      "title": "USB-C Dock Ethernet Port Not Detected",
+      "description": "Lenovo USB-C dock ethernet port not detected on laptop. Wi-Fi through dock works but wired LAN shows 'Unidentified network'. Need wired connection for client VPN policy.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / dock ethernet"
+    },
+    {
+      "id": "TC17",
+      "title": "AWS Secret Key Committed to Client Git Repo",
+      "description": "Security incident: developer accidentally committed AWS secret access key to client GitHub repository in pull request. Repo is private but 12 team members have access. Need immediate rotation.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / secret leak"
+    },
+    {
+      "id": "TC18",
+      "title": "MongoDB Replica Set Primary Election Loop",
+      "description": "MongoDB replica set stuck in primary election loop on client staging cluster. Application health checks failing. Secondary nodes show RECOVERING state.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / MongoDB"
+    },
+    {
+      "id": "TC19",
+      "title": "ServiceNow Catalog Item Page Blank White Screen",
+      "description": "ServiceNow IT service catalog page loads blank white screen when requesting software install. Other ServiceNow modules like incident list work fine in same browser.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / ServiceNow"
+    },
+    {
+      "id": "TC20",
+      "title": "Employee Smart Badge Denied at Main Gate Turnstile",
+      "description": "Employee smart badge denied at Pune campus main gate turnstile with red LED. Badge works for cafeteria but not building entry since badge reprint yesterday.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Access / smart badge"
+    },
+    {
+      "id": "TC21",
+      "title": "MPLS Circuit Down Client Data Center Link",
+      "description": "MPLS WAN circuit to client data center completely down since 6 AM. All offshore team lost connectivity to client production monitoring tools and ticketing system.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / MPLS outage"
+    },
+    {
+      "id": "TC22",
+      "title": "Citrix VDI Desktop Black Screen After Login",
+      "description": "Citrix VDI virtual desktop shows black screen after successful login. Mouse cursor visible but no desktop icons or taskbar. Local laptop works fine for other apps.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Citrix VDI"
+    },
+    {
+      "id": "TC23",
+      "title": "Laptop Keyboard Multiple Keys Not Responding",
+      "description": "Company laptop keyboard — keys E, R, T, and Space bar not responding. External USB keyboard works. Need repair or replacement before client presentation tomorrow.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Hardware", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hardware / keyboard"
+    },
+    {
+      "id": "TC24",
+      "title": "Snowflake Warehouse Auto-Suspended Credit Limit",
+      "description": "Snowflake data warehouse WH_CLIENT_ANALYTICS auto-suspended — credit quota exhausted. Client Tableau dashboards and ETL pipelines failing since midnight run.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database / Snowflake"
+    },
+    {
+      "id": "TC25",
+      "title": "SharePoint Project Site Access Denied for Team",
+      "description": "Entire project team getting 'Access Denied' on client SharePoint project site. Site worked yesterday. Need contributor access restored for 8 associates.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / SharePoint access"
+    },
+    {
+      "id": "TC26",
+      "title": "Brute Force Attack on Corporate VPN Gateway",
+      "description": "Security incident: VPN gateway logs show 80,000 failed login attempts from foreign IP range in last 2 hours. Possible credential stuffing attack on GlobalProtect portal.",
+      "urgency": "high",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "Security / VPN brute force"
+    },
+    {
+      "id": "TC27",
+      "title": "NetApp Snapshot Restore for Deleted Client Data",
+      "description": "Client project data accidentally deleted from NetApp NAS volume. Need snapshot restore from last night 11 PM snapshot before client audit on Friday.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "DBA", "category": "Storage" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Storage / NetApp restore"
+    },
+    {
+      "id": "TC28",
+      "title": "Webex Client Call Audio One-Way for Client Meeting",
+      "description": "Cisco Webex desktop client — client can hear me but I cannot hear them on daily scrum call. Webex browser version works with two-way audio on same machine.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Software", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Application / Webex audio"
+    },
+    {
+      "id": "TC29",
+      "title": "Offboard Resigned Associate Revoke All Access",
+      "description": "Associate resigned effective today — need immediate offboarding: disable AD account, revoke Ultimatix, O365, VPN, GitHub, Jira, and client VPN credentials per HR ticket.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Access / offboarding"
+    },
+    {
+      "id": "TC30",
+      "title": "Campus Wing B DHCP Pool Exhausted No IP",
+      "description": "Users in Campus Wing B report 'No IP address' on corporate LAN since morning. DHCP scope 10.45.0.0/24 shows zero available leases. Affects 200+ associates.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Network / DHCP exhausted"
+    }
+  ]
+}
