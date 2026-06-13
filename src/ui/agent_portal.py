@@ -14,7 +14,12 @@ from src.config.departments import (
     display_department,
 )
 from src.config.demo_profiles import demo_person_name
-from src.config.specialists import SPECIALISTS_CAPTION, SPECIALISTS_DISPLAY, STATUS_ROUTING_REVIEW
+from src.config.specialists import (
+    SPECIALISTS_CAPTION,
+    SPECIALISTS_DISPLAY,
+    SPECIALISTS_QUEUE,
+    STATUS_ROUTING_REVIEW,
+)
 from src.services.reference_ticket_loader import load_reference_ticket, normalize_reference_ticket_id
 from src.services.resolution_steps_codec import decode_steps
 from src.services.specialists_desk_service import (
