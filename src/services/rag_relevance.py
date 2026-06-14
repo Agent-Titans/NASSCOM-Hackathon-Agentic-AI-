@@ -1,6 +1,7 @@
 """Topic + title overlap checks so weak RAG hits do not drive wrong resolutions."""
 from __future__ import annotations
 
+from src.config.settings import get_settings
 from src.models.schemas import ClassificationResult, ResolutionResult, SimilarTicketMatch
 from src.services.semantic_similarity import stemmed_jaccard
 
@@ -119,8 +120,11 @@ def is_rag_relevant(query_text: str, similar: SimilarTicketMatch) -> tuple[bool,
     """
     Return (relevant, reason).
 
-    Rejects matches where the prior ticket topic/title does not align with the query
-    (e.g. VPN playbook for a laptop charger request).
+    High semantic similarity (>= rag_sim_high) trusts the embedding match for both
+    user tickets and RAG corpus entries — title wording may differ.
+
+    Lower scores still use topic + title overlap to block wrong playbooks
+    (e.g. VPN article for a laptop charger request).
     """
     query = query_text.strip()
     if not query:
@@ -136,6 +140,9 @@ def is_rag_relevant(query_text: str, similar: SimilarTicketMatch) -> tuple[bool,
 
     if _topics_conflict(query_topics, match_topics):
         return False, "topic_mismatch"
+
+    if similar.similarity_score >= get_settings().rag_sim_high:
+        return True, "trusted_semantic"
 
     title_overlap = stemmed_jaccard(query, match_text)
     min_overlap = 0.10

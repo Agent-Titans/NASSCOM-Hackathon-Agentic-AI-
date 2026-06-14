@@ -1109,9 +1109,11 @@ def render_agent_portal(user: User, session) -> None:
         st.session_state["agent_view"] = "home"
 
     view = st.session_state["agent_view"]
-    if view == "detail":
+    if view == "detail" and st.session_state.get("ticket_id"):
         render_agent_detail(user, session, st.session_state.get("ticket_id"))
     else:
+        if view == "detail":
+            st.session_state["agent_view"] = "home"
         render_agent_home(user, session)
 
     _sync_agent_url()

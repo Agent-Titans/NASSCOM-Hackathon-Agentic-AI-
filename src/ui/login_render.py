@@ -60,6 +60,31 @@ def _clear_query_keys(*keys: str) -> None:
         st.query_params.clear()
 
 
+def _reset_nav_state_for_user(user: User) -> None:
+    """Clear stale detail views from a prior session or account."""
+    for key in (
+        "ticket_id",
+        "portal_return_ticket_id",
+        "portal_reference_view",
+        "agent_return_ticket_id",
+        "agent_reference_view",
+        "agent_route_dialog_ticket",
+        "portal_detail_notice",
+        "portal_assignment_toast_team",
+    ):
+        st.session_state.pop(key, None)
+
+    if user.role in ("requester", "employee"):
+        st.session_state["portal_view"] = "home"
+        st.session_state.pop("agent_view", None)
+    elif user.role == "assignee":
+        st.session_state["agent_view"] = "home"
+        st.session_state.pop("portal_view", None)
+    else:
+        st.session_state.pop("portal_view", None)
+        st.session_state.pop("agent_view", None)
+
+
 def _session_login(user: User) -> None:
     email = normalize_email(user.email)
     st.session_state["user"] = {
@@ -74,9 +99,10 @@ def _session_login(user: User) -> None:
         user.role == "admin" and email == "admin@employee"
     )
 
+    _reset_nav_state_for_user(user)
+
     if user.role in ("requester", "employee"):
         st.session_state["page"] = "portal"
-        st.session_state["portal_view"] = "home"
         from src.services.retrieval_bootstrap import start_retrieval_warm_background
 
         start_retrieval_warm_background(delay_seconds=0.5, api_embeds=True)
@@ -84,7 +110,7 @@ def _session_login(user: User) -> None:
         st.session_state["page"] = "overview"
 
     _clear_auth_state()
-    _clear_query_keys("portal_view", "portal_ticket")
+    _clear_query_keys("portal_view", "portal_ticket", "agent_view", "ticket")
     st.rerun()
 
 

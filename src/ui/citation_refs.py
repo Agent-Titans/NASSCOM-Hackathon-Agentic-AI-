@@ -7,7 +7,7 @@ import streamlit as st
 from sqlalchemy.orm import Session
 
 from src.models.schemas import RetrievalReference
-from src.services.reference_ticket_loader import resolve_reference_link
+from src.services.reference_ticket_loader import load_reference_ticket, resolve_reference_link
 
 
 def _button_label(ref: RetrievalReference) -> str:
@@ -34,6 +34,8 @@ def render_resolution_references(
     for ref in references:
         ref_id = resolve_reference_link(session, ref.ticket_id or ref.label)
         if not ref_id or ref_id in seen:
+            continue
+        if not load_reference_ticket(session, ref_id):
             continue
         seen.add(ref_id)
         resolved.append((ref, ref_id))

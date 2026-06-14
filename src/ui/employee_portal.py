@@ -293,8 +293,12 @@ def _action_card_html() -> str:
 
 
 def _go_create_view() -> None:
+    st.session_state.pop("portal_return_ticket_id", None)
+    st.session_state.pop("portal_reference_view", None)
+    st.session_state.pop("ticket_id", None)
     st.session_state["portal_view"] = "create"
     st.session_state["page"] = "portal"
+    _sync_portal_url()
 
 
 _CONTACT_EMAIL_MARKER = "\n\nContact email:"
@@ -477,6 +481,7 @@ def _open_reference_ticket(ref_ticket_id: str, return_to: str) -> None:
     st.session_state["portal_view"] = "detail"
     st.session_state["ticket_id"] = normalize_reference_ticket_id(ref_ticket_id)
     st.session_state["page"] = "portal"
+    _sync_portal_url()
     st.rerun()
 
 
@@ -663,6 +668,7 @@ def render_portal_create(user: User, session) -> None:
         st.session_state["portal_view"] = "detail"
         st.session_state["ticket_id"] = ticket.ticket_id
         st.session_state["page"] = "portal"
+        _sync_portal_url()
         st.rerun()
     except Exception as exc:
         st.error(str(exc))
@@ -774,6 +780,8 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
             st.session_state["ticket_id"] = return_id
             st.session_state.pop("portal_return_ticket_id", None)
             st.session_state.pop("portal_reference_view", None)
+            st.session_state["portal_view"] = "detail"
+            _sync_portal_url()
             st.rerun()
     elif st.button("← Back to workspace", key="portal_detail_back", type="tertiary"):
         st.session_state.pop("portal_return_ticket_id", None)
@@ -866,6 +874,8 @@ def render_portal_detail(user: User, session, ticket_id: Optional[str]) -> None:
                 st.session_state["portal_flash"] = "Thank you — your request is now closed."
                 st.session_state["portal_flash_type"] = "success"
                 st.session_state["portal_view"] = "home"
+                st.session_state.pop("ticket_id", None)
+                _sync_portal_url()
                 st.rerun()
         with fb2:
             if st.button("Did not work", key=f"portal_fb_failed_{ticket_id}", use_container_width=True):
@@ -894,10 +904,11 @@ def render_employee_portal(user: User, session) -> None:
     view = st.session_state["portal_view"]
     if view == "create":
         render_portal_create(user, session)
-    elif view == "detail":
+    elif view == "detail" and st.session_state.get("ticket_id"):
         render_portal_detail(user, session, st.session_state.get("ticket_id"))
     else:
-        st.session_state["portal_view"] = "home"
+        if view == "detail":
+            st.session_state["portal_view"] = "home"
         render_portal_home(user, session)
 
     _render_assignment_toast()

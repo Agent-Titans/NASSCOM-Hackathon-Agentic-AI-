@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+from functools import lru_cache
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -45,7 +46,9 @@ def normalize_reference_ticket_id(ticket_id: str) -> str:
 def resolve_reference_label(label_or_id: str) -> Optional[str]:
     """
     Map a citation label to a corpus ticket_id without hitting the DB.
-    KB-DB-DEDUP -> rag-h3-09; RAG-H3-09 -> rag-h3-09.
+
+    Unknown KB-* strings from LLM citations are rejected unless they exist in
+    the RAG catalog (prevents broken reference links).
     """
     raw = (label_or_id or "").strip()
     if not raw:
@@ -56,14 +59,23 @@ def resolve_reference_label(label_or_id: str) -> Optional[str]:
         return mapped
 
     if is_corpus_ticket_id(raw):
-        return normalize_reference_ticket_id(raw)
+        canon = normalize_reference_ticket_id(raw)
+        if canon in _known_corpus_ids():
+            return canon
+        return None
 
     syn = _SYN_REF_RE.match(raw)
     if syn:
-        return f"syn-{syn.group(1)}"
+        canon = f"syn-{syn.group(1)}"
+        if canon in _synthetic_row_by_id():
+            return canon
+        return None
 
     if is_synthetic_ticket_id(raw):
-        return raw.strip().lower()
+        canon = raw.strip().lower()
+        if canon in _synthetic_row_by_id():
+            return canon
+        return None
 
     return None
 
@@ -95,6 +107,11 @@ def resolve_reference_link(session: Session, label_or_id: str) -> Optional[str]:
 
 def _catalog_by_id() -> dict[str, RagCatalogEntry]:
     return {entry.ticket_id.lower(): entry for entry in iter_rag_catalog_entries()}
+
+
+@lru_cache(maxsize=1)
+def _known_corpus_ids() -> frozenset[str]:
+    return frozenset(_catalog_by_id().keys())
 
 
 def _default_requester(session: Session) -> User:
