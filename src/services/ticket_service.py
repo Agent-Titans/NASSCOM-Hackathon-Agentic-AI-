@@ -1,7 +1,8 @@
 """
-TicketService — single entry point for the five-agent pipeline (LLD).
+TicketService — orchestrates the five-step incident pipeline.
 
-Pipeline order is fixed; total local CPU work is linear in ticket text size.
+Fixed order: Guardrail → Retrieval → Classifier → Router → Resolver → Supervisor.
+Each step writes to the audit log; total work is linear in ticket text length.
 """
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ from src.models.schemas import (
     SanitizedText,
     SupervisorDecision,
 )
+from src.services.automation_suggestion import maybe_append_automation_suggestion
 from src.services.historical_success_service import historical_success_for_category
 from src.services.notification_service import NotificationService
 from src.services.rag_gate import evaluate_rag_match
@@ -92,12 +94,12 @@ class TicketService:
         agent_run = self.agent_runs.begin(ticket)
 
         # ------------------------------------------------------------------
-        # GUARDRAIL — dual-layer injection defense (must complete before RAG/LLM)
+        # GUARDRAIL — PII redaction and injection scan before retrieval/classify
         # ------------------------------------------------------------------
         try:
             sanitized = self._run_guardrail(ticket, agent_run)
         except SecurityGuardrailException as exc:
-            # Hard stop: no Classifier / Router / Resolver / Supervisor LLM work.
+            # Hard stop: classifier, router, and resolver are not invoked.
             return self._security_halt(ticket, agent_run, exc)
 
         retrieval_text = f"{ticket.title}\n{sanitized.text}".strip()
@@ -231,6 +233,19 @@ class TicketService:
                 pipeline_started_at=pipeline_started_at,
             ),
         )
+
+        before_auto = len(resolution.steps)
+        resolution = maybe_append_automation_suggestion(resolution, classification)
+        if len(resolution.steps) > before_auto:
+            self.audit.record(
+                ticket,
+                "automation_suggestion",
+                agent="supervisor",
+                details=(
+                    f"similarity={resolution.similarity_score:.2f} "
+                    f"match={resolution.matched_ticket_id or 'none'}"
+                ),
+            )
 
         self._finalize(
             ticket, sanitized, classification, routing, resolution, decision

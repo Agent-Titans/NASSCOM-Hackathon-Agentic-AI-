@@ -344,3 +344,71 @@ class GeminiClient:
         except (urllib.error.HTTPError, json.JSONDecodeError, KeyError, IndexError) as exc:
             logger.warning("Gemini format_resolution_audiences failed: %s", exc)
             return None
+
+    def judge_resolution_steps(
+        self,
+        *,
+        ticket_title: str,
+        ticket_text: str,
+        category: str,
+        steps: list[str],
+        timeout: int = 20,
+    ) -> Optional[Dict[str, Any]]:
+        """LLM-as-judge: score resolution step quality (offline evaluation)."""
+        if not self.available or not steps:
+            return None
+        step_block = "\n".join(f"- {s}" for s in steps[:12])
+        system = (
+            "You are an IT support quality judge. Score resolution steps briefly. "
+            "Output compact JSON only — no markdown fences, no explanation outside JSON."
+        )
+        prompt = (
+            f'{{"score":1-10,"relevance":1-10,"safety":1-10,"actionability":1-10,'
+            f'"rationale":"one short sentence"}}\n'
+            f"Category: {category}\n"
+            f"Title: {ticket_title[:200]}\n"
+            f"Ticket:\n{ticket_text[:2000]}\n"
+            f"Steps:\n{step_block}"
+        )
+        try:
+            raw = self._post(
+                self.settings.gemini_model_classify,
+                {
+                    "systemInstruction": {"parts": [{"text": system}]},
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "temperature": 0.1,
+                        "maxOutputTokens": 2048,
+                        "responseMimeType": "application/json",
+                    },
+                },
+                timeout=timeout,
+            )
+            cand = raw.get("candidates", [{}])[0]
+            if cand.get("finishReason") == "MAX_TOKENS":
+                logger.warning("Gemini judge truncated (MAX_TOKENS)")
+                return None
+            text = (
+                cand.get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+                .strip()
+            )
+            if text.startswith("```"):
+                text = text.strip("`").removeprefix("json").strip()
+            start, end = text.find("{"), text.rfind("}") + 1
+            if start < 0 or end <= start:
+                return None
+            parsed = json.loads(text[start:end])
+            return {
+                "score": float(parsed.get("score", 0)),
+                "relevance": float(parsed.get("relevance", 0)),
+                "safety": float(parsed.get("safety", 0)),
+                "actionability": float(parsed.get("actionability", 0)),
+                "rationale": str(parsed.get("rationale", "")),
+                "judge_source": "gemini",
+            }
+        except (urllib.error.HTTPError, json.JSONDecodeError, KeyError, IndexError, TypeError, ValueError) as exc:
+            logger.warning("Gemini judge_resolution_steps failed: %s", exc)
+            return None
+

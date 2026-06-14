@@ -1,10 +1,10 @@
 {
   "category_to_department": {
-    "Infrastructure": "Hardware",
-    "Application": "Software",
+    "Infrastructure": "Infrastructure",
+    "Application": "Application",
     "Security": "SecOps",
-    "Database": "DBA",
-    "Storage": "DBA",
+    "Database": "Database",
+    "Storage": "Storage",
     "Network": "Network",
     "Access Management": "Access Management"
   },
@@ -34,6 +34,10 @@
           ],
           "min_source_hand": "1",
           "min_similarity": 0.70
+        },
+        "policy_automation_suggestion": {
+          "enabled": true,
+          "min_similarity": 0.82
         }
       },
       "demo": {
@@ -45,6 +49,10 @@
           "categories": ["Access Management"],
           "min_source_hand": "1",
           "min_similarity": 0.55
+        },
+        "policy_automation_suggestion": {
+          "enabled": true,
+          "min_similarity": 0.82
         }
       }
     }

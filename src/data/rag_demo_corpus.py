@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import List, Tuple
 
+from src.config.departments import department_for_category
+
 # (id, title, description, category, hand, steps, citations)
 RagDemoEntry = Tuple[str, str, str, str, str, List[str], List[str]]
 
@@ -620,24 +622,17 @@ def corpus_search_document(entry: RagDemoEntry) -> str:
     return f"{title}\n{description}\n{category}"
 
 
-_CATEGORY_TO_DEPARTMENT: dict[str, str] = {
-    "Infrastructure": "Hardware",
-    "Application": "Software",
-    "Security": "SecOps",
-    "Database": "DBA",
-    "Storage": "DBA",
-    "Network": "Network",
-    "Access Management": "Access Management",
-}
-
 _DEPARTMENT_TO_ASSIGNEE_EMAIL: dict[str, str] = {
+    "Infrastructure": "sree@employee",
     "Hardware": "sree@employee",
+    "Application": "subbu@employee",
     "Software": "subbu@employee",
     "SecOps": "narsimha@employee",
     "Network": "shashi@employee",
     "Access Management": "satya@employee",
+    "Database": "sagar@employee",
     "DBA": "sagar@employee",
-    "Storage": "sagar@employee",
+    "Storage": "arjun@employee",
 }
 
 _REQUESTER_EMAILS: tuple[str, ...] = (
@@ -653,10 +648,6 @@ _SLA_BY_PRIORITY: dict[str, tuple[int, ...]] = {
     "P1": (12, 24),
     "P2": (24, 48),
 }
-
-
-def department_for_category(category: str) -> str:
-    return _CATEGORY_TO_DEPARTMENT.get(category, "Software")
 
 
 def assignee_email_for_department(department: str) -> str:

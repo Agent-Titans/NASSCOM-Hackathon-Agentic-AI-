@@ -50,6 +50,11 @@ CLASSIFIER_PROMPT_CONFIG: dict[str, object] = {
             "printer",
             "laptop",
             "server hardware",
+            "blue screen",
+            "bsod",
+            "stop code",
+            "nvidia driver",
+            "gpu driver",
         ],
         "Application": [
             "compilation error",
@@ -72,6 +77,9 @@ CLASSIFIER_PROMPT_CONFIG: dict[str, object] = {
             "zscaler",
             "nginx",
             "f5",
+            "untrusted certificate",
+            "corp-wifi",
+            "802.1x",
         ],
         "Security": [
             "unauthorized file access",
@@ -81,6 +89,11 @@ CLASSIFIER_PROMPT_CONFIG: dict[str, object] = {
             "certificate expiry",
             "phishing",
             "malware",
+            "dlp",
+            "waf",
+            "sql injection",
+            "impossible travel",
+            "account compromise",
         ],
         "Database": [
             "etl",
@@ -141,11 +154,12 @@ DO NOT classify as Security because of operational background noise:
 ## Step 4 — True Security Scope (narrow)
 Reserve Security ONLY for active structural security events:
 - Explicit security breach or suspected breach
-- Phishing incident (clicked link, suspicious email)
-- Malware / ransomware / unauthorized software
+- Phishing incident (clicked link, suspicious email, spear phishing)
+- Malware / ransomware / unauthorized software / endpoint quarantine
 - Leaked passwords, API keys, secrets, credential compromise
 - Unauthorized access, unauthorized file/folder access, privilege escalation,
-  VPN breach, account takeover
+  VPN breach, account takeover, impossible travel logins
+- DLP alerts, WAF-detected SQL injection, active attack patterns in logs
 - SSL/TLS certificate expiry or renewal (compliance risk) → Security
 
 ## Step 5 — Failure owner (WHO owns the broken layer?)
@@ -178,12 +192,25 @@ Application vs Access Management:
 - App or SaaS permission/feature inside a named product (Confluence space, Jira
   board, SharePoint external sharing, Chrome extension whitelist) → Application
 - Identity/AD/Okta/SAML account provisioning or credential lifecycle → Access Management
+- Password expired, self-service reset broken, locked AD account → Access Management
+  EVEN IF a named app is mentioned (SAP Fiori, Okta, portal login)
 - Browser extension blocked by GPO for a desktop app → Application (NOT Access Management)
 
 Infrastructure (hardware) vs Application:
 - Physical device or peripheral (laptop, dock, printer, monitor, stand, headset,
   microphone, keyboard, USB receiver, smart card reader, presentation clicker)
   → Infrastructure, EVEN IF Teams/Zoom/Windows cannot detect it
+- GPU driver BSOD, blue screen STOP code after driver push → Infrastructure
+  (NOT Application), even when CUDA or ML workloads are mentioned
+
+Storage vs Application (SharePoint):
+- SharePoint document library access denied, contributor rights on file library
+  → Storage (file/share permission), NOT Application app-feature support
+
+Application vs Network (gateway disambiguation):
+- Power BI data gateway offline, dataset refresh gateway connection → Application
+- VPN gateway, F5/nginx reverse proxy 504/502, load balancer timeout → Network
+- Corp WiFi untrusted certificate warning → Network
 
 ## Step 6 — Multi-class disambiguation
 - Docker, Hypervisors, VMs, BIOS, hardware virtualization, DEP/HVCI blocking

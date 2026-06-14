@@ -10,7 +10,7 @@ python scripts/bootstrap_rag_environment.py
 
 After bootstrap: **0 live tickets**, **1000 RESOLVED `syn-*` in SQLite**, **~1006 vectors in Chroma** (KB + synthetic). See `docs/COLLEAGUE_SETUP.md` for teammate clone flow. Routing reports: `test-reports/index.html`.
 
-Automated coverage: `pytest tests/test_golden_set.py tests/test_latency_benchmark.py tests/test_agent_department_filters.py -v`
+Automated coverage: `python scripts/ui_smoke_test.py` and `python scripts/judge50_assessment.py`
 
 ---
 
@@ -71,19 +71,17 @@ Automated coverage: `pytest tests/test_golden_set.py tests/test_latency_benchmar
 
 ---
 
-## 6. Golden-set metrics (automated)
+## 6. Routing metrics (automated)
 
 ```bash
-pytest tests/test_golden_set.py::test_golden_set_accuracy_meets_threshold -v -s
-pytest tests/test_latency_benchmark.py -v -s
+python scripts/judge50_assessment.py
+open test-reports/judge50_report.html
 ```
 
 | Metric | Target | Source |
 |--------|--------|--------|
-| Classification accuracy | ≥85% | `data/golden_tickets.json` (16 tickets, 7 categories) |
-| Hand routing accuracy | ≥85% | Same golden set |
-| Department routing | ≥85% | Same golden set |
-| Pipeline latency (p95) | <15s | `PIPELINE_LATENCY_BUDGET_SEC` env override |
+| Judge50 routing | ≥85% | 50-firm suite |
+| Portal UI smoke | 19/19 pass | `scripts/ui_smoke_test.py` |
 
 ---
 
@@ -105,6 +103,6 @@ Log in as each agent; confirm inbox shows **only** that department's Hand 2/3 ti
 ## Quick smoke (no UI)
 
 ```bash
-python scripts/smoke_golden_tickets.py
-pytest tests/ -q
+python scripts/ui_smoke_test.py
+python scripts/judge50_assessment.py
 ```

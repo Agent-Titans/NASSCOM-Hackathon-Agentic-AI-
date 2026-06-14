@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAARTHI — Intelligent IT Service Management</title>
+<style>
+  :root {
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --navy: #0f172a;
+    --slate: #475569;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    line-height: 1.65;
+  }
+  .hero {
+    background: linear-gradient(145deg, #0f766e 0%, #0d9488 45%, #1e3a8a 100%);
+    color: #fff;
+    padding: 4rem 2rem 3.5rem;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+  .hero .tagline { font-size: 1.15rem; opacity: 0.92; max-width: 640px; margin: 0 auto 1.5rem; }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  section { margin-bottom: 2.75rem; }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--border);
+  }
+  h3 { font-size: 1rem; font-weight: 700; margin: 1.25rem 0 0.5rem; color: var(--navy); }
+  p { color: var(--slate); margin-bottom: 0.85rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 12px rgba(15,23,42,0.04);
+  }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .hand-card { text-align: center; padding: 1.25rem; }
+  .hand-num { font-size: 2rem; font-weight: 800; color: var(--teal); }
+  .hand-lbl { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); margin-top: 0.25rem; }
+  .flow {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--slate);
+    overflow-x: auto;
+  }
+  ul { padding-left: 1.25rem; color: var(--slate); margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+  th { background: var(--teal-dark); color: #fff; padding: 0.6rem 0.85rem; text-align: left; }
+  td { padding: 0.55rem 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .portal-tag {
+    display: inline-block;
+    background: #ecfdf5;
+    color: var(--teal-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    margin-right: 0.35rem;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #94a3b8;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Nasscom Agentic AI Hackathon · Use Case 1</div>
+  <h1>SAARTHI</h1>
+  <p class="tagline">Intelligent IT service management — classify every incident, route to the right team, and deliver resolution guidance in seconds.</p>
+</div>
+
+<div class="wrap">
+
+<section>
+  <h2>What problem we solve</h2>
+  <p>Enterprise IT helpdesks receive thousands of heterogeneous tickets — password resets, VPN failures, database outages, security incidents. Manual triage is slow, inconsistent, and expensive.</p>
+  <p><strong>SAARTHI</strong> automates the first mile: every ticket is sanitized, classified, matched against 1,000 resolved historical cases, routed to the correct department queue, and given actionable resolution steps — before a human agent opens the inbox.</p>
+</section>
+
+<section>
+  <h2>Three Hands — how work is delivered</h2>
+  <div class="grid-3">
+    <div class="card hand-card">
+      <div class="hand-num">1</div>
+      <div class="hand-lbl">Self-Help</div>
+      <p style="margin-top:0.75rem;font-size:0.88rem;">Employee gets guided steps on the portal. Marks <em>Worked</em> or <em>Did not work</em> to close or escalate.</p>
+    </div>
+    <div class="card hand-card">
+      <div class="hand-num">2</div>
+      <div class="hand-lbl">Team Assist</div>
+      <p style="margin-top:0.75rem;font-size:0.88rem;">Ticket lands in the right department queue. Agent assigns, collaborates, and resolves.</p>
+    </div>
+    <div class="card hand-card">
+      <div class="hand-num">3</div>
+      <div class="hand-lbl">Specialist</div>
+      <p style="margin-top:0.75rem;font-size:0.88rem;">Confirmed security incidents route to SecOps. No self-help steps — human specialist required.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>End-to-end flow</h2>
+  <div class="flow">
+Employee submits ticket (title + description)
+        │
+        ▼
+   Guardrail — redact PII, block injection
+        │
+        ▼
+   RAG retrieval — search 1,000 resolved tickets (ChromaDB)
+        │
+        ▼
+   Classifier — category + confidence
+        │
+        ▼
+   Router — Hand 1/2/3 + department queue
+        │
+        ▼
+   Resolver — steps from similar case or playbook
+        │
+        ▼
+   Supervisor — final hand + confidence band
+        │
+        ▼
+   Employee portal / Agent queue / SecOps desk
+  </div>
+</section>
+
+<section>
+  <h2>Six department queues</h2>
+  <table>
+    <thead><tr><th>Queue</th><th>Example tickets</th></tr></thead>
+    <tbody>
+      <tr><td>Infrastructure</td><td>Printer jam, docking station, laptop hardware</td></tr>
+      <tr><td>Application</td><td>Teams crash, Chrome blank page, SAP / SharePoint issues</td></tr>
+      <tr><td>Network</td><td>VPN errors, Wi-Fi loops, firewall whitelist requests</td></tr>
+      <tr><td>Database</td><td>SQL backup failure, connection pool exhausted, Snowflake credits</td></tr>
+      <tr><td>Access Management</td><td>Password reset, account lockout, onboarding / offboarding</td></tr>
+      <tr><td>SecOps</td><td>Phishing, ransomware, credential leaks, unauthorized logins</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Three portals</h2>
+  <div class="grid-2">
+    <div class="card">
+      <span class="portal-tag">Employee</span>
+      <h3>Submit &amp; track requests</h3>
+      <ul>
+        <li>Create incident with title and description</li>
+        <li>View routing outcome and match strength</li>
+        <li>Hand 1: follow resolution steps, give feedback</li>
+        <li>Hand 2/3: see assignee and department status</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="portal-tag">Agent</span>
+      <h3>Department workspace</h3>
+      <ul>
+        <li>Queue filtered to agent's department only</li>
+        <li>Assign, release, mark resolved</li>
+        <li>Route misrouted tickets to SecOps Routing Specialists</li>
+        <li>Resolution steps and RAG references on detail page</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="portal-tag">Admin</span>
+      <h3>Operations dashboard</h3>
+      <ul>
+        <li>KPI cards — open, resolved, SLA, queue depth</li>
+        <li>All tickets table with CSV export</li>
+        <li>Audit log — pipeline events, confidence %, RAG hits</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="portal-tag">SecOps</span>
+      <h3>Routing Specialists desk</h3>
+      <ul>
+        <li>Agents escalate suspected misroutes with a reason</li>
+        <li>SecOps reviews routing context</li>
+        <li>One-hop correction to the correct department</li>
+        <li>Security incidents kept on SecOps queue</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Key features</h2>
+  <div class="card">
+    <ul>
+      <li><strong>RAG grounding</strong> — 1,000 resolved synthetic tickets indexed in ChromaDB; similarity gate prevents weak matches</li>
+      <li><strong>Confidence scoring</strong> — every ticket stores c_total; UI shows Strong / Good / Low match labels</li>
+      <li><strong>Guardrail layer</strong> — PII redaction and prompt-injection defence before any model call</li>
+      <li><strong>Routing Specialists</strong> — human-in-the-loop misroute correction without re-running the pipeline</li>
+      <li><strong>Audit trail</strong> — every agent step, RAG hit/miss, and duration logged for compliance</li>
+      <li><strong>Reference articles</strong> — agents and employees can open similar resolved cases as guidance</li>
+      <li><strong>Multi-firm scenarios</strong> — tested across Microsoft, Google, Wipro, and Nasscom ticket patterns</li>
+      <li><strong>Responsible AI</strong> — security incidents force Hand 3; low-grounding flag when RAG match is weak</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>RAG corpus</h2>
+  <p>SAARTHI ships with <strong>1,000 resolved historical tickets</strong> (`data/synthetic/tickets_1000.json`). Each title includes a demo assignee name so retrieval results look like real enterprise data.</p>
+  <p>On first run, <code>bootstrap_rag_environment.py</code> embeds the corpus into ChromaDB (~5–8 minutes). After that, retrieval is local and fast.</p>
+</section>
+
+<section>
+  <h2>Demo accounts</h2>
+  <table>
+    <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
+    <tbody>
+      <tr><td>Employee</td><td>pallavi@user</td><td>1234</td></tr>
+      <tr><td>Agent (Application)</td><td>subbu@employee</td><td>1234</td></tr>
+      <tr><td>Agent (SecOps)</td><td>narsimha@employee</td><td>1234</td></tr>
+      <tr><td>Admin</td><td>admin@employee</td><td>1234</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Three tickets to demo live</h2>
+  <table>
+    <thead><tr><th>Submit as employee</th><th>Expected outcome</th></tr></thead>
+    <tbody>
+      <tr><td>Forgot password / cannot login to portal</td><td>Hand 1 · Access Management · self-help steps</td></tr>
+      <tr><td>Printer paper jam in conference room</td><td>Hand 1 or 2 · Infrastructure queue</td></tr>
+      <tr><td>AWS secret key exposed on public GitHub</td><td>Hand 3 · SecOps · no self-help steps</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Technical stack</h2>
+  <p>Python 3.11 · Streamlit UI · SQLite · ChromaDB · Google Gemini (classify + resolve + embeddings) · Structured audit log</p>
+  <p>Full code map: <code>docs/CODE_WALKTHROUGH.md</code> · Setup: <code>docs/COLLEAGUE_SETUP.md</code></p>
+</section>
+
+</div>
+
+<div class="footer">
+  SAARTHI · Nasscom Agentic AI Hackathon 2026 ·
+  <a href="../test-reports/portal_master_report.html">Assessment report</a> ·
+  <a href="../test-reports/index.html">All test reports</a>
+</div>
+
+</body>
+</html>

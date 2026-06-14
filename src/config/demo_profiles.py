@@ -32,13 +32,13 @@ DEMO_DISPLAY_NAMES: dict[str, str] = {
 }
 
 AGENT_QUEUE_LABELS: dict[str, str] = {
-    "sree@employee": "Hardware",
-    "kiran@employee": "Hardware",
-    "vikram@employee": "Hardware",
-    "subbu@employee": "Software",
-    "sruthi@employee": "Software",
-    "meena@employee": "Software",
-    "anita@employee": "Software",
+    "sree@employee": "Infrastructure",
+    "kiran@employee": "Infrastructure",
+    "vikram@employee": "Infrastructure",
+    "subbu@employee": "Application",
+    "sruthi@employee": "Application",
+    "meena@employee": "Application",
+    "anita@employee": "Application",
     "shashi@employee": "Network",
     "rahul@employee": "Network",
     "deepak@employee": "Network",
@@ -47,9 +47,9 @@ AGENT_QUEUE_LABELS: dict[str, str] = {
     "rohan@employee": "SecOps",
     "satya@employee": "Access Management",
     "meera@employee": "Access Management",
-    "sagar@employee": "DBA",
-    "priya@employee": "DBA",
-    "arjun@employee": "DBA",
+    "sagar@employee": "Database",
+    "priya@employee": "Database",
+    "arjun@employee": "Storage",
     "admin@employee": "Admin",
 }
 

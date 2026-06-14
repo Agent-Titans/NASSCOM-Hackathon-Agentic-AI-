@@ -74,7 +74,7 @@ def _session_login(user: User) -> None:
         user.role == "admin" and email == "admin@employee"
     )
 
-    if user.role == "requester":
+    if user.role in ("requester", "employee"):
         st.session_state["page"] = "portal"
         st.session_state["portal_view"] = "home"
         from src.services.retrieval_bootstrap import start_retrieval_warm_background
@@ -251,7 +251,7 @@ def render_signin_step(users: list[User]) -> None:
                 st.rerun()
 
             norm = normalize_email(user.email)
-            if norm in EMPLOYEE_PORTAL_EMAILS and user.role != "requester":
+            if norm in EMPLOYEE_PORTAL_EMAILS and user.role not in ("requester", "employee"):
                 st.session_state["auth_login_error"] = "Invalid email or password."
                 st.rerun()
             if norm in AGENT_WORKSPACE_EMAILS and user.role not in ("assignee", "admin"):

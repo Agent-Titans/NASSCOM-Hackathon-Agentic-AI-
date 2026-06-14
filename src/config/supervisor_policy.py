@@ -27,6 +27,12 @@ class Hand1PlaybookPolicy:
 
 
 @dataclass(frozen=True)
+class AutomationSuggestionPolicy:
+    enabled: bool
+    min_similarity: float
+
+
+@dataclass(frozen=True)
 class SupervisorPolicy:
     """Active Supervisor decision policy for the current mode."""
 
@@ -34,6 +40,7 @@ class SupervisorPolicy:
     lld_section: str
     low_grounding_hand: str
     hand1_playbook: Hand1PlaybookPolicy
+    automation_suggestion: AutomationSuggestionPolicy
     apply_similarity_hand1_cap: bool
     force_hand3_categories: tuple[str, ...]
     urgency_min_hand: dict[str, str]
@@ -61,6 +68,11 @@ def get_supervisor_policy() -> SupervisorPolicy:
         min_source_hand=str(playbook_raw.get("min_source_hand", "1")),
         min_similarity=float(playbook_raw.get("min_similarity", 0.55)),
     )
+    automation_raw = cfg.get("policy_automation_suggestion", {})
+    automation = AutomationSuggestionPolicy(
+        enabled=bool(automation_raw.get("enabled", False)),
+        min_similarity=float(automation_raw.get("min_similarity", 0.82)),
+    )
     urgency_raw = cfg.get("urgency_min_hand", {})
     urgency_min_hand = {
         str(k).lower(): str(v)
@@ -75,6 +87,7 @@ def get_supervisor_policy() -> SupervisorPolicy:
         lld_section=str(cfg.get("lld_section", "#supervisor-agent")),
         low_grounding_hand=str(cfg.get("low_grounding_hand", "3")),
         hand1_playbook=playbook,
+        automation_suggestion=automation,
         apply_similarity_hand1_cap=bool(cfg.get("apply_similarity_hand1_cap", False)),
         force_hand3_categories=tuple(rules.get("policy_force_hand3_categories", [])),
         urgency_min_hand=urgency_min_hand,

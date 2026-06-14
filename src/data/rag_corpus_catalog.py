@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from functools import lru_cache
 
 from src.data.enterprise_rag_corpus import ENTERPRISE_RAG_CORPUS
+from src.config.departments import CATEGORY_TO_DEPARTMENT
 from src.data.rag_demo_corpus import (
     RAG_DEMO_CORPUS,
     RagDemoEntry,
-    _CATEGORY_TO_DEPARTMENT,
     demo_ticket_routing,
 )
 from src.data.kb_seed_corpus import KB_SEED_CORPUS
@@ -59,7 +59,7 @@ def _department_for(entry: RagDemoEntry) -> str:
     doc_id, _title, _desc, category, hand, _steps, _cites = entry
     if doc_id.startswith("rag-") or doc_id.startswith("ent-"):
         return str(demo_ticket_routing(doc_id, category, hand)["department_queue"])
-    return _CATEGORY_TO_DEPARTMENT.get(category, category)
+    return CATEGORY_TO_DEPARTMENT.get(category, category)
 
 
 def _from_demo_entry(entry: RagDemoEntry, *, source: str) -> RagCatalogEntry:
@@ -89,7 +89,7 @@ def iter_rag_catalog_entries() -> list[RagCatalogEntry]:
                 description=doc,
                 category=category,
                 hand="1",
-                department=_CATEGORY_TO_DEPARTMENT.get(category, category),
+                department=CATEGORY_TO_DEPARTMENT.get(category, category),
                 steps=tuple(steps),
                 citations=tuple(cites),
                 source=_SOURCE_KB,

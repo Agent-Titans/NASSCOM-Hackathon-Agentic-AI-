@@ -6,6 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from src.config.departments import canonical_department
 from src.data.rag_demo_corpus import RagDemoEntry
 
 _CORPUS_PATH = Path(__file__).resolve().parents[2] / "data" / "synthetic" / "tickets_1000.json"
@@ -48,7 +49,7 @@ def synthetic_row_metadata(row: dict[str, Any]) -> dict[str, object]:
     hand = str(row["hand"])
     return {
         "category": row["category"],
-        "department": row["department"],
+        "department": canonical_department(str(row.get("department") or "")),
         "hand": hand,
         "seed": True,
         "priority": row.get("priority", "P2"),

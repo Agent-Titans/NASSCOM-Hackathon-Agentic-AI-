@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.config.departments import canonical_department, department_queue_aliases  # noqa: E402
 from src.config.settings import get_settings  # noqa: E402
 from src.data.synthetic_corpus import (  # noqa: E402
     synthetic_row_metadata,
@@ -43,9 +44,11 @@ def _load_tickets(path: Path) -> list[dict]:
 
 
 def _assignee_for_department(session, department: str) -> str | None:
+    canon = canonical_department(department)
+    queues = list(department_queue_aliases(canon))
     agents = (
         session.query(User)
-        .filter(User.role == "assignee", User.department == department)
+        .filter(User.role == "assignee", User.department.in_(queues))
         .order_by(User.email)
         .all()
     )
@@ -78,7 +81,7 @@ def seed_sqlite_resolved(session, tickets: list[dict], *, batch: int = 200) -> i
     for idx, row in enumerate(tickets):
         ticket_id = row["id"]
         hand = str(row["hand"])
-        department = row["department"]
+        department = canonical_department(str(row.get("department") or ""))
         requester = requesters[idx % len(requesters)]
         assignee_id = None if hand == "1" else _assignee_for_department(session, department)
 

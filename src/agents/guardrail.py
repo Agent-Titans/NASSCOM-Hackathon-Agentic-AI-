@@ -63,7 +63,7 @@ _INJECTION_REGEXES: Tuple[re.Pattern[str], ...] = tuple(
         r"classify\s+this\s+ticket\s+as\s+['\"]?\w+['\"]?\s*,?\s*set\s+confidence",
         r"output\s+(a\s+)?response\s+that\s+says",
         r"<\s*/?\s*system\s*>",
-        r"jailbreak",
+        r"(?<!detection\s)(?<!detection false positive )jailbreak(?!(\s+detection|\s+false))",
         r"developer\s+mode\s+enabled",
     )
 )

@@ -1,6 +1,14 @@
 """
-SAARTHI — SaaS-style Streamlit dashboard.
-Inspired by production Streamlit patterns (sidebar nav, KPIs, wide layout).
+SAARTHI entry point — Streamlit app shell and role-based routing.
+
+Pages:
+  - Login (all users)
+  - Employee portal (requester) — submit tickets, Hand 1 self-help
+  - Agent workspace (assignee) — dept queues, assign/resolve/route
+  - Admin console (admin) — KPIs, audit log, CSV export
+
+Session state keys: page, portal_view, agent_view, ticket_id, signed_in.
+URL query params restore detail views after browser refresh.
 """
 from __future__ import annotations
 
@@ -162,7 +170,7 @@ def page_overview_requester(user: User) -> None:
 
 def page_requests(user: User) -> None:
     ui.hello_bar(user.email, user.role)
-    st.caption("My requests · routed by five AI agents")
+    st.caption("My requests · classified and routed by department")
     if st.session_state.get("flash"):
         st.success(st.session_state.pop("flash"))
     with get_db() as session:
@@ -298,7 +306,7 @@ def page_detail(user: User, ticket_id: Optional[str]) -> None:
 
 def page_overview_assignee(user: User) -> None:
     ui.hello_bar(user.email, user.role)
-    dept = user.department or "Hardware"
+    dept = user.department or "Infrastructure"
     st.caption(f"Team dashboard · {dept}")
     s = stats_for_assignee(dept)
     ui.kpi_grid(
@@ -313,7 +321,7 @@ def page_overview_assignee(user: User) -> None:
 
 
 def page_queue(user: User, embedded: bool = False) -> None:
-    dept = user.department or "Hardware"
+    dept = user.department or "Infrastructure"
     if not embedded:
         ui.hello_bar(user.email, user.role)
         st.caption(f"Team queue · {dept}")
@@ -437,7 +445,7 @@ def main() -> None:
             else:
                 start_retrieval_warm_background(delay_seconds=2.0, api_embeds=False)
 
-        if user.role == "requester":
+        if user.role in ("requester", "employee"):
             from src.ui.employee_portal import render_employee_portal
 
             st.session_state["page"] = "portal"

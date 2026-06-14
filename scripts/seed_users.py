@@ -18,13 +18,13 @@ SEED_USERS = [
     ("santhosh@user", "requester", None),
     ("requester@demo.local", "requester", None),
     # Agent workspace — one queue per Use Case department (+ backups)
-    ("sree@employee", "assignee", "Hardware"),
-    ("kiran@employee", "assignee", "Hardware"),
-    ("vikram@employee", "assignee", "Hardware"),
-    ("subbu@employee", "assignee", "Software"),
-    ("sruthi@employee", "assignee", "Software"),
-    ("meena@employee", "assignee", "Software"),
-    ("anita@employee", "assignee", "Software"),
+    ("sree@employee", "assignee", "Infrastructure"),
+    ("kiran@employee", "assignee", "Infrastructure"),
+    ("vikram@employee", "assignee", "Infrastructure"),
+    ("subbu@employee", "assignee", "Application"),
+    ("sruthi@employee", "assignee", "Application"),
+    ("meena@employee", "assignee", "Application"),
+    ("anita@employee", "assignee", "Application"),
     ("shashi@employee", "assignee", "Network"),
     ("rahul@employee", "assignee", "Network"),
     ("deepak@employee", "assignee", "Network"),
@@ -33,9 +33,9 @@ SEED_USERS = [
     ("rohan@employee", "assignee", "SecOps"),
     ("satya@employee", "assignee", "Access Management"),
     ("meera@employee", "assignee", "Access Management"),
-    ("sagar@employee", "assignee", "DBA"),
-    ("priya@employee", "assignee", "DBA"),
-    ("arjun@employee", "assignee", "DBA"),
+    ("sagar@employee", "assignee", "Database"),
+    ("priya@employee", "assignee", "Database"),
+    ("arjun@employee", "assignee", "Storage"),
     ("admin@employee", "admin", None),
 ]
 
@@ -72,12 +72,26 @@ def main() -> None:
                 {"department_queue": "Access Management"}, synchronize_session=False
             )
         )
+        queue_migrations = {
+            "Hardware": "Infrastructure",
+            "Software": "Application",
+            "DBA": "Database",
+        }
+        migrated_queues = 0
+        for legacy, canon in queue_migrations.items():
+            migrated_queues += (
+                session.query(Ticket)
+                .filter(Ticket.department_queue == legacy)
+                .update({"department_queue": canon}, synchronize_session=False)
+            )
         session.commit()
     print("Seeded users:", ", ".join(u[0] for u in SEED_USERS))
-    if migrated_users or migrated_tickets:
+    if migrated_users or migrated_tickets or migrated_queues:
         print(
-            f"Migrated legacy Identity → Access Management: "
-            f"{migrated_users} user(s), {migrated_tickets} ticket(s)"
+            f"Migrated legacy queues: "
+            f"{migrated_users} user(s) Identity→Access Management, "
+            f"{migrated_tickets} ticket(s) Identity→Access Management, "
+            f"{migrated_queues} ticket(s) Hardware/Software/DBA→canonical"
         )
 
 

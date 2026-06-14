@@ -90,6 +90,16 @@ def admin_portal_css() -> str:
       color: #2563EB !important;
       background: #F8FAFC !important;
     }}
+    {pp} button[data-testid="stBaseButton-tertiary"] {{
+      background: transparent !important;
+      border: none !important;
+      color: #64748B !important;
+      font-weight: 600 !important;
+      padding-left: 0 !important;
+    }}
+    {pp} [class*="st-key-admin_detail_back"] {{
+      margin: 0 0 0.5rem !important;
+    }}
     /* Horizontal nav row below brand bar */
     {s} .admin-nav-row {{
       margin: 0 0 0.85rem;

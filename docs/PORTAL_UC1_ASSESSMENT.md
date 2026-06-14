@@ -120,14 +120,21 @@
 ## Test commands
 
 ```bash
-# Unit / integration
-pytest tests/test_agent_department_filters.py tests/test_h1_escalation.py -v
+source .venv/bin/activate
 
-# 30-ticket routing suite
-python scripts/custom_25_embedding_test.py --backend gemini --no-reindex \
-  --scenarios data/pallavi_30_triage_scenarios.json --case-delay 3.0 \
-  --output docs/pallavi_30_results.json
+# Portal smoke (19 checks)
+python scripts/ui_smoke_test.py
 
-# E2E (Streamlit must be running on :8501)
-pytest tests/test_webapp_e2e.py -v
+# Nasscom firm suite (50 tickets)
+python scripts/judge50_assessment.py
+python scripts/judge50_assessment.py --live
+
+# Independent master validation (50 tickets)
+python scripts/master_assessment.py
+python scripts/master_assessment.py --live
+
+# Cognizant delivery suite (30 tickets)
+python scripts/cognizant30_assessment.py --live
+
+# Reports: test-reports/index.html
 ```

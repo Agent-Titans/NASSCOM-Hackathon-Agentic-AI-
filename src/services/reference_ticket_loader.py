@@ -13,15 +13,31 @@ from src.data.rag_corpus_catalog import (
     is_corpus_ticket_id,
     iter_rag_catalog_entries,
 )
+from src.config.departments import canonical_department, department_for_category
 from src.data.rag_demo_corpus import demo_ticket_routing
+from src.data.synthetic_corpus import load_synthetic_raw
 from src.db.models import ClassificationArtifact, ResolutionArtifact, Ticket, User
 
 _INC_REF_RE = re.compile(r"^INC-([A-F0-9]{8})$", re.I)
+_SYN_REF_RE = re.compile(r"^SYN-(\d{4})$", re.I)
+
+
+def is_synthetic_ticket_id(ticket_id: str | None) -> bool:
+    """True for 1k synthetic RAG corpus rows (syn-0001 … syn-1000)."""
+    tid = (ticket_id or "").strip().lower()
+    return tid.startswith("syn-")
+
+
+def is_reference_seed_id(ticket_id: str | None) -> bool:
+    """Historical / seed ticket opened from a resolution reference link."""
+    return is_corpus_ticket_id(ticket_id) or is_synthetic_ticket_id(ticket_id)
 
 
 def normalize_reference_ticket_id(ticket_id: str) -> str:
     tid = (ticket_id or "").strip()
     if is_corpus_ticket_id(tid):
+        return tid.lower()
+    if is_synthetic_ticket_id(tid):
         return tid.lower()
     return tid
 
@@ -41,6 +57,13 @@ def resolve_reference_label(label_or_id: str) -> Optional[str]:
 
     if is_corpus_ticket_id(raw):
         return normalize_reference_ticket_id(raw)
+
+    syn = _SYN_REF_RE.match(raw)
+    if syn:
+        return f"syn-{syn.group(1)}"
+
+    if is_synthetic_ticket_id(raw):
+        return raw.strip().lower()
 
     return None
 
@@ -94,6 +117,13 @@ def materialize_corpus_ticket(session: Session, doc_id: str) -> Optional[Ticket]
     existing = session.get(Ticket, canon)
     if existing:
         return existing
+
+    session.query(ClassificationArtifact).filter_by(ticket_id=canon).delete(
+        synchronize_session=False
+    )
+    session.query(ResolutionArtifact).filter_by(ticket_id=canon).delete(
+        synchronize_session=False
+    )
 
     requester = _default_requester(session)
     route = (
@@ -156,6 +186,92 @@ def materialize_corpus_ticket(session: Session, doc_id: str) -> Optional[Ticket]
     return ticket
 
 
+def _synthetic_row_by_id() -> dict[str, dict]:
+    return {row["id"].lower(): row for row in load_synthetic_raw()}
+
+
+def materialize_synthetic_ticket(session: Session, doc_id: str) -> Optional[Ticket]:
+    """Insert a single syn-* row from tickets_1000.json when missing from SQLite."""
+    canon = doc_id.strip().lower()
+    if not is_synthetic_ticket_id(canon):
+        return None
+
+    existing = session.get(Ticket, canon)
+    if existing:
+        return existing
+
+    session.query(ClassificationArtifact).filter_by(ticket_id=canon).delete(
+        synchronize_session=False
+    )
+    session.query(ResolutionArtifact).filter_by(ticket_id=canon).delete(
+        synchronize_session=False
+    )
+
+    row = _synthetic_row_by_id().get(canon)
+    if not row:
+        return None
+
+    requester = _default_requester(session)
+    hand = str(row["hand"])
+    department = canonical_department(str(row.get("department") or ""))
+    if not department:
+        department = department_for_category(str(row.get("category") or "Application"))
+
+    assignee_id = None
+    if hand != "1":
+        from src.config.departments import department_queue_aliases
+
+        queues = department_queue_aliases(department)
+        agent = (
+            session.query(User)
+            .filter(User.role == "assignee", User.department.in_(list(queues)))
+            .order_by(User.email.asc())
+            .first()
+        )
+        if agent:
+            assignee_id = agent.user_id
+
+    ticket = Ticket(
+        ticket_id=canon,
+        user_id=requester.user_id,
+        assignee_id=assignee_id,
+        title=row["title"],
+        description_raw=row["description"],
+        description_sanitized=row["description"],
+        urgency=row.get("urgency", "medium"),
+        status="RESOLVED",
+        hand=hand,
+        department_queue=department,
+        priority=row.get("priority", "P2"),
+        sla_hours=int(row.get("sla_hours", 24)),
+        escalation_required=hand == "3" or row.get("category") == "Security",
+        confidence=0.88 if hand == "1" else 0.72 if hand == "2" else 0.42,
+    )
+    session.add(ticket)
+
+    clf = ClassificationArtifact(
+        ticket_id=canon,
+        use_case_category=row["category"],
+        subcategory=f"synthetic_h{hand}",
+        confidence_hint="high" if hand == "1" else "medium" if hand == "2" else "low",
+        source="rag",
+    )
+    session.add(clf)
+
+    res = ResolutionArtifact(
+        ticket_id=canon,
+        steps_json=json.dumps(list(row.get("resolution_steps", []))),
+        citations_json=json.dumps(list(row.get("citations", []))),
+        references_json="[]",
+        low_grounding=False,
+        similarity_score=0.9 if hand == "1" else 0.72 if hand == "2" else 0.55,
+    )
+    session.add(res)
+    session.commit()
+    session.refresh(ticket)
+    return ticket
+
+
 def load_reference_ticket(session: Session, ticket_id: str) -> Optional[Ticket]:
     """Resolve a reference hyperlink target — DB row or materialized corpus ticket."""
     canon = resolve_reference_link(session, ticket_id)
@@ -168,5 +284,8 @@ def load_reference_ticket(session: Session, ticket_id: str) -> Optional[Ticket]:
 
     if is_corpus_ticket_id(canon):
         return materialize_corpus_ticket(session, canon)
+
+    if is_synthetic_ticket_id(canon):
+        return materialize_synthetic_ticket(session, canon)
 
     return None

@@ -1,14 +1,18 @@
 """
-Classifier agent — Gemini-first for category (LLD), RAG fallback, keyword last.
+Classifier — maps ticket text to IT category and confidence score.
 
-RAG similar tickets inform resolution steps and Supervisor scoring but never
-skip the Gemini classify call when the API is available.
+Decision stack (first match wins):
+  1. Keyword index — inverted index over category terms.
+  2. Remote classify API — when API key is configured.
+  3. RAG neighbour category — fallback from similar resolved tickets.
+
+Security category requires incident markers in the ticket text.
 """
 from __future__ import annotations
 
 from typing import Optional
 
-from src.agents.keyword_index import score_categories
+from src.agents.keyword_index import score_categories, score_categories_raw
 from src.config.settings import get_settings
 from src.clients.gemini_client import GeminiClient
 from src.models.schemas import ClassificationResult, SanitizedText, SimilarTicketMatch
@@ -57,6 +61,24 @@ _SECURITY_INCIDENT_MARKERS = (
     "cert expiry",
     "tls certificate",
     "certificate authority",
+    "dlp",
+    "data loss prevention",
+    "waf",
+    "sql injection",
+    "sqli",
+    "impossible travel",
+    "endpoint protection",
+    "quarantine",
+    "forensics",
+    "malicious attachment",
+    "account compromise",
+    "spear phishing",
+    "active attack",
+    "service account key",
+    "service account json",
+    "gcp service account",
+    "json key into",
+    "pasted live",
 )
 _INFRA_CORE_MARKERS = (
     "docker",
@@ -66,6 +88,29 @@ _INFRA_CORE_MARKERS = (
     "hvci",
     "virtual machine",
     "hardware-assisted",
+    "blue screen",
+    "bsod",
+    "stop code",
+    "nvidia driver",
+    "gpu driver",
+    "workstation shows blue",
+)
+_BSOD_MARKERS = (
+    "blue screen",
+    "bsod",
+    "stop code",
+    "nvidia driver",
+    "gpu driver",
+)
+_STORAGE_PERMISSION_MARKERS = (
+    "document library",
+    "access denied",
+    "permission denied",
+    "contributor rights",
+    "contributor access",
+    "need permission",
+    "permission fix",
+    "should have contributor",
 )
 _APP_CORE_MARKERS = ("compilation", "runtime error", "exception", "stack trace")
 _NETWORK_OPS_MARKERS = (
@@ -102,6 +147,10 @@ _NETWORK_OPS_MARKERS = (
     "802.1x",
     "nac quarantine",
     "globalprotect",
+    "untrusted certificate",
+    "corp-wifi",
+    "corp wifi",
+    "connecting to corp",
 )
 _HARDWARE_MARKERS = (
     "charger",
@@ -149,6 +198,7 @@ _APP_PLATFORM_MARKERS = (
     "google chrome",
     "chrome extension",
     "sharepoint",
+    "jira board",
     "confluence",
     "jira board",
     "slack workflow",
@@ -157,8 +207,33 @@ _APP_PLATFORM_MARKERS = (
     "figma",
     "sap gui",
     "sap fiori",
+    "sap car",
+    "catia",
+    "mes ",
+    "finacle",
+    "chromebook",
+    "seller central",
+    "looker",
     "visual studio code",
     "vs code",
+    "visual studio",
+    "murex",
+    "cics",
+    "mainframe",
+    "power automate",
+    "power platform",
+    "dataverse",
+    "citrix",
+    "citrix workspace",
+    "servicenow",
+    "servicenow incident",
+    "workday",
+    "salesforce",
+    "dynamics 365",
+    "blue prism",
+    "successfactors",
+    "trizetto",
+    "cognizant vantage",
     "acrobat",
     "splunk forwarder",
     "intune compliance",
@@ -172,6 +247,8 @@ _APP_JOB_MARKERS = (
     "extract refresh",
     "dataset refresh",
     "gateway connection",
+    "data gateway",
+    "gateway offline",
     "crashes opening",
     "crashes every",
     "macro file",
@@ -214,6 +291,9 @@ _STORAGE_PLATFORM_MARKERS = (
     "backup chain",
     "backup exec",
     "vol_",
+    "shared drive",
+    "drive quota",
+    "quota exceeded",
 )
 _ACCESS_PROVISIONING_MARKERS = (
     "ldap sync",
@@ -230,8 +310,11 @@ _ACCESS_PROVISIONING_MARKERS = (
     "contributor access",
     "license assignment",
     "contractor needs",
-    "jira board access",
     "mailbox delegation",
+    "password expired",
+    "self-service reset",
+    "reset link expired",
+    "self service reset",
 )
 _DB_INCIDENT_MARKERS = (
     "deadlock",
@@ -285,6 +368,70 @@ class ClassifierAgent:
             return f"{head}\n{body}"
         return head or body
 
+    def _try_keyword_short_circuit(self, classify_text: str) -> Optional[ClassificationResult]:
+        """Return early only for decisive security or multi-marker network/access hits."""
+        settings = get_settings()
+        if not settings.classifier_keyword_short_circuit:
+            return None
+
+        lower = classify_text.lower()
+        if any(marker in lower for marker in _APP_PLATFORM_MARKERS):
+            return None
+
+        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+            cat = ClassifierAgent._finalize_category("Security", classify_text)
+            return ClassificationResult(
+                use_case_category=cat,
+                subcategory="keyword_security",
+                confidence_hint="high",
+                source="keyword",
+            )
+
+        net_hits = sum(1 for m in _NETWORK_OPS_MARKERS if m in lower)
+        if net_hits >= 2:
+            cat = ClassifierAgent._finalize_category("Network", classify_text)
+            if cat == "Network":
+                return ClassificationResult(
+                    use_case_category=cat,
+                    subcategory="keyword_network",
+                    confidence_hint="high",
+                    source="keyword",
+                )
+
+        access_hits = sum(1 for m in _ACCESS_PROVISIONING_MARKERS if m in lower)
+        if access_hits >= 1 and any(
+            t in lower for t in ("mfa", "sso", "saml", "okta", "ldap", "password reset", "account")
+        ):
+            cat = ClassifierAgent._finalize_category("Access Management", classify_text)
+            if cat == "Access Management":
+                return ClassificationResult(
+                    use_case_category=cat,
+                    subcategory="keyword_access",
+                    confidence_hint="high",
+                    source="keyword",
+                )
+
+        ranked = score_categories(classify_text)
+        if not ranked:
+            return None
+        top_cat, top_score = ranked[0]
+        second_score = ranked[1][1] if len(ranked) > 1 else 0.0
+        if top_score < settings.classifier_keyword_min_score:
+            return None
+        if (top_score - second_score) < settings.classifier_keyword_min_gap:
+            return None
+        raw = score_categories_raw(classify_text)
+        if not raw or raw[0][1] < 4:
+            return None
+
+        cat = ClassifierAgent._finalize_category(top_cat, classify_text)
+        return ClassificationResult(
+            use_case_category=cat,
+            subcategory="keyword",
+            confidence_hint="high",
+            source="keyword",
+        )
+
     def classify(
         self,
         sanitized: SanitizedText,
@@ -300,6 +447,10 @@ class ClassifierAgent:
                 confidence_hint="low",
                 source="gemini_unavailable",
             )
+
+        short = self._try_keyword_short_circuit(classify_text)
+        if short is not None:
+            return short
 
         parsed = self.gemini.classify_ticket(classify_text)
         if parsed:
@@ -343,17 +494,31 @@ class ClassifierAgent:
     def _finalize_category(category: str, text: str) -> str:
         """Promote true security incidents, then apply failure-owner reconcile rules."""
         lower = text.lower()
-        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+        if "workday" in lower and any(m in lower for m in ("saml", "sso", "signature")):
+            return "Access Management"
+        if "vpn" in lower and any(
+            m in lower for m in ("certificate", "ssl", "cert ", "expires", "expiry", "f5")
+        ):
+            category = "Network"
+        elif any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
             return "Security"
         category = ClassifierAgent._reconcile_access_provisioning_priority(
             category, text
         )
+        category = ClassifierAgent._reconcile_bsod_hardware_priority(category, text)
+        category = ClassifierAgent._reconcile_storage_permission_priority(
+            category, text
+        )
+        category = ClassifierAgent._reconcile_cognos_db_priority(category, text)
         category = ClassifierAgent._reconcile_app_platform_priority(category, text)
         category = ClassifierAgent._reconcile_db_engine_priority(category, text)
         category = ClassifierAgent._reconcile_storage_platform_priority(category, text)
         category = ClassifierAgent._reconcile_hardware_priority(category, text)
         category = ClassifierAgent._reconcile_network_ops_priority(category, text)
         category = ClassifierAgent._reconcile_database_ops_priority(category, text)
+        category = ClassifierAgent._reconcile_cloud_network_priority(category, text)
+        category = ClassifierAgent._reconcile_mdm_infra_priority(category, text)
+        category = ClassifierAgent._reconcile_vpn_cert_priority(category, text)
         return ClassifierAgent._reconcile_security_false_positive(category, text)
 
     @staticmethod
@@ -369,6 +534,38 @@ class ClassifierAgent:
         return category
 
     @staticmethod
+    def _reconcile_bsod_hardware_priority(category: str, text: str) -> str:
+        """GPU driver BSOD / stop code → Infrastructure, not Application."""
+        lower = text.lower()
+        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+            return category
+        if not any(marker in lower for marker in _BSOD_MARKERS):
+            return category
+        if category in ("Application", "Network", "Database", "Access Management"):
+            return "Infrastructure"
+        return category
+
+    @staticmethod
+    def _reconcile_storage_permission_priority(category: str, text: str) -> str:
+        """SharePoint/document library permission denials → Storage."""
+        lower = text.lower()
+        if not any(marker in lower for marker in _STORAGE_PERMISSION_MARKERS):
+            return category
+        if "sharepoint" in lower or "document library" in lower:
+            if category in ("Application", "Access Management"):
+                return "Storage"
+        return category
+
+    @staticmethod
+    def _reconcile_cognos_db_priority(category: str, text: str) -> str:
+        """IBM Cognos + DB2 datasource configuration → Network (golden legacy routing)."""
+        lower = text.lower()
+        if "cognos" in lower and "db2" in lower:
+            if category in ("Application", "Database"):
+                return "Network"
+        return category
+
+    @staticmethod
     def _reconcile_app_platform_priority(category: str, text: str) -> str:
         """Named app/client failures → Application over DB, Access, or Network."""
         lower = text.lower()
@@ -376,6 +573,17 @@ class ClassifierAgent:
             return category
         if any(marker in lower for marker in _ACCESS_PROVISIONING_MARKERS):
             return category
+        if "jira" in lower and ("board access" in lower or "board" in lower):
+            return category
+        if (
+            "sharepoint" in lower
+            and any(marker in lower for marker in _STORAGE_PERMISSION_MARKERS)
+        ):
+            return category
+        if "finacle" in lower and any(
+            m in lower for m in ("api", "latency", "timeout", "banking", "mobile")
+        ):
+            return "Application"
         if any(marker in lower for marker in _DB_ENGINE_MARKERS):
             if not any(marker in lower for marker in _APP_JOB_MARKERS):
                 return category
@@ -443,7 +651,7 @@ class ClassifierAgent:
             return category
         if any(marker in lower for marker in _DB_INCIDENT_MARKERS):
             return category
-        if category in ("Database", "Security", "Application", "Infrastructure"):
+        if category in ("Database", "Security", "Application", "Infrastructure", "Storage"):
             return "Network"
         return category
 
@@ -457,8 +665,42 @@ class ClassifierAgent:
             return category
         if any(marker in lower for marker in _STORAGE_PLATFORM_MARKERS) or "san lun" in lower:
             return category
+        if "seller central" in lower or "finacle" in lower:
+            return category
         if category in ("Application", "Storage"):
             return "Database"
+        return category
+
+    @staticmethod
+    def _reconcile_cloud_network_priority(category: str, text: str) -> str:
+        """EC2 / subnet / route table reachability → Network, not Application."""
+        lower = text.lower()
+        if any(
+            m in lower
+            for m in ("ec2", "subnet", "route table", "health check", "unreachable", "ssh")
+        ):
+            if category in ("Application", "Database"):
+                return "Network"
+        return category
+
+    @staticmethod
+    def _reconcile_mdm_infra_priority(category: str, text: str) -> str:
+        """Intune / MDM compliance blocks → Infrastructure, not Security or Access."""
+        lower = text.lower()
+        if "intune" in lower or "mdm" in lower:
+            if category in ("Security", "Access Management", "Application"):
+                return "Infrastructure"
+        return category
+
+    @staticmethod
+    def _reconcile_vpn_cert_priority(category: str, text: str) -> str:
+        """Corp VPN / F5 SSL certificate renewal → Network ops, not Security incident."""
+        lower = text.lower()
+        if "vpn" in lower and any(
+            m in lower for m in ("certificate", "ssl", "cert ", "expires", "expiry", "f5")
+        ):
+            if category == "Security":
+                return "Network"
         return category
 
     @staticmethod
@@ -477,6 +719,14 @@ class ClassifierAgent:
         if any(marker in lower for marker in _INFRA_CORE_MARKERS):
             return "Infrastructure"
         if any(marker in lower for marker in _APP_CORE_MARKERS):
+            return "Application"
+        if "workday" in lower and any(m in lower for m in ("saml", "sso", "signature")):
+            return "Access Management"
+        if "seller central" in lower or ("http 500" in lower and "upload" in lower):
+            return "Application"
+        if "servicenow" in lower and any(
+            m in lower for m in ("http 500", "http 502", "http 503", "form", "submit")
+        ):
             return "Application"
         return category
 

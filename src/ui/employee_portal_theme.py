@@ -25,7 +25,7 @@ def employee_portal_css() -> str:
     {pp} [data-testid="stMainBlockContainer"],
     {pp} .block-container {{
       max-width: 1140px !important;
-      padding: 100px 2rem 2.5rem !important;
+      padding: 58px 1.5rem 1.5rem !important;
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
@@ -118,16 +118,14 @@ def employee_portal_css() -> str:
       background: #F8FAFC !important;
     }}
 
-    /* —— Top row glass cards (equal height) —— */
+    /* —— Top row premium white cards (equal height) —— */
     {s} .portal-profile-card,
     {s} .portal-action-card {{
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
       border-radius: 18px;
       padding: 1.75rem 1.5rem;
-      box-shadow: 0 8px 28px -8px rgba(30, 41, 59, 0.06);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
       min-height: 220px;
       display: flex;
       flex-direction: column;
@@ -233,7 +231,7 @@ def employee_portal_css() -> str:
 
     /* —— Dashboard metrics —— */
     {s} .portal-dash {{
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }}
     {s} .portal-dash-heading {{
       font-size: 0.72rem;
@@ -323,26 +321,42 @@ def employee_portal_css() -> str:
     {s} .portal-metric-resolved .portal-metric-hint {{ color: #059669; }}
     {s} .portal-metric-total .portal-metric-hint {{ color: #6366F1; }}
 
-    /* —— Queue list alignment —— */
-    {s} .portal-queue-head {{
+    {s} .portal-queue-head-employee {{
       display: grid;
       grid-template-columns: 0.8fr 2.05fr 0.95fr 0.7fr 1.05fr 0.7fr;
-      gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
+      gap: 0.4rem;
+      padding: 0.5rem 0.65rem;
       margin-bottom: 0.35rem;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: #94A3B8;
     }}
+    {pp} [data-testid="stExpander"] [data-testid="stHorizontalBlock"] [data-testid="stColumn"]:last-child {{
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.3rem !important;
+      justify-content: center !important;
+    }}
+    {pp} [class*="st-key-portal_view_"] button {{
+      width: 100% !important;
+      min-height: 1.75rem !important;
+      padding: 0.28rem 0.4rem !important;
+      font-size: 0.68rem !important;
+      margin: 0 !important;
+    }}
+    {pp} [data-testid="stExpander"] [data-testid="stHorizontalBlock"] {{
+      gap: 0.35rem !important;
+    }}
     {pp} [data-testid="stExpander"] [data-testid="stHorizontalBlock"] {{
       align-items: center !important;
-      background: rgba(255, 255, 255, 0.45) !important;
-      border: 1px solid rgba(226, 232, 240, 0.65) !important;
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
       border-radius: 10px !important;
       padding: 0.55rem 0.65rem !important;
       margin-bottom: 0.45rem !important;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
     }}
     {s} .portal-row-id {{
       font-size: 0.72rem;
@@ -411,11 +425,12 @@ def employee_portal_css() -> str:
     /* Empty state */
     {s} .portal-empty-state {{
       text-align: center;
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px dashed #E2E8F0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
       border-radius: 14px;
       padding: 1.75rem 1.25rem;
       margin-bottom: 1rem;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
     }}
     {s} .portal-empty-icon {{ font-size: 1.75rem; margin: 0 0 0.5rem; }}
     {s} .portal-empty-title {{
@@ -451,11 +466,11 @@ def employee_portal_css() -> str:
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-      margin-bottom: 1rem;
+      margin-bottom: 0.65rem;
     }}
-    {s} .itsm-record-top {{ padding: 1.25rem 1.5rem; border-bottom: 1px solid #E2E8F0; }}
-    {s} .itsm-record-key {{ font-size: 0.75rem; font-weight: 700; color: #2563EB; margin: 0 0 0.35rem; }}
-    {s} .itsm-record-title {{ font-size: 1.45rem; font-weight: 800; color: #0F172A; margin: 0 0 0.65rem; }}
+    {s} .itsm-record-top {{ padding: 0.9rem 1.15rem; border-bottom: 1px solid #E2E8F0; }}
+    {s} .itsm-record-key {{ font-size: 0.75rem; font-weight: 700; color: #2563EB; margin: 0 0 0.2rem; }}
+    {s} .itsm-record-title {{ font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 0 0 0.45rem; }}
     {s} .itsm-state-bar {{ display: flex; flex-wrap: wrap; gap: 0.45rem; }}
     {s} .itsm-chip {{ display: inline-block; font-size: 0.72rem; font-weight: 600; border-radius: 4px; padding: 0.2rem 0.5rem; }}
     {s} .itsm-chip-status {{ color: #475569; background: #F1F5F9; }}
@@ -468,7 +483,7 @@ def employee_portal_css() -> str:
     {s} .itsm-meta-cell:nth-child(2n) {{ border-right: none; }}
     {s} .itsm-meta-lbl {{ font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94A3B8; margin: 0 0 0.25rem; }}
     {s} .itsm-meta-val {{ font-size: 0.92rem; font-weight: 600; color: #0F172A; margin: 0; }}
-    {s} .itsm-banner {{ margin: 1rem 1.25rem 0; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.88rem; line-height: 1.45; }}
+    {s} .itsm-banner {{ margin: 0.55rem 1rem 0; padding: 0.7rem 0.9rem; border-radius: 10px; font-size: 0.86rem; line-height: 1.45; }}
     {s} .itsm-banner-info {{ background: #F8FAFC; border: 1px solid #E2E8F0; color: #334155; }}
     {s} .itsm-banner-warn {{ background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }}
     {s} .itsm-banner-ok {{ background: #F8FAFC; border: 1px solid #E2E8F0; color: #334155; }}
@@ -532,12 +547,36 @@ def employee_portal_css() -> str:
       white-space: pre-wrap;
     }}
     {s} .itsm-description-text:last-child {{ margin-bottom: 0; }}
+    {s} .itsm-expander-meta {{
+      margin: 0 0 0.65rem;
+      font-size: 0.85rem;
+      color: #475569;
+    }}
+    {s} .itsm-expander-chip {{
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #1D4ED8;
+      background: #EFF6FF;
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      margin-right: 0.35rem;
+    }}
+    {s} .itsm-resolution-list {{
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #475569;
+      font-size: 0.9rem;
+    }}
 
     {pp} [data-testid="stExpander"] {{
-      background: rgba(255,255,255,0.65) !important;
+      background: #FFFFFF !important;
       border: 1px solid #E2E8F0 !important;
       border-radius: 12px !important;
       margin-bottom: 0.85rem !important;
+      box-shadow: 0 2px 14px rgba(15, 23, 42, 0.05) !important;
     }}
     {pp} [data-testid="stExpander"] summary {{
       font-size: 0.78rem !important;
@@ -546,7 +585,70 @@ def employee_portal_css() -> str:
       text-transform: uppercase !important;
       color: #475569 !important;
       padding: 0.8rem 1rem !important;
-      background: rgba(248,250,252,0.9) !important;
+      background: #FFFFFF !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+    }}
+    {pp} [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{
+      padding: 0.9rem 1rem 1rem !important;
+      background: #FFFFFF !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-record {{
+      border: none !important;
+      box-shadow: none !important;
+      background: #FFFFFF !important;
+    }}
+    {pp} .ticket-detail-view,
+    {pp} [data-testid="stMarkdownContainer"]:has(> div > .ticket-detail-view) {{
+      display: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      line-height: 0 !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-record-top {{
+      border-bottom: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-meta-grid {{
+      border-top: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-meta-cell {{
+      border-color: #F8FAFC !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] {{
+      background: #FFFFFF !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 8px !important;
+      margin-bottom: 0.18rem !important;
+      overflow: hidden !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] summary {{
+      background: #FFFFFF !important;
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+      padding: 0.6rem 0.85rem !important;
+      border-radius: 8px !important;
+      color: #334155 !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"][open] summary {{
+      border-bottom: none !important;
+      border-radius: 8px 8px 0 0 !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{
+      background: #FFFFFF !important;
+      border: none !important;
+      border-top: none !important;
+      padding: 0 0.85rem 0.65rem !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) details {{
+      border: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) details > summary + div {{
+      border-top: none !important;
     }}
     {pp} button[data-testid="stBaseButton-primary"] {{
       background: #2563EB !important;
@@ -572,6 +674,10 @@ def employee_portal_css() -> str:
       background: transparent !important;
       border: none !important;
       color: #64748B !important;
+    }}
+    {pp} [class*="st-key-portal_back_home"],
+    {pp} [class*="st-key-portal_detail_back"] {{
+      margin: 0 0 0.1rem !important;
     }}
     {pp} [class*="st-key-portal_cite_"] button,
     {pp} [class*="st-key-portal_ref_"] button {{
@@ -696,7 +802,7 @@ def employee_portal_css() -> str:
     @media (max-width: 768px) {{
       {pp} [data-testid="stMainBlockContainer"],
       {pp} .block-container {{
-        padding: 88px 1rem 2rem !important;
+        padding: 54px 1rem 1.5rem !important;
       }}
       {s} .portal-topnav {{
         padding: 0 1rem !important;

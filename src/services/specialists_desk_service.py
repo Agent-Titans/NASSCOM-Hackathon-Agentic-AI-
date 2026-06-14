@@ -1,4 +1,17 @@
-"""SecOps-operated Routing Specialists desk — one-hop misroute correction."""
+"""
+Routing Specialists desk — SecOps team fixes AI misroutes in one hop.
+
+Flow (agent portal):
+  1. Dept agent clicks Route → ticket moves to Specialists queue (hand unchanged).
+  2. SecOps reviews Routing context (original dept, reason, requester).
+  3. SecOps either assigns as security work OR picks target dept + Route.
+
+Policy:
+  - One-hop only: already_rerouted_from_specialists() blocks second reroute.
+  - OPERATIONAL_DEPARTMENT_SET validates target queue in O(1).
+
+Audit trail: EVENT_SPECIALIST_* rows in audit_log.details JSON.
+"""
 from __future__ import annotations
 
 import json
@@ -8,9 +21,10 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.config.departments import (
-    OPERATIONAL_DEPARTMENT_QUEUES,
+    OPERATIONAL_DEPARTMENT_SET,
     canonical_department,
     departments_match,
+    display_department,
 )
 from src.config.specialists import (
     EVENT_SPECIALIST_KEPT_SECOPS,
@@ -38,6 +52,17 @@ def can_request_specialist(ticket: Ticket, user: User) -> bool:
         return False
     dept = user.department or ""
     if not departments_match(ticket.department_queue, dept):
+        return False
+    return True
+
+
+def can_employee_request_route_review(ticket: Ticket, user: User) -> bool:
+    """Requester may ask SecOps Routing Specialists to review AI routing."""
+    if ticket.user_id != user.user_id:
+        return False
+    if ticket.status in ("RESOLVED", "CLOSED"):
+        return False
+    if is_specialists_ticket(ticket):
         return False
     return True
 
@@ -130,6 +155,43 @@ def request_specialist_review(
     return True, "Routed to SecOps-operated Routing Specialists desk."
 
 
+def request_employee_route_review(
+    session: Session,
+    ticket: Ticket,
+    user: User,
+    reason: str,
+) -> tuple[bool, str]:
+    """Employee-owned ticket → SecOps Routing Specialists desk with reason."""
+    reason = (reason or "").strip()
+    if len(reason) < MIN_REASON_CHARS:
+        return False, f"Please enter at least {MIN_REASON_CHARS} characters explaining the routing concern."
+    if not can_employee_request_route_review(ticket, user):
+        return False, "This ticket cannot be sent for SecOps routing review."
+
+    from_dept = canonical_department(ticket.department_queue or "")
+    from_hand = ticket.hand or "2"
+    ticket.assignee_id = None
+    ticket.department_queue = SPECIALISTS_QUEUE
+    ticket.status = STATUS_ROUTING_REVIEW
+    session.commit()
+    session.refresh(ticket)
+
+    AuditLogStore(session).record(
+        ticket,
+        EVENT_SPECIALIST_REQUESTED,
+        agent=user.email,
+        details=json.dumps(
+            {
+                "from_dept": from_dept,
+                "from_hand": from_hand,
+                "reason": reason,
+                "requested_by_role": "requester",
+            }
+        ),
+    )
+    return True, "Routed to SecOps-operated Routing Specialists desk for review."
+
+
 def reroute_from_specialists(
     session: Session,
     ticket: Ticket,
@@ -144,7 +206,7 @@ def reroute_from_specialists(
         return False, "This ticket was already rerouted from the specialists desk (one-hop policy)."
 
     target = canonical_department(target_department)
-    if target not in OPERATIONAL_DEPARTMENT_QUEUES:
+    if target not in OPERATIONAL_DEPARTMENT_SET:
         return False, "Choose a valid department queue."
 
     ticket.department_queue = target
@@ -160,6 +222,41 @@ def reroute_from_specialists(
         details=json.dumps({"to_dept": target}),
     )
     return True, f"Rerouted to {target} queue."
+
+
+def reroute_secops_operational(
+    session: Session,
+    ticket: Ticket,
+    user: User,
+    target_department: str,
+) -> tuple[bool, str]:
+    """SecOps agent transfers an operational SecOps-queue ticket to another department."""
+    if user.department != "SecOps":
+        return False, "Only SecOps agents can route from the SecOps queue."
+    if is_specialists_ticket(ticket):
+        return False, "Use the routing specialists desk flow for this ticket."
+    if not departments_match(ticket.department_queue, "SecOps"):
+        return False, "Ticket is not on the SecOps queue."
+    if ticket.status in ("RESOLVED", "CLOSED"):
+        return False, "Ticket is already closed."
+
+    target = canonical_department(target_department)
+    if target not in OPERATIONAL_DEPARTMENT_SET:
+        return False, "Choose a valid department queue."
+
+    ticket.department_queue = target
+    ticket.status = "ROUTED"
+    ticket.assignee_id = None
+    session.commit()
+    session.refresh(ticket)
+
+    AuditLogStore(session).record(
+        ticket,
+        EVENT_SPECIALIST_REROUTED,
+        agent=user.email,
+        details=json.dumps({"to_dept": target, "from": "SecOps"}),
+    )
+    return True, f"Rerouted to {display_department(target)} queue."
 
 
 def keep_specialist_ticket_in_secops(

@@ -3,33 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAARTHI — Routing Test Reports</title>
+<title>SAARTHI — Test Reports</title>
 <style>
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f6f8; color: #1a1a2e; padding: 2rem; max-width: 720px; margin: 0 auto; }
-  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+  body { font-family: system-ui, sans-serif; background: #f4f6f8; color: #1a1a2e; padding: 2rem; max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; }
   p.sub { color: #555; margin-bottom: 1.5rem; }
   ul { list-style: none; padding: 0; }
   li { background: #fff; border: 1px solid #dde3ea; border-radius: 8px; margin-bottom: 0.75rem; padding: 1rem 1.25rem; }
-  li a { font-weight: 600; color: #1B4F72; text-decoration: none; font-size: 1.05rem; }
+  li.highlight { border-color: #0d9488; background: #f0fdfa; }
+  li a { font-weight: 600; color: #0f766e; text-decoration: none; font-size: 1.05rem; }
   li a:hover { text-decoration: underline; }
   .meta { display: block; font-size: 0.85rem; color: #666; margin-top: 0.35rem; }
 </style>
 </head>
 <body>
-<h1>SAARTHI routing test reports</h1>
-<p class="sub">Multi-firm scenario suites · Gemini classifier + RAG · open any report in your browser</p>
+<h1>SAARTHI test reports</h1>
+<p class="sub">Nasscom UC1 pre-judge assessment · open in any browser</p>
 <ul>
-  <li><a href="master100.html">Master 100</a><span class="meta">100 tickets · Capgemini, JP Morgan, HSBC, TCS, NASSCOM, Microsoft, WHDN, Software Office</span></li>
-  <li><a href="capgemini.html">Capgemini 50</a><span class="meta">50 consulting &amp; delivery scenarios</span></li>
-  <li><a href="jpmorgan.html">JP Morgan Tech 30</a><span class="meta">30 banking technology scenarios</span></li>
-  <li><a href="hsbc.html">HSBC India 20</a><span class="meta">20 India banking IT scenarios</span></li>
-  <li><a href="nasscom.html">NASSCOM 20</a><span class="meta">20 hackathon / member firm scenarios</span></li>
-  <li><a href="microsoft.html">Microsoft 20</a><span class="meta">20 Azure / M365 enterprise scenarios</span></li>
-  <li><a href="mixed_whdn.html">Wipro · HCL · Deloitte · Nvidia 20</a><span class="meta">20 mixed-firm scenarios</span></li>
-<li><a href="final_master_report.html">Final master assessment (score)</a></li>
-<li><a href="master50.html">Master 50 — 50 firms</a></li>
-<li><a href="feature_matrix.html">Feature matrix</a></li>
+  <li class="highlight"><a href="cognizant30_report.html">Cognizant30 report (latest)</a><span class="meta">30 tickets · Cognizant Technology Services · F1 · per-agent timing</span></li>
+  <li><a href="master_report.html">Master Assessment — Grand Report</a><span class="meta">50 independent tickets · F1 · LLM jury · per-agent timing · RAI/LLD audit · grand score</span></li>
+  <li><a href="judge50_report.html">Judge50 pre-Nasscom report</a><span class="meta">50 tickets · JPMorgan · HSBC · Microsoft · Nasscom · Wipro · jury score + gaps + rank</span></li>
 </ul>
-<p style="font-size:0.85rem;color:#888;margin-top:2rem;">Setup: <code>docs/COLLEAGUE_SETUP.md</code></p>
+<p style="font-size:0.85rem;color:#888;margin-top:2rem;">
+Run cognizant30: <code>python scripts/cognizant30_assessment.py --live</code><br>
+Run master: <code>python scripts/master_assessment.py --live</code><br>
+Run judge50: <code>python scripts/judge50_assessment.py --live</code><br>
+UI smoke: <code>python scripts/ui_smoke_test.py</code><br>
+Product overview: <code>docs/saarthi_overview.html</code><br>
+Code map: <code>docs/CODE_WALKTHROUGH.md</code><br>
+Setup: <code>docs/COLLEAGUE_SETUP.md</code>
+</p>
 </body>
 </html>

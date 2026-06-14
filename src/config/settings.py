@@ -59,6 +59,11 @@ class Settings(BaseSettings):
 
     routing_rules_path: Path = ROOT_DIR / "config" / "routing_rules.json"
 
+    # Skip Gemini classify when local keyword index is a clear winner (saves ~2–4s/ticket).
+    classifier_keyword_short_circuit: bool = True
+    classifier_keyword_min_score: float = 0.95
+    classifier_keyword_min_gap: float = 0.5
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -52,7 +52,7 @@ class NotificationService:
             recipient=recipient,
             subject=f"Ticket Opened: INC-{short} — {ticket.title}",
             headline="Your ticket has been opened.",
-            subheadline=f"INC-{short} · {ticket.title} · Routed via AI agents",
+            subheadline=f"INC-{short} · {ticket.title} · Routed to {ticket.department_queue or 'queue'}",
             footer_note=(
                 f"This email was sent to {recipient} because ticket INC-{short} "
                 "was submitted on the employee portal."

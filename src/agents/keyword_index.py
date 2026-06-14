@@ -14,25 +14,8 @@ from typing import Dict, List, Tuple
 
 # Use Case 1 categories (LLD) -> representative keywords
 _CATEGORY_KEYWORDS: Dict[str, List[str]] = {
-    "Infrastructure": [
-        "server",
-        "hardware",
-        "printer",
-        "laptop",
-        "charger",
-        "adapter",
-        "battery",
-        "charging",
-        "datacenter",
-        "outage",
-        "docker",
-        "hypervisor",
-        "virtualization",
-        "bios",
-        "virtual machine",
-        "hvci",
-    ],
-    "Application": ["software", "app", "crash", "bug", "install", "update"],
+    "Infrastructure": ["server", "hardware", "printer", "laptop", "charger", "adapter", "battery", "charging", "datacenter", "outage", "docker", "hypervisor", "virtualization", "bios", "virtual machine", "hvci", "intune", "chromebook", "enrollment", "mdm"],
+    "Application": ["software", "app", "crash", "bug", "install", "update", "mes", "finacle", "portal", "seller"],
     "Security": [
         "breach",
         "malware",
@@ -93,7 +76,7 @@ _CATEGORY_KEYWORDS: Dict[str, List[str]] = {
         "traffic",
         "packet",
     ],
-    "Access Management": ["password", "login", "mfa", "access", "account", "permissions", "sso"],
+    "Access Management": ["password", "login", "mfa", "access", "account", "permissions", "sso", "saml", "okta", "workday"],
 }
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
@@ -124,23 +107,32 @@ def build_inverted_index() -> Dict[str, List[Tuple[str, int]]]:
 INVERTED_INDEX = build_inverted_index()
 
 
+def _category_hit_scores(text: str) -> Dict[str, int]:
+    """Raw hit counts per category — O(t * d)."""
+    tokens = _tokenize(text)
+    scores: Dict[str, int] = defaultdict(int)
+    for token in tokens:
+        for category, weight in INVERTED_INDEX.get(token, ()):
+            scores[category] += weight
+    return dict(scores)
+
+
+def score_categories_raw(text: str) -> List[Tuple[str, int]]:
+    """Sorted (category, raw_hits) — for short-circuit gap checks."""
+    scores = _category_hit_scores(text)
+    if not scores:
+        return [("Application", 0)]
+    return sorted(scores.items(), key=lambda x: (-x[1], x[0]))
+
+
 def score_categories(text: str) -> List[Tuple[str, float]]:
     """
     Score each category by token hits — O(t * d).
     Returns sorted list (best first) using counting sort style bucket by score.
     """
-    tokens = _tokenize(text)
-    if not tokens:
-        return []
-
-    scores: Dict[str, int] = defaultdict(int)
-    for token in tokens:
-        for category, weight in INVERTED_INDEX.get(token, ()):
-            scores[category] += weight
-
-    if not scores:
+    ranked = score_categories_raw(text)
+    if not ranked or ranked[0][1] == 0:
         return [("Application", 0.0)]
 
-    ranked = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
     max_score = ranked[0][1] or 1
     return [(cat, hit / max_score) for cat, hit in ranked]

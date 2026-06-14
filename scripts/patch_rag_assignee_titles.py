@@ -12,14 +12,17 @@ CORPUS = ROOT / "data" / "synthetic" / "tickets_1000.json"
 
 # Department → demo agent display names (must match seed_users / demo_profiles)
 DEPT_ASSIGNEES: dict[str, list[str]] = {
+    "Infrastructure": ["Sree", "Kiran", "Vikram"],
     "Hardware": ["Sree", "Kiran", "Vikram"],
+    "Application": ["Subbu", "Sruthi", "Meena", "Anita"],
     "Software": ["Subbu", "Sruthi", "Meena", "Anita"],
     "Network": ["Shashi", "Rahul", "Deepak"],
     "SecOps": ["Narsimha", "Chandana", "Rohan"],
     "Access Management": ["Satya", "Meera"],
     "Identity": ["Satya", "Meera"],
-    "DBA": ["Sagar", "Priya", "Arjun"],
-    "Storage": ["Sagar", "Priya", "Arjun"],
+    "Database": ["Sagar", "Priya"],
+    "DBA": ["Sagar", "Priya"],
+    "Storage": ["Arjun"],
 }
 
 # Legacy hand-picked high-signal titles (kept for stable demo references)
@@ -50,7 +53,7 @@ _ASSIGNEE_IN_TITLE = re.compile(
 
 
 def _pick_assignee(ticket_id: str, department: str) -> str:
-    names = DEPT_ASSIGNEES.get(department) or DEPT_ASSIGNEES.get("Software", ["Subbu"])
+    names = DEPT_ASSIGNEES.get(department) or DEPT_ASSIGNEES.get("Application", ["Subbu"])
     idx = int(ticket_id.split("-")[-1]) % len(names)
     return names[idx]
 
@@ -76,7 +79,7 @@ def main() -> int:
         if tid in TITLE_PATCHES:
             new_title = TITLE_PATCHES[tid]
         else:
-            dept = ticket.get("department") or "Software"
+            dept = ticket.get("department") or "Application"
             assignee = _pick_assignee(tid, dept)
             new_title = _title_with_assignee(ticket["title"], assignee, dept)
 

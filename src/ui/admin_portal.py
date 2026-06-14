@@ -688,7 +688,7 @@ def _render_admin_ticket_detail(user: User, session, ticket_id: str) -> None:
     ticket = TicketStore(session).get(ticket_id)
     if not ticket:
         st.error("Ticket not found.")
-        if st.button("← Back to All Tickets", key="admin_detail_missing_back"):
+        if st.button("← Back to All Tickets", key="admin_detail_missing_back", type="tertiary"):
             st.session_state.pop("admin_ticket_id", None)
             st.rerun()
         return

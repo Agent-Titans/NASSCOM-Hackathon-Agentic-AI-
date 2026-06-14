@@ -15,12 +15,12 @@ Colleague setup: [`docs/COLLEAGUE_SETUP.md`](docs/COLLEAGUE_SETUP.md)
 │   ├── test-reports/        # HTML routing test reports (open index.html)
 │   └── JUDGE_SETUP.md       # Short pointer → COLLEAGUE_SETUP
 ├── src/                 # Application code
-├── scripts/             # bootstrap, ingest, seed, run_app
+├── scripts/             # bootstrap, ingest, seed, run_app, master_assessment, judge50, ui_smoke
 ├── data/
 │   ├── synthetic/       # tickets_1000.json + tickets_1000.csv (RAG corpus)
 │   ├── app.db           # gitignored — local tickets
 │   └── chroma/          # gitignored — vector index
-└── tests/
+└── test-reports/        # HTML assessment reports (open index.html)
 ```
 
 ## Quick start
@@ -85,12 +85,15 @@ python scripts/export_synthetic_corpus_csv.py      # refresh CSV from JSON
 
 Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
 
-**Committed:** code, `data/synthetic/tickets_1000.json`, scripts, tests  
+**Committed:** code, `data/synthetic/tickets_1000.json`, scripts  
 **Not committed:** `data/app.db`, `data/chroma/`, `.env` — each machine runs `bootstrap_rag_environment.py` locally.
 
-## Tests
+## Verify before demo
 
 ```bash
-pytest tests/ -m "not slow" -q
-pytest tests/test_golden_set.py -v
+source .venv/bin/activate
+python scripts/ui_smoke_test.py
+python scripts/judge50_assessment.py
 ```
+
+Open `test-reports/judge50_report.html` for the Nasscom pre-judge report.

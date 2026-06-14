@@ -1,4 +1,15 @@
-"""Find similar resolved tickets — ChromaDB (Gemini embeddings) + keyword fallback."""
+"""
+Find similar resolved tickets for RAG grounding.
+
+Search order (first good match wins):
+  1. ChromaDB vector search — O(log n) approximate nearest neighbours on embeddings.
+  2. In-memory corpus keyword overlap — stemmed Jaccard, O(k) per doc with cached stems.
+  3. SQLite resolved tickets — same Jaccard scorer.
+
+Caches (built once per process):
+  _CORPUS_STEMS: doc_id → set of stemmed tokens  (avoids re-tokenizing 1000+ docs)
+  _indexed_resolved_ids: set of ticket_ids already in Chroma
+"""
 from __future__ import annotations
 
 import json
@@ -52,16 +63,7 @@ _corpus_cache_hydrated = False
 _indexed_resolved_ids: set[str] = set()
 _ensure_index_done = False
 
-# Seed knowledge when DB is sparse (maps to demo playbooks)
-_DEPT_MAP = {
-    "Infrastructure": "Hardware",
-    "Application": "Software",
-    "Security": "SecOps",
-    "Database": "DBA",
-    "Storage": "DBA",
-    "Network": "Network",
-    "Access Management": "Access Management",
-}
+from src.config.departments import CATEGORY_TO_DEPARTMENT as _DEPT_MAP
 
 
 def _keyword_overlap(query: str, candidate: str) -> float:
@@ -249,8 +251,14 @@ class TicketRetrievalService:
             .limit(200)
             .all()
         )
-        pending = [t for t in tickets if t.ticket_id not in _indexed_resolved_ids]
-        if pending and self.chroma.available and self.chroma.count < 50:
+        pending = [
+            t
+            for t in tickets
+            if t.ticket_id not in _indexed_resolved_ids
+            and not _is_corpus_id(t.ticket_id)
+            and not t.ticket_id.startswith("syn-")
+        ]
+        if pending and self.chroma.available:
             ticket_ids = [t.ticket_id for t in pending]
             artifacts = {
                 row.ticket_id: row
@@ -358,10 +366,29 @@ class TicketRetrievalService:
         )
         resolved_q = session.query(Ticket).filter(Ticket.status == "RESOLVED")
         if settings.rag_corpus_mode.lower() == "synthetic":
-            resolved_q = resolved_q.filter(Ticket.ticket_id.like("syn-%"))
-        resolved = (
-            resolved_q.order_by(Ticket.updated_at.desc()).limit(resolved_limit).all()
-        )
+            syn_resolved = (
+                resolved_q.filter(Ticket.ticket_id.like("syn-%"))
+                .order_by(Ticket.updated_at.desc())
+                .limit(resolved_limit)
+                .all()
+            )
+            live_resolved = (
+                session.query(Ticket)
+                .filter(
+                    Ticket.status == "RESOLVED",
+                    ~Ticket.ticket_id.like("syn-%"),
+                )
+                .order_by(Ticket.updated_at.desc())
+                .limit(50)
+                .all()
+            )
+            resolved = syn_resolved + [
+                t for t in live_resolved if not _is_corpus_id(t.ticket_id)
+            ]
+        else:
+            resolved = (
+                resolved_q.order_by(Ticket.updated_at.desc()).limit(resolved_limit).all()
+            )
         min_resolved_overlap = (
             0.12 if settings.rag_corpus_mode.lower() == "synthetic" else 0.0
         )
@@ -559,7 +586,7 @@ class TicketRetrievalService:
             if sid.startswith("rag-"):
                 dept = str(demo_ticket_routing(sid, category, hand)["department_queue"])
             else:
-                dept = _DEPT_MAP.get(category, "Software")
+                dept = _DEPT_MAP.get(category, "Application")
             sub = "kb_seed" if sid.startswith("kb-") else f"rag_demo_h{hand}"
             hint = confidence_hint_from_similarity(score)
             low_grounding = is_low_grounding_similarity(score)
@@ -635,7 +662,7 @@ class TicketRetrievalService:
                 matched_ticket_id=ticket_id,
                 matched_source_hand=ticket_hand,
             ),
-            department_queue=ticket.department_queue or _DEPT_MAP.get(category, "Software"),
+            department_queue=ticket.department_queue or _DEPT_MAP.get(category, "Application"),
             source=source,
             source_hand=ticket_hand,
         )

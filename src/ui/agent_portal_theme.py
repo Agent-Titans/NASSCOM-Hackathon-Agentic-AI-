@@ -22,7 +22,7 @@ def agent_portal_css() -> str:
     {pp} [data-testid="stMainBlockContainer"],
     {pp} .block-container {{
       max-width: 1180px !important;
-      padding: 100px 2rem 2.5rem !important;
+      padding: 58px 1.5rem 1.5rem !important;
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
@@ -104,13 +104,11 @@ def agent_portal_css() -> str:
 
     {s} .portal-profile-card,
     {s} .agent-queue-card {{
-      background: rgba(255, 255, 255, 0.58);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
       border-radius: 18px;
       padding: 1.75rem 1.5rem;
-      box-shadow: 0 8px 28px -8px rgba(30, 41, 59, 0.06);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
       min-height: 220px;
       display: flex;
       flex-direction: column;
@@ -203,7 +201,7 @@ def agent_portal_css() -> str:
       min-width: 0;
     }}
 
-    {s} .portal-dash {{ margin-bottom: 1.25rem; }}
+    {s} .portal-dash {{ margin-bottom: 0.85rem; }}
     {s} .portal-dash-heading {{
       font-size: 0.72rem;
       font-weight: 700;
@@ -337,11 +335,12 @@ def agent_portal_css() -> str:
     }}
     {pp} [data-testid="stExpander"] [data-testid="stHorizontalBlock"] {{
       align-items: center !important;
-      background: rgba(255, 255, 255, 0.5) !important;
-      border: 1px solid rgba(226, 232, 240, 0.65) !important;
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
       border-radius: 10px !important;
       padding: 0.5rem 0.6rem !important;
       margin-bottom: 0.4rem !important;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
     }}
     {s} .portal-row-id {{
       font-size: 0.7rem;
@@ -418,11 +417,12 @@ def agent_portal_css() -> str:
 
     {s} .portal-empty-state {{
       text-align: center;
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px dashed #E2E8F0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
       border-radius: 14px;
       padding: 1.75rem 1.25rem;
       margin-bottom: 1rem;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
     }}
     {s} .portal-empty-icon {{ font-size: 1.75rem; margin: 0 0 0.5rem; }}
     {s} .portal-empty-title {{ font-size: 1rem; font-weight: 700; color: #475569; margin: 0 0 0.25rem; }}
@@ -434,11 +434,11 @@ def agent_portal_css() -> str:
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-      margin-bottom: 1rem;
+      margin-bottom: 0.65rem;
     }}
-    {s} .itsm-record-top {{ padding: 1.25rem 1.5rem; border-bottom: 1px solid #E2E8F0; }}
-    {s} .itsm-record-key {{ font-size: 0.75rem; font-weight: 700; color: #0D9488; margin: 0 0 0.35rem; }}
-    {s} .itsm-record-title {{ font-size: 1.45rem; font-weight: 800; color: #0F172A; margin: 0 0 0.65rem; }}
+    {s} .itsm-record-top {{ padding: 0.9rem 1.15rem; border-bottom: 1px solid #E2E8F0; }}
+    {s} .itsm-record-key {{ font-size: 0.75rem; font-weight: 700; color: #0D9488; margin: 0 0 0.2rem; }}
+    {s} .itsm-record-title {{ font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 0 0 0.45rem; }}
     {s} .itsm-state-bar {{ display: flex; flex-wrap: wrap; gap: 0.45rem; }}
     {s} .itsm-chip {{ display: inline-block; font-size: 0.72rem; font-weight: 600; border-radius: 4px; padding: 0.2rem 0.5rem; }}
     {s} .itsm-chip-status {{ color: #475569; background: #F1F5F9; }}
@@ -450,14 +450,14 @@ def agent_portal_css() -> str:
     {s} .itsm-meta-cell:nth-child(2n) {{ border-right: none; }}
     {s} .itsm-meta-lbl {{ font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94A3B8; margin: 0 0 0.25rem; }}
     {s} .itsm-meta-val {{ font-size: 0.92rem; font-weight: 600; color: #0F172A; margin: 0; }}
-    {s} .itsm-banner {{ margin: 1rem 1.25rem 0; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.88rem; }}
+    {s} .itsm-banner {{ margin: 0.55rem 1rem 0; padding: 0.7rem 0.9rem; border-radius: 8px; font-size: 0.86rem; }}
     {s} .itsm-banner-info {{ background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }}
     {s} .itsm-banner-warn {{ background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }}
     {s} .itsm-banner-ref {{ background: #F5F3FF; border: 1px solid #DDD6FE; color: #5B21B6; margin-bottom: 0.85rem; }}
     {s} .itsm-banner-ok {{ background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }}
     {s} .itsm-cite-plain {{ margin: 0 0 0.35rem; font-size: 0.85rem; color: #64748B; }}
     {s} .itsm-cite-muted {{ color: #94A3B8; font-size: 0.78rem; }}
-    {s} .itsm-section-title {{ font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; margin: 0 0 0.65rem; }}
+    {s} .itsm-section-title {{ font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #64748B; margin: 0 0 0.45rem; }}
     {s} .itsm-section {{
       background: #FAFAFA;
       border: 1px solid #E2E8F0;
@@ -465,20 +465,332 @@ def agent_portal_css() -> str:
       padding: 1rem 1.15rem;
       margin-bottom: 0.85rem;
     }}
+    {s} .itsm-secops-badge {{
+      width: 50%;
+      margin: 0.04rem auto 0;
+      padding: 0.2rem 0.3rem;
+      text-align: center;
+      background: linear-gradient(180deg, #DBEAFE 0%, #EFF6FF 100%);
+      border: 1px solid #93C5FD;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      font-size: 0.54rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #1E3A8A;
+      line-height: 1.15;
+    }}
+    {s} .itsm-detail-actions-title {{
+      margin-top: 0.15rem !important;
+      margin-bottom: 0.35rem !important;
+    }}
+    {s} .itsm-dept-route-heading {{
+      margin-top: 0.45rem !important;
+      margin-bottom: 0.35rem !important;
+    }}
+    {s} .itsm-secops-badge strong {{
+      font-weight: 900;
+    }}
+    {s} .itsm-route-toolbar {{
+      margin: 0.35rem 0 0.65rem;
+      padding: 0.75rem 1rem 0.35rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(239,246,255,0.85) 100%);
+      border: 1px solid #DBEAFE;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(37, 99, 235, 0.06);
+    }}
+    {s} .itsm-route-toolbar-title {{
+      margin: 0;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1E40AF;
+    }}
+    {s} .itsm-expander-meta {{
+      margin: 0 0 0.75rem;
+      font-size: 0.86rem;
+      color: #334155;
+      line-height: 1.45;
+    }}
+    {s} .itsm-expander-chip {{
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      margin-right: 0.35rem;
+      border-radius: 6px;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }}
+    {s} .itsm-description-text {{
+      margin: 0;
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }}
+    {s} .itsm-resolution-list {{
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }}
+    {s} .itsm-premium-select-head {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin: 0.5rem 0 0.35rem;
+      padding: 0.55rem 0.75rem;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    }}
+    {s} .itsm-premium-select-lbl {{
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748B;
+    }}
+    {s} .itsm-premium-select-chevron {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      flex-shrink: 0;
+    }}
+    {s} .itsm-premium-dropdown-panel {{
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 0.65rem 0.75rem 0.35rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }}
+    {s} .itsm-premium-dropdown-title {{
+      margin: 0 0 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748B;
+    }}
+    {s} .itsm-view-only-panel {{
+      background: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+    }}
+
+    {pp} [data-testid="stPopover"] button {{
+      width: 100% !important;
+      background: #FFFFFF !important;
+      border: 1.5px solid #E2E8F0 !important;
+      border-radius: 10px !important;
+      color: #0F172A !important;
+      font-weight: 600 !important;
+      font-size: 0.88rem !important;
+      min-height: 2.5rem !important;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+      justify-content: space-between !important;
+    }}
+    {pp} [data-testid="stPopover"] button:hover {{
+      border-color: #93C5FD !important;
+      background: #F8FAFC !important;
+    }}
+    {pp} [data-testid="stPopoverBody"] {{
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+      padding: 0.5rem !important;
+    }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-agent_detail_assign"]) {{
+      align-items: flex-start !important;
+      gap: 0.55rem !important;
+      margin-bottom: 0.35rem !important;
+    }}
+    {pp} [data-testid="stColumn"]:has([class*="st-key-agent_route_btn_"]) {{
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+    }}
+    {pp} [data-testid="stHorizontalBlock"]:has([class*="st-key-dept_route_select_"]) {{
+      align-items: flex-end !important;
+      gap: 0.6rem !important;
+      margin: 0 !important;
+    }}
+    {pp} [class*="st-key-agent_route_btn_"] {{
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }}
+    {pp} [class*="st-key-agent_route_btn_"] button {{
+      width: 100% !important;
+      min-height: 2.45rem !important;
+      border-radius: 8px 8px 0 0 !important;
+      margin: 0 !important;
+      font-weight: 800 !important;
+    }}
+    {pp} [class*="st-key-agent_detail_assign"] button,
+    {pp} [class*="st-key-agent_detail_resolve"] button,
+    {pp} [class*="st-key-agent_detail_release"] button {{
+      min-height: 2.45rem !important;
+    }}
+    {pp} [data-testid="stMarkdownContainer"]:has(.itsm-secops-badge) {{
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] {{
+      margin: 0 !important;
+      padding: 0 !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stWidgetLabel"] p {{
+      font-size: 0.65rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
+      color: #94A3B8 !important;
+      margin-bottom: 0.25rem !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stSelectbox"] > div {{
+      background: #FFFFFF !important;
+      border: 1.5px solid #CBD5E1 !important;
+      border-radius: 10px !important;
+      min-height: 2.45rem !important;
+      box-shadow: none !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stSelectbox"] [data-baseweb="select"] {{
+      min-height: 2.45rem !important;
+      background: transparent !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stSelectbox"] [data-baseweb="select"] > div {{
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
+      color: #0F172A !important;
+      padding: 0.45rem 0.65rem !important;
+      line-height: 1.35 !important;
+      white-space: nowrap !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stSelectbox"] [data-baseweb="select"] > div > div {{
+      color: #0F172A !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #0F172A !important;
+    }}
+    {pp} [class*="st-key-dept_route_select_"] [data-testid="stSelectbox"] svg {{
+      display: block !important;
+      width: 1rem !important;
+      height: 1rem !important;
+      flex-shrink: 0 !important;
+      color: #64748B !important;
+      fill: currentColor !important;
+    }}
+    {pp} [class*="st-key-dept_route_btn_"] {{
+      margin: 0 !important;
+      padding: 0 !important;
+    }}
+    {pp} [class*="st-key-dept_route_btn_"] button {{
+      min-height: 2.45rem !important;
+      font-weight: 800 !important;
+      border-radius: 10px !important;
+      margin-top: 1.38rem !important;
+    }}
+    {pp} .ticket-detail-view,
+    {pp} [data-testid="stMarkdownContainer"]:has(> div > .ticket-detail-view) {{
+      display: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      line-height: 0 !important;
+    }}
 
     {pp} [data-testid="stExpander"] {{
-      background: rgba(255,255,255,0.65) !important;
+      background: #FFFFFF !important;
       border: 1px solid #E2E8F0 !important;
       border-radius: 12px !important;
       margin-bottom: 0.85rem !important;
+      box-shadow: 0 2px 14px rgba(15, 23, 42, 0.05) !important;
+      overflow: hidden !important;
     }}
     {pp} [data-testid="stExpander"] summary {{
       font-size: 0.78rem !important;
       font-weight: 700 !important;
       letter-spacing: 0.06em !important;
       text-transform: uppercase !important;
-      color: #475569 !important;
-      padding: 0.8rem 1rem !important;
+      color: #334155 !important;
+      padding: 0.85rem 1rem !important;
+      background: #FFFFFF !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+    }}
+    {pp} [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{
+      padding: 0.9rem 1rem 1rem !important;
+      background: #FFFFFF !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-record {{
+      border: none !important;
+      box-shadow: none !important;
+      background: #FFFFFF !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-record-top {{
+      border-bottom: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-meta-grid {{
+      border-top: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) .itsm-meta-cell {{
+      border-color: #F8FAFC !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] {{
+      background: #FFFFFF !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 8px !important;
+      margin-bottom: 0.18rem !important;
+      overflow: hidden !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] summary {{
+      background: #FFFFFF !important;
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+      padding: 0.6rem 0.85rem !important;
+      border-radius: 8px !important;
+      color: #334155 !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"][open] summary {{
+      border-bottom: none !important;
+      border-radius: 8px 8px 0 0 !important;
+    }}
+    {pp}:has(.ticket-detail-view) [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{
+      background: #FFFFFF !important;
+      border: none !important;
+      border-top: none !important;
+      padding: 0 0.85rem 0.65rem !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) details {{
+      border: none !important;
+    }}
+    {pp}:has(.ticket-detail-view) details > summary + div {{
+      border-top: none !important;
+    }}
+    {pp} [class*="st-key-agent_detail_back_ref"],
+    {pp} [class*="st-key-agent_detail_back_dashboard"] {{
+      margin: 0 0 0.1rem !important;
     }}
     {pp} button[data-testid="stBaseButton-primary"] {{
       background: #0D9488 !important;
@@ -523,7 +835,7 @@ def agent_portal_css() -> str:
     }}
     @media (max-width: 768px) {{
       {pp} [data-testid="stMainBlockContainer"],
-      {pp} .block-container {{ padding: 88px 1rem 2rem !important; }}
+      {pp} .block-container {{ padding: 54px 1rem 1.5rem !important; }}
       {s} .portal-metrics {{ grid-template-columns: 1fr !important; }}
       {s} .portal-queue-head {{ display: none !important; }}
       {pp} [data-testid="stElementContainer"][class*="st-key-agent_signout"] {{
