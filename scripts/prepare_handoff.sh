@@ -30,20 +30,20 @@ print(f'OK  live={live} syn={syn} chroma={c.count} email={cfg.email_notification
 "
 
 echo ""
-echo "=== 3. Colleague clone steps (on new machine) ==="
+echo "=== 3. Nasscom jury setup (new machine) ==="
 cat <<'EOF'
-  git clone <repo-url>
-  cd "Final Round Hackathon"
+  git clone https://github.com/Agent-Titans/NASSCOM-Hackathon-Agentic-AI-.git
+  cd NASSCOM-Hackathon-Agentic-AI- && git checkout final-round-hackathon
   bash scripts/setup_venv.sh && source .venv/bin/activate
   cp .env.example .env    # add GOOGLE_API_KEY
   python scripts/bootstrap_rag_environment.py
   bash scripts/run_app.sh
-  # Password: 1234 — see docs/COLLEAGUE_SETUP.md
+  # Password: 1234 — full guide: docs/NASSCOM_JUDGE_SETUP.md
 EOF
 
 echo ""
 echo "=== 4. Open test reports ==="
-echo "  test-reports/index.html  (Classifier Fix · Judge Pro · Clear50)"
+echo "  test-reports/index.html  (Demo20 · business doc)"
 
 echo ""
 echo "Handoff ready. Chroma is local-only (gitignored); colleague runs bootstrap to build it."

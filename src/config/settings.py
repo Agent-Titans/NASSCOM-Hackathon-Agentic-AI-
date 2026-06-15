@@ -63,7 +63,7 @@ class Settings(BaseSettings):
 
     # Gemini classifies first. When True, only "Security incident:" prefix short-circuits.
     classifier_keyword_short_circuit: bool = True
-    gemini_classify_max_output_tokens: int = 1024
+    gemini_classify_max_output_tokens: int = 512
     gemini_http_retries: int = 2
     classifier_keyword_min_score: float = 0.95
     classifier_keyword_min_gap: float = 0.5

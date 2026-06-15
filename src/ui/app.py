@@ -38,6 +38,7 @@ from src.db.session import get_session_factory, init_db
 from src.services.retrieval_bootstrap import start_retrieval_warm_background
 from src.services.ticket_service import TicketService
 from src.stores.ticket_store import TicketStore
+from src.ui.pipeline_progress import streamlit_pipeline_status
 from src.ui import components as ui
 
 THEME = ROOT / "assets" / "theme.css"
@@ -227,8 +228,8 @@ def page_new_request(user: User) -> None:
                 ticket = TicketStore(session).create(
                     user, title.strip(), description.strip(), urgency
                 )
-                with st.spinner("Guardrail → Classify → Route → Resolve → Supervisor…"):
-                    result = TicketService(session).process_ticket(ticket)
+                with streamlit_pipeline_status(label="Routing ticket…") as on_stage:
+                    result = TicketService(session).process_ticket(ticket, on_stage=on_stage)
                 hl, _, _ = HAND_DISPLAY[result.decision.hand]
                 st.session_state["flash"] = (
                     f"Routed to {hl} · {result.classification.use_case_category}"

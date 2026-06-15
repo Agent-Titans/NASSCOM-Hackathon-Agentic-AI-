@@ -17,17 +17,18 @@
 </style>
 </head>
 <body>
-<h1>SAARTHI — Validation reports</h1>
-<p class="sub">Fresh-machine live routing · open in any browser</p>
+<h1>SAARTHI — Nasscom jury reports</h1>
+<p class="sub">Open in any browser · setup: <code>docs/NASSCOM_JUDGE_SETUP.md</code></p>
 <ul>
-  <li class="highlight"><a href="clear50_report.html">Clear15 — Clear-title validation</a><span class="meta">15 tickets · 93% pass · F1 0.93 · avg 17.9s · fresh bootstrap · gemini-2.5-flash + lite fallback</span></li>
-  <li><a href="jury100_report.html">Jury100 (deferred)</a><span class="meta">Incomplete 429-heavy run — not for jury handoff</span></li>
+  <li class="highlight"><a href="demo20_report.html">Demo20 — Jury demo validation</a><span class="meta">20 tickets · 80% pass · F1 0.78 · avg 11.5s · LLM jury 8.5/10 · security 3/3 · UI smoke PASS</span></li>
+  <li><a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.html">Business documentation</a><span class="meta">Product overview, team, responsible AI, integrations, roadmap</span></li>
+  <li><a href="../docs/saarthi_overview.html">Product overview</a><span class="meta">What / why / how</span></li>
 </ul>
 <p style="font-size:0.85rem;color:#888;margin-top:2rem;">
-Run Clear15: <code>python scripts/clear50_assessment.py --live --fresh --limit 15 --delay 2.0</code><br>
-Fresh setup: <code>python scripts/bootstrap_rag_environment.py</code><br>
-UI smoke: <code>python scripts/ui_smoke_test.py</code><br>
-Setup: <code>docs/COLLEAGUE_SETUP.md</code> · Business doc: <a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.html">HTML</a> · <a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.pdf">PDF</a>
+Setup: <code>docs/NASSCOM_JUDGE_SETUP.md</code><br>
+Scenarios: <code>data/set_demo20_scenarios.json</code><br>
+Re-run: <code>python scripts/demo20_assessment.py --live --fresh --delay 2.0</code><br>
+UI smoke: <code>python scripts/ui_smoke_test.py</code>
 </p>
 </body>
 </html>

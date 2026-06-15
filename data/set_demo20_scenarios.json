@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "description": "Demo20 — 20 clear-title jury demo tickets (password, VPN, printer, security, apps, network, DB). Single-intent titles for live Nasscom demo.",
+  "cases": [
+    {
+      "id": "DM01",
+      "title": "Forgot password — cannot login to employee portal",
+      "description": "I forgot my password and cannot login to the employee self-service portal. Account may be locked after too many attempts. Need password reset guidance.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Hand 1 self-help password"
+    },
+    {
+      "id": "DM02",
+      "title": "VPN error 807 — cannot connect from home",
+      "description": "VPN client fails with error 807 when connecting from home network. Worked yesterday. Need remote access restored for client call.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "VPN network"
+    },
+    {
+      "id": "DM03",
+      "title": "Printer paper jam on 3rd floor",
+      "description": "HP printer on 3rd floor shows paper jam error. Cannot print payslips for payroll deadline. Tried opening trays, jam persists.",
+      "urgency": "medium",
+      "expect": { "hand": "1", "department": "Infrastructure", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Printer infrastructure"
+    },
+    {
+      "id": "DM04",
+      "title": "Security incident: AWS secret key found on public GitHub",
+      "description": "Security incident: developer accidentally committed AWS access key to public GitHub repository. Key must be rotated immediately. Possible unauthorized access.",
+      "urgency": "critical",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "SecOps H3"
+    },
+    {
+      "id": "DM05",
+      "title": "Microsoft Teams not launching after update",
+      "description": "Microsoft Teams crashes on launch after Windows update overnight. Error code 0xc0000142. Cannot join customer meetings.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Application", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Teams application"
+    },
+    {
+      "id": "DM06",
+      "title": "Outlook keeps prompting for password",
+      "description": "Outlook desktop repeatedly asks for password even after entering correct credentials. Modern authentication loop. Email sync stopped.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Application", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Outlook application"
+    },
+    {
+      "id": "DM07",
+      "title": "Office Wi-Fi disconnected — laptop cannot join CORP network",
+      "description": "Laptop cannot connect to office CORP Wi-Fi. Authentication fails with incorrect password though password works on wired dock.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Wi-Fi network"
+    },
+    {
+      "id": "DM08",
+      "title": "SAP GUI login failed — user locked",
+      "description": "SAP GUI shows login failed and user locked in production client. Finance month-end posting blocked for my user ID.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Application", "category": "Application" },
+      "acceptable_hands": ["2"],
+      "notes": "SAP application"
+    },
+    {
+      "id": "DM09",
+      "title": "Reporting database connection timeout",
+      "description": "Custom reporting app returns database connection timeout when running monthly sales report. SQL Server HRPROD listener may be down.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Database", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database timeout"
+    },
+    {
+      "id": "DM10",
+      "title": "Shared file server disk full — cannot save files",
+      "description": "Users cannot save files to \\\\fileserver\\finance share. Disk full alert at 99 percent. Payroll uploads failing.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Storage", "category": "Storage" },
+      "acceptable_hands": ["2"],
+      "notes": "Storage capacity"
+    },
+    {
+      "id": "DM11",
+      "title": "New hire badge not working at main entrance",
+      "description": "New hire smart badge denied at main entrance turnstile. HR confirmed onboarding complete. Badge shows active in photos but door reader flashes red.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Badge access"
+    },
+    {
+      "id": "DM12",
+      "title": "Security incident: phishing email with malware attachment",
+      "description": "Security incident: employee clicked phishing email with malware attachment. Endpoint detection flagged suspicious process. Machine isolated pending triage.",
+      "urgency": "critical",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "SecOps phishing"
+    },
+    {
+      "id": "DM13",
+      "title": "Laptop extremely slow after Windows update",
+      "description": "Corporate laptop very slow after cumulative Windows update. CPU at 100 percent. Cannot open Excel files for budget review.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Infrastructure", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Endpoint performance"
+    },
+    {
+      "id": "DM14",
+      "title": "Cannot access shared network drive S:",
+      "description": "Mapped drive S: unavailable. Network path not found when opening finance shared folder. VPN is connected.",
+      "urgency": "medium",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2"],
+      "notes": "SMB / network path"
+    },
+    {
+      "id": "DM15",
+      "title": "Zoom no audio in meetings",
+      "description": "Zoom meetings connect but no audio in or out. Headset works in Teams. Zoom audio settings show wrong microphone device.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Application", "category": "Application" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Zoom application"
+    },
+    {
+      "id": "DM16",
+      "title": "Internal portal SSL certificate expired",
+      "description": "Browser shows certificate expired warning on internal HR portal https://hr.company.local. Employees cannot submit leave requests.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Network", "category": "Network" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "TLS certificate"
+    },
+    {
+      "id": "DM17",
+      "title": "MFA SMS code not received",
+      "description": "Multi-factor authentication SMS codes not arriving for VPN login. Tried twice with correct mobile number on file.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Access Management", "category": "Access Management" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "MFA access"
+    },
+    {
+      "id": "DM18",
+      "title": "Security incident: suspicious login from unknown country",
+      "description": "Security incident: Okta alert for successful login from unknown country on executive account outside business hours. Possible account compromise.",
+      "urgency": "critical",
+      "expect": { "hand": "3", "department": "SecOps", "category": "Security" },
+      "acceptable_hands": ["3"],
+      "notes": "SecOps identity"
+    },
+    {
+      "id": "DM19",
+      "title": "External monitor not detected on docking station",
+      "description": "Dell dock does not detect external monitors after laptop reconnect. Display settings show laptop screen only. Tried different HDMI cable.",
+      "urgency": "low",
+      "expect": { "hand": "1", "department": "Infrastructure", "category": "Infrastructure" },
+      "acceptable_hands": ["1", "2"],
+      "notes": "Dock hardware"
+    },
+    {
+      "id": "DM20",
+      "title": "Nightly SQL backup job failed",
+      "description": "SQL Server Agent backup job for FINANCE_DB failed last night with disk IO error. DBA needs investigation before tonight's run.",
+      "urgency": "high",
+      "expect": { "hand": "2", "department": "Database", "category": "Database" },
+      "acceptable_hands": ["2", "3"],
+      "notes": "Database backup"
+    }
+  ]
+}

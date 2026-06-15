@@ -1,0 +1,809 @@
+{
+  "evaluated_at": "2026-06-15T10:53:44.607775+00:00",
+  "suite": "Demo20",
+  "summary": {
+    "total": 20,
+    "passed": 16,
+    "pass_rate": 0.8,
+    "security_hand_ok": 3,
+    "security_total": 3,
+    "security_downgrades": 0,
+    "avg_latency_sec": 11.46,
+    "grand_score": 82.1
+  },
+  "f1_department": {
+    "macro_f1": 0.781,
+    "micro_f1": 0.8,
+    "per_label": {
+      "Access Management": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      "Application": {
+        "precision": 0.75,
+        "recall": 0.75,
+        "f1": 0.75,
+        "support": 4
+      },
+      "Database": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.667,
+        "support": 2
+      },
+      "Infrastructure": {
+        "precision": 0.667,
+        "recall": 0.667,
+        "f1": 0.667,
+        "support": 3
+      },
+      "Network": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.857,
+        "support": 4
+      },
+      "SecOps": {
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.857,
+        "support": 3
+      },
+      "Storage": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.667,
+        "support": 1
+      }
+    }
+  },
+  "latency": {
+    "avg": 11.46,
+    "p50": 13.64,
+    "p90": 29.14,
+    "min": 0.72,
+    "max": 30.1
+  },
+  "agent_timing": {
+    "guardrail": {
+      "avg_ms": 7,
+      "max_ms": 19,
+      "samples": 20
+    },
+    "retrieval": {
+      "avg_ms": 784,
+      "max_ms": 1057,
+      "samples": 20
+    },
+    "classifier": {
+      "avg_ms": 4966,
+      "max_ms": 16155,
+      "samples": 20
+    },
+    "router": {
+      "avg_ms": 5,
+      "max_ms": 12,
+      "samples": 20
+    },
+    "resolver": {
+      "avg_ms": 6947,
+      "max_ms": 18895,
+      "samples": 16
+    },
+    "supervisor": {
+      "avg_ms": 5,
+      "max_ms": 11,
+      "samples": 20
+    },
+    "resolution_format": {
+      "avg_ms": 5,
+      "max_ms": 11,
+      "samples": 20
+    },
+    "_pipeline_avg_ms": 12719
+  },
+  "source_mix": {
+    "gemini": 13,
+    "keyword": 7
+  },
+  "llm_judge": {
+    "overall": 8.5,
+    "verdict": "SAARTHI ITSM presents a robust solution with excellent security and architectural adherence, demonstrating good performance, though its classification accuracy requires further refinement.",
+    "use_case_alignment": 7.5,
+    "lld_alignment": 9.0,
+    "responsible_ai": 7.5,
+    "ethical_ai": 7.0,
+    "security_posture": 9.5,
+    "evaluation_rigor": 9.0,
+    "strengths": [
+      "Exceptional security posture with zero H3 downgrades.",
+      "Strong architectural adherence, scoring 9.2/10 on the checklist.",
+      "Efficient performance with a low average latency of 11.46 seconds.",
+      "Effective hybrid classification leveraging both Gemini AI and keyword matching."
+    ],
+    "improvements": [
+      "Enhance classification accuracy to reduce misroutes, specifically addressing the identified failures between departments like Infrastructure/Application and Network/SecOps.",
+      "Increase the overall routing pass rate beyond 80% for critical demo tickets."
+    ],
+    "source": "gemini"
+  },
+  "architecture": {
+    "LLD Pipeline Order": {
+      "score": 10.0,
+      "detail": "Guardrail \u2192 Retrieval \u2192 Classifier \u2192 Router \u2192 Resolver \u2192 Supervisor (ticket_service.py)"
+    },
+    "Deterministic Routing": {
+      "score": 10.0,
+      "detail": "RouterAgent uses cached routing_rules.json \u2014 O(1) hash lookup, no LLM"
+    },
+    "Security Guardrail": {
+      "score": 9.5,
+      "detail": "PII redaction + injection regex + Gemini scan; pipeline halt on SECURITY_FAIL"
+    },
+    "Privacy / PII": {
+      "score": 9.5,
+      "detail": "Email, phone, secrets redacted before retrieval and downstream LLM"
+    },
+    "Responsible AI": {
+      "score": 9.2,
+      "detail": "low_grounding flags, Hand 3 human review, audit trail per agent step"
+    },
+    "Ethical AI": {
+      "score": 9.0,
+      "detail": "No auto-assign without grace period; transparent hand/department on every ticket"
+    },
+    "RAG Grounding": {
+      "score": 9.0,
+      "detail": "Chroma + keyword Jaccard + rag_gate trusted match before Hand 1"
+    },
+    "Scalability": {
+      "score": 8.8,
+      "detail": "Chroma ANN O(log n), process caches, background index warm, SQLite \u2192 Postgres-ready ORM"
+    },
+    "Cost Efficiency": {
+      "score": 9.0,
+      "detail": "Local ONNX embeddings (MiniLM), keyword short-circuit, resolver skips LLM on RAG hit"
+    },
+    "Open Source / Offline": {
+      "score": 8.5,
+      "detail": "RAG_EMBEDDING_BACKEND=local, Chroma, keyword index \u2014 demo without embed API"
+    },
+    "API Integration Ready": {
+      "score": 9.0,
+      "detail": "Gemini client swappable; settings-driven models; SMTP hooks for notifications"
+    },
+    "Dynamic Configuration": {
+      "score": 8.7,
+      "detail": "routing_rules.json, supervisor_mode, rag_corpus_mode, department taxonomy via config"
+    },
+    "UC1 Use Case Alignment": {
+      "score": 9.3,
+      "detail": "Three Hands, dept queues, employee + agent + admin portals, specialists desk"
+    }
+  },
+  "ui": {
+    "ok": true,
+    "checks": 18,
+    "output": "OK   employee_home: buttons=23 expanders=2\nOK   employee_create: buttons=3 expanders=0\nOK   employee_detail: buttons=3 expanders=1\nOK   agent_home: buttons=9 expanders=1\nOK   agent_detail: buttons=6 expanders=2\nOK   admin_home: buttons=5 expanders=0\nOK   admin_all_tickets: buttons=7 expanders=0\nOK   admin_audit: buttons=6 expanders=0\nOK   admin_ticket_detail: buttons=2 expanders=0\nOK   secops_specialists_detail: buttons=6 expanders=3\nOK   secops_regular_detail: buttons=6 expanders=2\nOK   employee_url_restore\nOK   agent_url_restore\n---\nApple QA (logic checks)\nOK   qa_operational_set\nOK   qa_security_map\nOK   qa_category_count\nOK   qa_can_route\nOK   qa_specialists_detect\n---\nAll UI smoke checks passed\n"
+  },
+  "cases": [
+    {
+      "case_id": "DM01",
+      "title": "Forgot password \u2014 cannot login to employee portal",
+      "description": "I forgot my password and cannot login to the employee self-service portal. Account may be locked after too many attempts. Need password reset guidance.",
+      "urgency": "medium",
+      "expected_hand": "1",
+      "expected_department": "Access Management",
+      "expected_category": "Access Management",
+      "actual_hand": "1",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "status": "SELF_HELP",
+      "latency_sec": 13.64,
+      "agent_ms": {
+        "guardrail": 11,
+        "retrieval": 878,
+        "classifier": 12318,
+        "router": 10,
+        "resolver": 9,
+        "supervisor": 11,
+        "resolution_format": 8
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Hand 1 self-help password"
+    },
+    {
+      "case_id": "DM02",
+      "title": "VPN error 807 \u2014 cannot connect from home",
+      "description": "VPN client fails with error 807 when connecting from home network. Worked yesterday. Need remote access restored for client call.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "expected_category": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 3.9,
+      "agent_ms": {
+        "guardrail": 9,
+        "retrieval": 845,
+        "classifier": 2820,
+        "router": 10,
+        "resolver": 9,
+        "supervisor": 9,
+        "resolution_format": 9
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "VPN network"
+    },
+    {
+      "case_id": "DM03",
+      "title": "Printer paper jam on 3rd floor",
+      "description": "HP printer on 3rd floor shows paper jam error. Cannot print payslips for payroll deadline. Tried opening trays, jam persists.",
+      "urgency": "medium",
+      "expected_hand": "1",
+      "expected_department": "Infrastructure",
+      "expected_category": "Infrastructure",
+      "actual_hand": "2",
+      "actual_department": "Infrastructure",
+      "actual_category": "Infrastructure",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 4.49,
+      "agent_ms": {
+        "guardrail": 11,
+        "retrieval": 759,
+        "classifier": 3531,
+        "router": 9,
+        "resolver": 7,
+        "supervisor": 9,
+        "resolution_format": 8
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Printer infrastructure"
+    },
+    {
+      "case_id": "DM04",
+      "title": "Security incident: AWS secret key found on public GitHub",
+      "description": "Security incident: developer accidentally committed AWS access key to public GitHub repository. Key must be rotated immediately. Possible unauthorized access.",
+      "urgency": "critical",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "expected_category": "Security",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "status": "ESCALATED",
+      "latency_sec": 1.02,
+      "agent_ms": {
+        "guardrail": 16,
+        "retrieval": 782,
+        "classifier": 8,
+        "router": 8,
+        "supervisor": 8,
+        "resolution_format": 8
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "SecOps H3"
+    },
+    {
+      "case_id": "DM05",
+      "title": "Microsoft Teams not launching after update",
+      "description": "Microsoft Teams crashes on launch after Windows update overnight. Error code 0xc0000142. Cannot join customer meetings.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "expected_category": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 15.74,
+      "agent_ms": {
+        "guardrail": 10,
+        "retrieval": 722,
+        "classifier": 3255,
+        "router": 11,
+        "resolver": 11495,
+        "supervisor": 10,
+        "resolution_format": 8
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Teams application"
+    },
+    {
+      "case_id": "DM06",
+      "title": "Outlook keeps prompting for password",
+      "description": "Outlook desktop repeatedly asks for password even after entering correct credentials. Modern authentication loop. Email sync stopped.",
+      "urgency": "medium",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "expected_category": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "keyword",
+      "status": "ROUTED",
+      "latency_sec": 18.99,
+      "agent_ms": {
+        "guardrail": 11,
+        "retrieval": 1057,
+        "classifier": 4344,
+        "router": 12,
+        "resolver": 13370,
+        "supervisor": 10,
+        "resolution_format": 8
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Outlook application"
+    },
+    {
+      "case_id": "DM07",
+      "title": "Office Wi-Fi disconnected \u2014 laptop cannot join CORP network",
+      "description": "Laptop cannot connect to office CORP Wi-Fi. Authentication fails with incorrect password though password works on wired dock.",
+      "urgency": "medium",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "expected_category": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 29.14,
+      "agent_ms": {
+        "guardrail": 19,
+        "retrieval": 758,
+        "classifier": 16155,
+        "router": 11,
+        "resolver": 11936,
+        "supervisor": 11,
+        "resolution_format": 10
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Wi-Fi network"
+    },
+    {
+      "case_id": "DM08",
+      "title": "SAP GUI login failed \u2014 user locked",
+      "description": "SAP GUI shows login failed and user locked in production client. Finance month-end posting blocked for my user ID.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "expected_category": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 14.67,
+      "agent_ms": {
+        "guardrail": 15,
+        "retrieval": 747,
+        "classifier": 3628,
+        "router": 10,
+        "resolver": 10068,
+        "supervisor": 11,
+        "resolution_format": 11
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "SAP application"
+    },
+    {
+      "case_id": "DM09",
+      "title": "Reporting database connection timeout",
+      "description": "Custom reporting app returns database connection timeout when running monthly sales report. SQL Server HRPROD listener may be down.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "expected_category": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 3.91,
+      "agent_ms": {
+        "guardrail": 14,
+        "retrieval": 696,
+        "classifier": 3071,
+        "router": 3,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Database timeout"
+    },
+    {
+      "case_id": "DM10",
+      "title": "Shared file server disk full \u2014 cannot save files",
+      "description": "Users cannot save files to \\\\fileserver\\finance share. Disk full alert at 99 percent. Payroll uploads failing.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Storage",
+      "expected_category": "Storage",
+      "actual_hand": "2",
+      "actual_department": "Storage",
+      "actual_category": "Storage",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 4.67,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 859,
+        "classifier": 3725,
+        "router": 3,
+        "resolver": 3,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Storage capacity"
+    },
+    {
+      "case_id": "DM11",
+      "title": "New hire badge not working at main entrance",
+      "description": "New hire smart badge denied at main entrance turnstile. HR confirmed onboarding complete. Badge shows active in photos but door reader flashes red.",
+      "urgency": "medium",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "expected_category": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 17.23,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 658,
+        "classifier": 2731,
+        "router": 2,
+        "resolver": 13766,
+        "supervisor": 2,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Badge access"
+    },
+    {
+      "case_id": "DM12",
+      "title": "Security incident: phishing email with malware attachment",
+      "description": "Security incident: employee clicked phishing email with malware attachment. Endpoint detection flagged suspicious process. Machine isolated pending triage.",
+      "urgency": "critical",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "expected_category": "Security",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "status": "ESCALATED",
+      "latency_sec": 0.83,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 757,
+        "classifier": 2,
+        "router": 3,
+        "supervisor": 2,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "SecOps phishing"
+    },
+    {
+      "case_id": "DM13",
+      "title": "Laptop extremely slow after Windows update",
+      "description": "Corporate laptop very slow after cumulative Windows update. CPU at 100 percent. Cannot open Excel files for budget review.",
+      "urgency": "medium",
+      "expected_hand": "2",
+      "expected_department": "Infrastructure",
+      "expected_category": "Infrastructure",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "keyword",
+      "status": "ROUTED",
+      "latency_sec": 14.26,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 922,
+        "classifier": 3660,
+        "router": 2,
+        "resolver": 9616,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "category_ok": false,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": false,
+      "notes": "Endpoint performance"
+    },
+    {
+      "case_id": "DM14",
+      "title": "Cannot access shared network drive S:",
+      "description": "Mapped drive S: unavailable. Network path not found when opening finance shared folder. VPN is connected.",
+      "urgency": "medium",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "expected_category": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 5.19,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 1041,
+        "classifier": 4080,
+        "router": 3,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "SMB / network path"
+    },
+    {
+      "case_id": "DM15",
+      "title": "Zoom no audio in meetings",
+      "description": "Zoom meetings connect but no audio in or out. Headset works in Teams. Zoom audio settings show wrong microphone device.",
+      "urgency": "low",
+      "expected_hand": "1",
+      "expected_department": "Application",
+      "expected_category": "Application",
+      "actual_hand": "2",
+      "actual_department": "Infrastructure",
+      "actual_category": "Infrastructure",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 30.1,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 868,
+        "classifier": 10252,
+        "router": 2,
+        "resolver": 18895,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "category_ok": false,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": false,
+      "notes": "Zoom application"
+    },
+    {
+      "case_id": "DM16",
+      "title": "Internal portal SSL certificate expired",
+      "description": "Browser shows certificate expired warning on internal HR portal https://hr.company.local. Employees cannot submit leave requests.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "expected_category": "Network",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "status": "ESCALATED",
+      "latency_sec": 5.17,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 665,
+        "classifier": 4429,
+        "router": 4,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "category_ok": false,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": false,
+      "notes": "TLS certificate"
+    },
+    {
+      "case_id": "DM17",
+      "title": "MFA SMS code not received",
+      "description": "Multi-factor authentication SMS codes not arriving for VPN login. Tried twice with correct mobile number on file.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "expected_category": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 13.26,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 667,
+        "classifier": 12529,
+        "router": 2,
+        "resolver": 2,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "MFA access"
+    },
+    {
+      "case_id": "DM18",
+      "title": "Security incident: suspicious login from unknown country",
+      "description": "Security incident: Okta alert for successful login from unknown country on executive account outside business hours. Possible account compromise.",
+      "urgency": "critical",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "expected_category": "Security",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "status": "ESCALATED",
+      "latency_sec": 0.72,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 624,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 4,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "SecOps identity"
+    },
+    {
+      "case_id": "DM19",
+      "title": "External monitor not detected on docking station",
+      "description": "Dell dock does not detect external monitors after laptop reconnect. Display settings show laptop screen only. Tried different HDMI cable.",
+      "urgency": "low",
+      "expected_hand": "1",
+      "expected_department": "Infrastructure",
+      "expected_category": "Infrastructure",
+      "actual_hand": "2",
+      "actual_department": "Infrastructure",
+      "actual_category": "Infrastructure",
+      "classify_source": "gemini",
+      "status": "ROUTED",
+      "latency_sec": 15.49,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 666,
+        "classifier": 3266,
+        "router": 5,
+        "resolver": 11483,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "category_ok": true,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": true,
+      "notes": "Dock hardware"
+    },
+    {
+      "case_id": "DM20",
+      "title": "Nightly SQL backup job failed",
+      "description": "SQL Server Agent backup job for FINANCE_DB failed last night with disk IO error. DBA needs investigation before tonight's run.",
+      "urgency": "high",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "expected_category": "Database",
+      "actual_hand": "2",
+      "actual_department": "Storage",
+      "actual_category": "Storage",
+      "classify_source": "keyword",
+      "status": "ROUTED",
+      "latency_sec": 16.82,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 716,
+        "classifier": 5514,
+        "router": 4,
+        "resolver": 10500,
+        "supervisor": 4,
+        "resolution_format": 7
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "category_ok": false,
+      "security_hand_ok": true,
+      "security_downgrade": false,
+      "pass": false,
+      "notes": "Database backup"
+    }
+  ]
+}

@@ -304,7 +304,21 @@ All architecture decisions, security policies, routing rules, and validation res
 2. *Printer paper jam* → Hand 1/2 · Infrastructure  
 3. *AWS secret on public GitHub* → Hand 3 · SecOps  
 
-**Setup:** `docs/COLLEAGUE_SETUP.md` · **Reports:** `test-reports/index.html`
+**Setup:** `docs/NASSCOM_JUDGE_SETUP.md` · **Reports:** `test-reports/index.html`
+
+---
+
+## 14. Future roadmap (Round 3 / production)
+
+| Initiative | Benefit |
+|------------|---------|
+| **Parallel retrieval + classify** | Lower wall-clock latency without changing LLD agent boundaries |
+| **Merged classify/resolve draft** | Single Gemini call for simple tickets when RAG is weak |
+| **Duplicate-ticket fast cache** | String/fingerprint match bypasses full pipeline for repeat intents |
+| **True token streaming UI** | `streamGenerateContent` + progressive step rendering |
+| **Background notify/webhooks** | Non-blocking SMTP, ServiceNow, Teams integrations |
+
+**Demo20 validation:** `data/set_demo20_scenarios.json` · `test-reports/demo20_report.html`
 
 ---
 

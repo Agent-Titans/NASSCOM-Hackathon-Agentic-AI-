@@ -10,6 +10,8 @@ import time
 from dataclasses import replace
 from typing import Callable, Optional, TypeVar
 
+StageCallback = Callable[[str, str], None]
+
 from sqlalchemy.orm import Session
 
 from src.agents.classifier import ClassifierAgent
@@ -56,8 +58,21 @@ class TicketService:
         self.retrieval = TicketRetrievalService()
         self.resolution_formatter = ResolutionFormatter()
 
-    def _timed(self, ticket: Ticket, agent: str, fn: Callable[[], T]) -> T:
+    @staticmethod
+    def _notify_stage(on_stage: Optional[StageCallback], agent: str, phase: str) -> None:
+        if on_stage:
+            on_stage(agent, phase)
+
+    def _timed(
+        self,
+        ticket: Ticket,
+        agent: str,
+        fn: Callable[[], T],
+        *,
+        on_stage: Optional[StageCallback] = None,
+    ) -> T:
         """Run step and record duration in audit — O(1) log write."""
+        self._notify_stage(on_stage, agent, "start")
         start = time.perf_counter()
         self.audit.record(ticket, "agent_started", agent=agent)
         try:
@@ -66,6 +81,7 @@ class TicketService:
             self.audit.record(
                 ticket, "agent_completed", agent=agent, duration_ms=ms
             )
+            self._notify_stage(on_stage, agent, "complete")
             return out
         except Exception as exc:
             ms = int((time.perf_counter() - start) * 1000)
@@ -78,7 +94,12 @@ class TicketService:
             )
             raise
 
-    def process_ticket(self, ticket: Ticket) -> PipelineResult:
+    def process_ticket(
+        self,
+        ticket: Ticket,
+        *,
+        on_stage: Optional[StageCallback] = None,
+    ) -> PipelineResult:
         """
         Run Guardrail → Classifier → Router → Resolver → Supervisor.
 
@@ -97,7 +118,9 @@ class TicketService:
         # GUARDRAIL — PII redaction and injection scan before retrieval/classify
         # ------------------------------------------------------------------
         try:
+            self._notify_stage(on_stage, "guardrail", "start")
             sanitized = self._run_guardrail(ticket, agent_run)
+            self._notify_stage(on_stage, "guardrail", "complete")
         except SecurityGuardrailException as exc:
             # Hard stop: classifier, router, and resolver are not invoked.
             return self._security_halt(ticket, agent_run, exc)
@@ -111,6 +134,7 @@ class TicketService:
                 retrieval_text,
                 exclude_ticket_id=ticket.ticket_id,
             ),
+            on_stage=on_stage,
         )
         rag_gate = evaluate_rag_match(raw_similar, query_text=retrieval_text)
         trusted_similar = rag_gate.trusted
@@ -151,6 +175,7 @@ class TicketService:
             lambda: self.classifier.classify(
                 sanitized, trusted_similar, title=ticket.title
             ),
+            on_stage=on_stage,
         )
         self.agent_runs.mark_classification(agent_run, ok=True)
         self.audit.record(
@@ -168,6 +193,7 @@ class TicketService:
             ticket,
             "router",
             lambda: self.router.route(classification, ticket.urgency),
+            on_stage=on_stage,
         )
         self.agent_runs.mark_routing(agent_run, ok=True)
 
@@ -188,6 +214,7 @@ class TicketService:
                 agent="resolver",
                 details="skipped_llm_resolver",
             )
+            self._notify_stage(on_stage, "resolver", "complete")
             self.agent_runs.mark_resolver(agent_run, ok=True)
         else:
             resolution = self._timed(
@@ -196,6 +223,7 @@ class TicketService:
                 lambda: self.resolver.resolve(
                     sanitized, classification, routing, trusted_similar
                 ),
+                on_stage=on_stage,
             )
             resolution = replace(resolution, references=retrieval_references)
             self.agent_runs.mark_resolver(agent_run, ok=True)
@@ -217,6 +245,7 @@ class TicketService:
                 historical_success=historical,
                 urgency=ticket.urgency,
             ),
+            on_stage=on_stage,
         )
         self.agent_runs.mark_supervisor(agent_run, ok=True)
 
@@ -232,6 +261,7 @@ class TicketService:
                 trusted_similar=trusted_similar,
                 pipeline_started_at=pipeline_started_at,
             ),
+            on_stage=on_stage,
         )
 
         before_auto = len(resolution.steps)

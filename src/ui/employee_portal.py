@@ -30,6 +30,7 @@ from src.ui import components as ui
 from src.ui.citation_refs import render_resolution_references
 from src.ui.comments_ui import render_ticket_comments
 from src.ui.employee_portal_theme import employee_portal_css
+from src.ui.pipeline_progress import streamlit_pipeline_status
 from src.ui.scroll_top import inject_scroll_to_top
 from src.ui.ticket_display import (
     assignee_name,
@@ -651,8 +652,8 @@ def render_portal_create(user: User, session) -> None:
 
     try:
         ticket = TicketStore(session).create(user, title.strip(), full_description, urgency)
-        with st.spinner("Routing through Guardrail → Classify → Route → Resolve → Supervisor…"):
-            result = TicketService(session).process_ticket(ticket)
+        with streamlit_pipeline_status() as on_stage:
+            result = TicketService(session).process_ticket(ticket, on_stage=on_stage)
         session.refresh(ticket)
 
         hand = result.decision.hand

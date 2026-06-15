@@ -1,103 +1,75 @@
 # SAARTHI — IT ticket routing
 
-**SAARTHI** · Five AI agents → Three Hands. Nascom final round hackathon.
+**SAARTHI** · Five AI agents → Three Hands · Nasscom Agentic AI Hackathon 2026 (UC1)
 
-Colleague setup: [`docs/COLLEAGUE_SETUP.md`](docs/COLLEAGUE_SETUP.md)
+**Jury setup:** [`docs/NASSCOM_JUDGE_SETUP.md`](docs/NASSCOM_JUDGE_SETUP.md)
 
 ## Folder map
 
 ```
-├── design/              # Submitted LLD & architecture (source of truth)
+├── design/              # LLD & architecture (source of truth)
 ├── docs/
-│   ├── COLLEAGUE_SETUP.md   # ★ clone → bootstrap → demo (share with team)
-│   ├── SUBMISSION.md        # Submission layout + archived extras pointer
-│   ├── DEMO_CHECKLIST.md    # Jury walkthrough
-│   ├── SAARTHI_BUSINESS_DOCUMENTATION.pdf  # Business / jury overview (PDF)
-│   ├── SAARTHI_BUSINESS_DOCUMENTATION.html # Same content (print-ready)
-│   ├── PORTAL_UC1_ASSESSMENT.md
-│   └── JUDGE_SETUP.md       # Short pointer → COLLEAGUE_SETUP
+│   ├── NASSCOM_JUDGE_SETUP.md   # ★ jury clone → bootstrap → demo
+│   ├── SUBMISSION.md            # What ships in this repo
+│   ├── DEMO_CHECKLIST.md        # Pre-jury walkthrough
+│   ├── SAARTHI_BUSINESS_DOCUMENTATION.html  # Business jury pack
+│   └── saarthi_overview.html    # Product overview
 ├── src/                 # Application code
-├── scripts/             # bootstrap, ingest, run_app, 3 assessment suites, ui_smoke
+├── scripts/             # bootstrap, demo20_assessment, ui_smoke, run_app
 ├── data/
-│   ├── synthetic/       # tickets_1000.json + tickets_1000.csv (RAG corpus)
-│   ├── set_jury100_scenarios.json   # Nasscom self-eval (100 tickets)
+│   ├── synthetic/tickets_1000.json      # RAG corpus (1000 resolved tickets)
+│   ├── set_demo20_scenarios.json      # 20 jury demo tickets
 │   ├── app.db           # gitignored — local tickets
 │   └── chroma/          # gitignored — vector index
-└── test-reports/        # jury100_report.html + index.html
+└── test-reports/        # demo20_report.html + index.html
 ```
 
-## Quick start
-
-**Python 3.10+** (`pyproject.toml`). On Mac:
+## Quick start (judges)
 
 ```bash
-brew install python@3.11
-bash scripts/setup_venv.sh
-source .venv/bin/activate
+git clone https://github.com/Agent-Titans/NASSCOM-Hackathon-Agentic-AI-.git
+cd NASSCOM-Hackathon-Agentic-AI- && git checkout final-round-hackathon
+bash scripts/setup_venv.sh && source .venv/bin/activate
 cp .env.example .env          # set GOOGLE_API_KEY
-pip install -r requirements-ai.txt
-python scripts/bootstrap_rag_environment.py   # SQLite + Chroma + 1k corpus
+python scripts/bootstrap_rag_environment.py
 bash scripts/run_app.sh
 ```
 
-**Stop Streamlit** before bootstrap if the app is already running.
-
-Models: `gemini-2.5-flash` (classify/resolve) · Chroma uses **Gemini** `gemini-embedding-001` (default). Set `RAG_EMBEDDING_BACKEND=local` only for offline fallback.
+Open **http://localhost:8501** · Password: **`1234`**
 
 ## Demo logins
 
-**Password:** `1234` for all accounts.
+| Portal | Email | Password |
+|--------|-------|----------|
+| Employee | `pallavi@user` | 1234 |
+| Agent | `subbu@employee` | 1234 |
+| SecOps | `narsimha@employee` | 1234 |
+| Admin | `admin@employee` | 1234 |
 
-| Portal | Example emails |
-|--------|----------------|
-| Employee | `pallavi@user`, `gajanan@user`, `requester@demo.local` |
-| Agent | `sree@employee` (Hardware), `narsimha@employee` (SecOps) |
-| Admin | `admin@employee` |
+## Try these tickets (employee portal)
 
-Full list: `src/config/demo_auth.py`
+1. **Forgot password** → Hand 1 · Access Management  
+2. **Printer paper jam** → Hand 2 · Infrastructure  
+3. **Security incident: AWS secret on GitHub** → Hand 3 · SecOps  
 
-## Try these subjects
+Full list: `data/set_demo20_scenarios.json`
 
-- **Password reset** → Hand 1 Self-Help (guided steps)
-- **Printer jam** → Hand 2 Team Assist (department queue)
-- **Security breach** → Hand 3 Specialist (SecOps, no auto steps)
+## Validation reports
 
-## RAG corpus
-
-- **1,000 synthetic RESOLVED tickets** in `data/synthetic/tickets_1000.json` (+ **`tickets_1000.csv`** for Excel)
-- **SQLite** — transactional + RESOLVED metadata
-- **ChromaDB** — **Gemini** embedding vectors for retrieval (`RAG_EMBEDDING_BACKEND=gemini`)
-
-Sample titles reference demo assignees (Sree, Subbu, Narsimha, etc.) for realistic RAG matches.
-
-Re-ingest only:
+Open **`test-reports/index.html`** in a browser — Demo20 F1, LLM jury, latency, security.
 
 ```bash
-python scripts/ingest_synthetic_corpus.py          # rebuild Chroma + SQLite syn-*
-python scripts/ingest_synthetic_corpus.py --smoke  # + retrieval smoke test
-```
-
-Extra datasets and historical reports: `~/Desktop/SAARTHI-submission-archive/` (see `docs/SUBMISSION.md`).
-
-## New teammate
-
-1. **`docs/COLLEAGUE_SETUP.md`** — environment + bootstrap (share this)
-2. **`test-reports/index.html`** — routing accuracy reports
-3. `design/LLD.html` — architecture source of truth
-
-## Git sync
-
-Active branch: `final-round-hackathon` — `git pull` before work, `git push` when done.
-
-**Committed:** code, `data/synthetic/tickets_1000.json`, scripts  
-**Not committed:** `data/app.db`, `data/chroma/`, `.env` — each machine runs `bootstrap_rag_environment.py` locally.
-
-## Verify before demo
-
-```bash
-source .venv/bin/activate
 python scripts/ui_smoke_test.py
 bash scripts/prepare_handoff.sh
 ```
 
-Open `test-reports/index.html` — **Jury100** self-evaluation (F1, LLM jury, latency).
+## Documentation
+
+| Doc | Purpose |
+|-----|---------|
+| `docs/NASSCOM_JUDGE_SETUP.md` | Machine setup for judges |
+| `docs/SAARTHI_BUSINESS_DOCUMENTATION.html` | Business + technical overview |
+| `design/LLD.html` | Low-level design |
+| `docs/SUBMISSION.md` | Submission layout |
+
+**Not committed:** `.env`, `data/app.db`, `data/chroma/` — bootstrap locally per machine.
