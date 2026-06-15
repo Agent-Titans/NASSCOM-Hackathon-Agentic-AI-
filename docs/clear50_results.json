@@ -1,0 +1,456 @@
+{
+  "evaluated_at": "2026-06-15T09:36:04.020957+00:00",
+  "suite": "Clear15",
+  "limit": 15,
+  "summary": {
+    "total": 15,
+    "passed": 14,
+    "pass_rate": 0.933,
+    "source": "live",
+    "started_at": "2026-06-15T09:36:04.017772+00:00"
+  },
+  "f1": {
+    "macro_f1": 0.931,
+    "micro_f1": 0.933,
+    "per_label": {
+      "Access Management": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      "Application": {
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.857,
+        "support": 3
+      },
+      "Database": {
+        "precision": 1.0,
+        "recall": 0.667,
+        "f1": 0.8,
+        "support": 3
+      },
+      "Network": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      "SecOps": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      }
+    }
+  },
+  "latency": {
+    "avg": 17.86,
+    "p50": 16.63,
+    "p90": 32.75,
+    "min": 0.73,
+    "max": 41.64
+  },
+  "agent_timing": {
+    "guardrail": {
+      "avg_ms": 3,
+      "max_ms": 7,
+      "samples": 15
+    },
+    "retrieval": {
+      "avg_ms": 792,
+      "max_ms": 1277,
+      "samples": 15
+    },
+    "classifier": {
+      "avg_ms": 4061,
+      "max_ms": 14202,
+      "samples": 15
+    },
+    "router": {
+      "avg_ms": 3,
+      "max_ms": 6,
+      "samples": 15
+    },
+    "resolver": {
+      "avg_ms": 16151,
+      "max_ms": 37521,
+      "samples": 12
+    },
+    "supervisor": {
+      "avg_ms": 4,
+      "max_ms": 5,
+      "samples": 15
+    },
+    "resolution_format": {
+      "avg_ms": 2,
+      "max_ms": 4,
+      "samples": 15
+    },
+    "_pipeline_avg_ms": 21016
+  },
+  "source_mix": {
+    "gemini": 12,
+    "keyword": 3
+  },
+  "cases": [
+    {
+      "case_id": "BO01",
+      "firm": "Boeing",
+      "title": "Windchill PLM checkout fails for engineering drawings",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 16.63,
+      "agent_ms": {
+        "guardrail": 7,
+        "retrieval": 579,
+        "classifier": 4917,
+        "router": 4,
+        "resolver": 10974,
+        "supervisor": 5,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "BO02",
+      "firm": "Boeing",
+      "title": "Oracle manufacturing database redo log archive full",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 25.72,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 1277,
+        "classifier": 3573,
+        "router": 4,
+        "resolver": 20779,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "pass": false
+    },
+    {
+      "case_id": "BO03",
+      "firm": "Boeing",
+      "title": "Contractor badge access expired for flight line zone",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 12.65,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 626,
+        "classifier": 3530,
+        "router": 5,
+        "resolver": 8398,
+        "supervisor": 5,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "BO04",
+      "firm": "Boeing",
+      "title": "WAN link down between Renton and supplier portal",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 19.59,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 874,
+        "classifier": 7520,
+        "router": 3,
+        "resolver": 11113,
+        "supervisor": 4,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "BO05",
+      "firm": "Boeing",
+      "title": "Security incident: suspicious login on supplier portal admin",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.85,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 772,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "CT01",
+      "firm": "Caterpillar",
+      "title": "SAP PM work order screen freeze after save",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 32.75,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 816,
+        "classifier": 2992,
+        "router": 4,
+        "resolver": 28853,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "CT02",
+      "firm": "Caterpillar",
+      "title": "SQL Server tempdb growth on parts inventory DB",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 41.64,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 634,
+        "classifier": 3410,
+        "router": 4,
+        "resolver": 37521,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "CT03",
+      "firm": "Caterpillar",
+      "title": "New hire Active Directory account not syncing to email",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 15.08,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 787,
+        "classifier": 14202,
+        "router": 3,
+        "resolver": 4,
+        "supervisor": 5,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "CT04",
+      "firm": "Caterpillar",
+      "title": "Plant floor Wi-Fi SSID not broadcasting in Building 7",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 4.35,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 839,
+        "classifier": 3436,
+        "router": 2,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "CT05",
+      "firm": "Caterpillar",
+      "title": "Security incident: malware on dealer portal web server",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 1.13,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 1056,
+        "classifier": 2,
+        "router": 4,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "FX01",
+      "firm": "FedEx",
+      "title": "Package tracking web app returns 500 on scan events",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 15.95,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 801,
+        "classifier": 3128,
+        "router": 4,
+        "resolver": 11938,
+        "supervisor": 4,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "FX02",
+      "firm": "FedEx",
+      "title": "MongoDB shard chunk migration stuck on routing DB",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 23.3,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 701,
+        "classifier": 3282,
+        "router": 4,
+        "resolver": 19230,
+        "supervisor": 4,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "FX03",
+      "firm": "FedEx",
+      "title": "Driver mobile app SSO token expired after device swap",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 29.43,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 584,
+        "classifier": 7034,
+        "router": 6,
+        "resolver": 21719,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "FX04",
+      "firm": "FedEx",
+      "title": "SD-WAN failover failed at Memphis hub edge",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 28.14,
+      "agent_ms": {
+        "guardrail": 2,
+        "retrieval": 887,
+        "classifier": 3886,
+        "router": 2,
+        "resolver": 23282,
+        "supervisor": 3,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    },
+    {
+      "case_id": "FX05",
+      "firm": "FedEx",
+      "title": "Security incident: ransomware alert on file server share",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.73,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 651,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true
+    }
+  ]
+}

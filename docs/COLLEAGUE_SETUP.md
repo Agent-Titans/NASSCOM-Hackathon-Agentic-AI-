@@ -1,6 +1,6 @@
 # Colleague setup — SAARTHI (Use Case 1)
 
-**Goal:** Clone → bootstrap RAG → run app → verify with Judge50 assessment.  
+**Goal:** Clone → bootstrap RAG → run app → verify with HTML test reports.  
 **Time:** ~10 minutes first run (Gemini batch embed for 1006 corpus vectors).
 
 ---
@@ -26,14 +26,10 @@ Open **http://localhost:8501** · Password: **`1234`**
 ```bash
 source .venv/bin/activate
 python scripts/ui_smoke_test.py              # all portals (19 checks)
-python scripts/master_assessment.py          # cached Master50 grand report
-python scripts/judge50_assessment.py         # cached Judge50 Nasscom report
-# python scripts/master_assessment.py --live --fresh   # full independent 50-ticket run (~12 min)
+bash scripts/prepare_handoff.sh              # clear live tickets + verify
 ```
 
-Open **`test-reports/master_report.html`** — grand score, F1, LLM jury, per-agent timing, RAI/LLD audit.  
-Open **`test-reports/judge50_report.html`** — Nasscom firm-specific jury score and gaps.  
-Methodology write-up: **`docs/MASTER_ASSESSMENT_METHODOLOGY.md`**
+Open **`test-reports/jury100_report.html`** and **`docs/JURY100_SELF_EVALUATION.md`**.
 
 ---
 
@@ -60,15 +56,15 @@ Methodology write-up: **`docs/MASTER_ASSESSMENT_METHODOLOGY.md`**
 
 ---
 
-## Judge50 test suite
+## Validation suite (submission)
 
-**50 tickets** across 5 firms (10 each): JPMorgan Tech, HSBC Tech, Microsoft, Nasscom, Wipro.
+| Suite | Script | Outputs |
+|-------|--------|---------|
+| **Jury100** | `scripts/jury100_assessment.py` | `test-reports/jury100_report.html`, `docs/JURY100_SELF_EVALUATION.md` |
 
-| File | Purpose |
-|------|---------|
-| `data/set_judge50_scenarios.json` | Scenario definitions |
-| `docs/judge50_results.json` | Latest routing results |
-| `test-reports/judge50_report.html` | Pre-Nasscom jury report |
+100 tickets: Microsoft, HSBC Tech, JPMorgan Tech, Capgemini (25 each).
+
+Historical artifacts: `~/Desktop/SAARTHI-submission-archive/`
 
 ---
 
@@ -81,7 +77,7 @@ Methodology write-up: **`docs/MASTER_ASSESSMENT_METHODOLOGY.md`**
 | `src/ui/app.py` | Streamlit entry |
 | `src/services/ticket_service.py` | Five-step pipeline |
 | `src/ui/agent_portal.py` | Agent workspace + Route |
-| `scripts/judge50_assessment.py` | Full assessment + HTML report |
+| `scripts/jury100_assessment.py` | 100-ticket Nasscom self-evaluation + HTML/MD |
 
 ---
 

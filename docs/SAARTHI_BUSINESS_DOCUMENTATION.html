@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAARTHI — Business Documentation</title>
+<style>
+  :root {
+    --navy: #0f172a;
+    --blue: #0369a1;
+    --teal: #0d9488;
+    --slate: #475569;
+    --border: #e2e8f0;
+    --bg: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--navy);
+    line-height: 1.55;
+    font-size: 10.5pt;
+    background: #f1f5f9;
+  }
+  .page {
+    max-width: 210mm;
+    margin: 0 auto;
+    background: var(--bg);
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  }
+  @media print {
+    body { background: #fff; font-size: 10pt; }
+    .page { box-shadow: none; max-width: none; margin: 0; }
+    .no-print { display: none !important; }
+    section { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    table { break-inside: avoid; }
+  }
+  @page { size: A4; margin: 18mm 16mm; }
+
+  .cover {
+    min-height: 260mm;
+    background: linear-gradient(145deg, #0c4a6e 0%, #0369a1 40%, #7c3aed 100%);
+    color: #fff;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+  }
+  .cover .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: .35rem 1rem;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+  .cover h1 { font-size: 3.2rem; font-weight: 900; letter-spacing: -.03em; margin-bottom: .5rem; }
+  .cover .subtitle { font-size: 1.25rem; opacity: .95; max-width: 28rem; margin-bottom: 2rem; }
+  .cover .meta { font-size: .85rem; opacity: .85; margin-top: auto; line-height: 1.8; }
+  .cover .ai-note {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0,0,0,.2);
+    border-radius: 10px;
+    font-size: .82rem;
+    border-left: 4px solid #fbbf24;
+  }
+
+  .content { padding: 2rem 2.25rem 3rem; }
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--blue);
+    margin: 1.75rem 0 .75rem;
+    padding-bottom: .35rem;
+    border-bottom: 2px solid var(--border);
+  }
+  h2:first-child { margin-top: 0; }
+  h3 { font-size: .95rem; font-weight: 700; margin: 1rem 0 .4rem; color: var(--navy); }
+  p { color: var(--slate); margin-bottom: .65rem; }
+  ul { margin: .4rem 0 .75rem 1.2rem; color: var(--slate); }
+  li { margin-bottom: .25rem; }
+
+  .exec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .65rem;
+    margin: 1rem 0;
+  }
+  .exec-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem;
+    text-align: center;
+  }
+  .exec-card .num { font-size: 1.4rem; font-weight: 800; color: var(--blue); }
+  .exec-card .lbl { font-size: .65rem; color: var(--slate); text-transform: uppercase; letter-spacing: .04em; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; margin: .6rem 0 1rem; }
+  th { background: var(--blue); color: #fff; padding: .45rem .6rem; text-align: left; font-weight: 600; }
+  td { padding: .4rem .6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .flow {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: .75rem;
+    line-height: 1.65;
+    color: var(--slate);
+    margin: .75rem 0;
+    white-space: pre-line;
+  }
+
+  .hands { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin: .75rem 0; }
+  .hand {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem;
+    text-align: center;
+    background: #fff;
+  }
+  .hand .n { font-size: 1.6rem; font-weight: 800; color: var(--teal); }
+  .hand .t { font-size: .68rem; font-weight: 700; text-transform: uppercase; color: var(--slate); }
+
+  .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .team-row { display: flex; justify-content: space-between; padding: .4rem 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+  .team-row strong { color: var(--navy); }
+
+  .footer {
+    text-align: center;
+    font-size: .72rem;
+    color: #94a3b8;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .print-bar {
+    position: sticky; top: 0; z-index: 99;
+    background: #1e293b; color: #fff;
+    padding: .6rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .85rem;
+  }
+  .print-bar button {
+    background: var(--teal); color: #fff; border: none;
+    padding: .4rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <span>SAARTHI Business Documentation — Print or Save as PDF (A4)</span>
+  <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="badge">Nasscom Agentic AI Hackathon 2026 · Use Case 1</div>
+  <h1>SAARTHI</h1>
+  <p class="subtitle">Intelligent IT Service Management — classify, route, and resolve every incident with agentic AI and human-in-the-loop triage.</p>
+  <div class="meta">
+    <strong>Business &amp; Technical Overview</strong><br>
+    Version 1.0 · June 2026<br>
+    Document owner: SAARTHI Team
+  </div>
+  <div class="ai-note">
+    <strong>AI-assisted development disclosure:</strong> This platform was built with AI-assisted coding tools (Cursor / LLM pair-programming) under human architecture review, security governance, and live validation suites. All routing rules, guardrails, and test evidence are team-owned.
+  </div>
+</div>
+
+<div class="content">
+
+<section>
+  <h2>Executive summary</h2>
+  <p><strong>SAARTHI</strong> (Sanskrit: <em>companion, guide</em>) automates the first mile of enterprise IT incident handling. Every ticket is sanitized, classified, matched against 1,000 resolved historical cases, routed to the correct department and <strong>Hand</strong>, and given actionable guidance — typically in <strong>under 20 seconds</strong>.</p>
+  <div class="exec-grid">
+    <div class="exec-card"><div class="num">88%</div><div class="lbl">Peak routing pass (100-ticket live)</div></div>
+    <div class="exec-card"><div class="num">0.86</div><div class="lbl">Macro F1 (department)</div></div>
+    <div class="exec-card"><div class="num">~15s</div><div class="lbl">Avg end-to-end latency</div></div>
+    <div class="exec-card"><div class="num">5</div><div class="lbl">AI agents in pipeline</div></div>
+    <div class="exec-card"><div class="num">3</div><div class="lbl">Hands (outcomes)</div></div>
+    <div class="exec-card"><div class="num">1,000</div><div class="lbl">RAG resolved tickets</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>1. Problem &amp; business impact</h2>
+  <p>Enterprise IT helpdesks face password resets, VPN failures, application outages, database issues, and security incidents — often triaged manually with inconsistent results.</p>
+  <table>
+    <thead><tr><th>Challenge</th><th>Impact</th></tr></thead>
+    <tbody>
+      <tr><td>Manual triage &amp; mis-routing</td><td>Wrong queue → SLA breach, customer dissatisfaction</td></tr>
+      <tr><td>Inconsistent categorisation</td><td>Poor analytics, repeated escalations</td></tr>
+      <tr><td>Tacit senior knowledge</td><td>Slow onboarding, tribal runbooks</td></tr>
+      <tr><td>Security under-triage</td><td>Compliance and breach risk</td></tr>
+      <tr><td>High cost per ticket</td><td>L1/L2 labour on repetitive sorting</td></tr>
+    </tbody>
+  </table>
+  <p><strong>SAARTHI</strong> reduces time-to-route from minutes–hours to seconds and deflects Hand 1 issues to self-service.</p>
+</section>
+
+<section>
+  <h2>2. Solution — five-agent pipeline</h2>
+  <div class="flow">Employee submits ticket
+  → Guardrail (PII redaction, injection defence)
+  → Retrieval (ChromaDB + 1,000 resolved tickets)
+  → Classifier (Google Gemini 2.5 Flash)
+  → Router (deterministic rules — no LLM)
+  → Resolver (RAG-grounded or Gemini steps)
+  → Supervisor (confidence + final Hand)
+  → Employee portal / Agent queue / SecOps</div>
+  <table>
+    <thead><tr><th>Agent</th><th>Function</th><th>Technology</th></tr></thead>
+    <tbody>
+      <tr><td>Guardrail</td><td>PII redaction, prompt-injection scan</td><td>Regex + Gemini security scan</td></tr>
+      <tr><td>Retrieval</td><td>Similar resolved tickets</td><td>ChromaDB + keywords + Gemini embeddings</td></tr>
+      <tr><td>Classifier</td><td>Category &amp; confidence</td><td>Gemini 2.5 Flash (primary)</td></tr>
+      <tr><td>Router</td><td>Hand + department</td><td>routing_rules.json (O(1))</td></tr>
+      <tr><td>Resolver</td><td>Resolution steps</td><td>RAG match or Gemini generate</td></tr>
+      <tr><td>Supervisor</td><td>Final Hand + band</td><td>Weighted c_total formula</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>3. Three Hands &amp; human-in-the-loop</h2>
+  <div class="hands">
+    <div class="hand"><div class="n">1</div><div class="t">Self-Help</div><p style="font-size:.78rem;margin-top:.5rem">Guided steps; Worked / Did not work</p></div>
+    <div class="hand"><div class="n">2</div><div class="t">Team Assist</div><p style="font-size:.78rem;margin-top:.5rem">Department queue + agent resolve</p></div>
+    <div class="hand"><div class="n">3</div><div class="t">Specialist</div><p style="font-size:.78rem;margin-top:.5rem">SecOps; no unsafe self-help</p></div>
+  </div>
+  <p><strong>Routing Specialists desk:</strong> Agents escalate suspected misroutes to SecOps specialists for one-hop correction — human judgement without re-running the full pipeline. AI handles volume; humans handle ambiguity and policy.</p>
+</section>
+
+<section>
+  <h2>4. Differentiation</h2>
+  <table>
+    <thead><tr><th>Capability</th><th>SAARTHI</th><th>Rule-only ITSM</th><th>Generic chatbot</th></tr></thead>
+    <tbody>
+      <tr><td>Classification</td><td>Gemini + RAG context</td><td>Keywords only</td><td>No structured routing</td></tr>
+      <tr><td>Resolution</td><td>Similar resolved tickets</td><td>Static KB</td><td>Hallucination risk</td></tr>
+      <tr><td>Security</td><td>Force Hand 3 / SecOps</td><td>Manual</td><td>Often under-triages</td></tr>
+      <tr><td>Explainability</td><td>Full audit log</td><td>Limited</td><td>Black box</td></tr>
+      <tr><td>Resilience</td><td>Keyword + RAG fallback</td><td>N/A</td><td>Fails on API limits</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>5. RAG, Gemini embeddings &amp; fallbacks</h2>
+  <h3>Retrieval-Augmented Generation</h3>
+  <ul>
+    <li><strong>1,000 resolved tickets</strong> indexed in ChromaDB (local MiniLM default; Gemini embedding optional)</li>
+    <li><strong>Similarity gate</strong> — weak matches flagged as low grounding</li>
+    <li><strong>Cache warming</strong> — background index + disk embedding cache on login</li>
+  </ul>
+  <h3>Graceful degradation</h3>
+  <table>
+    <thead><tr><th>Stage</th><th>Primary</th><th>Fallback</th></tr></thead>
+    <tbody>
+      <tr><td>Classify</td><td>Gemini JSON</td><td>RAG neighbour → keyword index</td></tr>
+      <tr><td>Security</td><td>"Security incident:" short-circuit</td><td>SecOps Hand 3</td></tr>
+      <tr><td>Resolve</td><td>RAG similar ticket</td><td>Gemini → heuristics → generic steps</td></tr>
+      <tr><td>Embed</td><td>Gemini embedding-001</td><td>Local vectors + keywords</td></tr>
+      <tr><td>HTTP 429/503</td><td>Retry with backoff</td><td>Degrade to cached / keyword paths</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6. Security, PII &amp; responsible AI</h2>
+  <table>
+    <thead><tr><th>Control</th><th>Implementation</th></tr></thead>
+    <tbody>
+      <tr><td>PII</td><td>Redacted before SQLite, Chroma, and Gemini</td></tr>
+      <tr><td>Prompt injection</td><td>Regex + Gemini untrusted-data scan</td></tr>
+      <tr><td>Security incidents</td><td>Force Hand 3; SecOps queue</td></tr>
+      <tr><td>Audit</td><td>Append-only agent log with durations</td></tr>
+      <tr><td>API keys</td><td>.env only — never committed</td></tr>
+      <tr><td>Transparency</td><td>Confidence bands: Strong / Good / Low</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>7. Performance &amp; validation</h2>
+  <h3>Latency (live end-to-end)</h3>
+  <table>
+    <thead><tr><th>Profile</th><th>Avg</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Gemini-primary pipeline</td><td>14–16 s</td><td>Typical UI submit</td></tr>
+      <tr><td>Keyword-assisted</td><td>11–13 s</td><td>When short-circuit applies</td></tr>
+      <tr><td>Security short-circuit</td><td>&lt; 2 s</td><td>Security incident prefix</td></tr>
+    </tbody>
+  </table>
+  <h3>Routing accuracy (live validated)</h3>
+  <table>
+    <thead><tr><th>Suite</th><th>Tickets</th><th>Pass</th><th>Macro F1</th></tr></thead>
+    <tbody>
+      <tr><td>Classifier fix — Judge100A</td><td>100</td><td><strong>88%</strong></td><td><strong>0.86</strong></td></tr>
+      <tr><td>Judge100B (post-fix)</td><td>100</td><td><strong>86%</strong></td><td>0.74</td></tr>
+      <tr><td>Portal batch 50</td><td>50</td><td><strong>82%</strong></td><td>0.85</td></tr>
+      <tr><td>Smoke30 regression</td><td>30</td><td><strong>90%</strong></td><td>—</td></tr>
+      <tr><td>Jury100 (Microsoft, HSBC, JPM, Capgemini)</td><td>100</td><td>In progress</td><td>Target ≥0.80</td></tr>
+    </tbody>
+  </table>
+  <p><em>Pass = correct Hand + correct department queue. Per-agent timing logged in audit trail.</em></p>
+  <h3>SLA impact</h3>
+  <ul>
+    <li><strong>Time to first route:</strong> minutes–hours → ~15–20 seconds</li>
+    <li><strong>L1 deflection:</strong> Hand 1 self-help for password, printer, known playbooks</li>
+    <li><strong>Audit readiness:</strong> structured per-ticket agent evidence for compliance</li>
+  </ul>
+</section>
+
+<section>
+  <h2>8. Product features</h2>
+  <table>
+    <thead><tr><th>Portal</th><th>Capabilities</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Employee</strong></td><td>Submit tickets, view steps, Hand 1 feedback, track status</td></tr>
+      <tr><td><strong>Agent</strong></td><td>Dept queue, assign/resolve, SLA filters, Route to Specialists</td></tr>
+      <tr><td><strong>Admin</strong></td><td>KPIs, all tickets, CSV export, audit log</td></tr>
+      <tr><td><strong>SecOps Specialists</strong></td><td>Misroute review, one-hop correction</td></tr>
+    </tbody>
+  </table>
+  <p>Additional: reference articles, automation suggestions, optional SMTP email, auto-assign grace window, 19-check UI smoke suite.</p>
+</section>
+
+<section>
+  <h2>9. Integrations &amp; cloud hosting</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Current</th><th>Production path</th></tr></thead>
+    <tbody>
+      <tr><td>LLM</td><td>Google Gemini 2.5 Flash</td><td>Model routing + caching</td></tr>
+      <tr><td>Embeddings</td><td>Gemini embedding-001 / local MiniLM</td><td>Tenant-configurable</td></tr>
+      <tr><td>UI</td><td>Streamlit (Python)</td><td>Containerised / Streamlit Cloud</td></tr>
+      <tr><td>Database</td><td>SQLite (ORM)</td><td>PostgreSQL / Cloud SQL</td></tr>
+      <tr><td>Vector DB</td><td>ChromaDB local</td><td>Managed vector service</td></tr>
+      <tr><td>Auth</td><td>Demo accounts</td><td>SSO / Entra ID / Okta</td></tr>
+      <tr><td>Notifications</td><td>SMTP (optional)</td><td>Teams, PagerDuty, ServiceNow</td></tr>
+      <tr><td>Hosting</td><td>Local demo</td><td>GCP Cloud Run, Azure, AWS ECS</td></tr>
+      <tr><td>ITSM API</td><td>TicketService orchestration</td><td>REST ingest from ServiceNow / Jira SM</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>10. Team</h2>
+  <div class="team-grid">
+    <div class="team-row"><strong>Front end</strong><span>Sagar, Sree</span></div>
+    <div class="team-row"><strong>Back end</strong><span>Subbu, Sree, Karan, Shashi Pathi</span></div>
+    <div class="team-row"><strong>Testing &amp; QA</strong><span>Narsimha, Gajanan</span></div>
+    <div class="team-row"><strong>UI / UX design</strong><span>Satya Sai, Subbu</span></div>
+    <div class="team-row"><strong>Documentation</strong><span>Shashi</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>11. Demo reference</h2>
+  <table>
+    <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
+    <tbody>
+      <tr><td>Employee</td><td>pallavi@user</td><td>1234</td></tr>
+      <tr><td>Agent (Application)</td><td>subbu@employee</td><td>1234</td></tr>
+      <tr><td>Agent (SecOps)</td><td>narsimha@employee</td><td>1234</td></tr>
+      <tr><td>Admin</td><td>admin@employee</td><td>1234</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Live demo tickets:</strong> (1) Forgot password → Hand 1 · Access · (2) Printer jam → Infrastructure · (3) AWS secret on GitHub → Hand 3 SecOps</p>
+</section>
+
+</div>
+
+<div class="footer">
+  SAARTHI Team · Nasscom Agentic AI Hackathon 2026 · Use Case 1<br>
+  docs/SAARTHI_BUSINESS_DOCUMENTATION.md · Print this page to PDF (A4)
+</div>
+
+</div>
+</body>
+</html>

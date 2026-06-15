@@ -10,7 +10,7 @@ python scripts/bootstrap_rag_environment.py
 
 After bootstrap: **0 live tickets**, **1000 RESOLVED `syn-*` in SQLite**, **~1006 vectors in Chroma** (KB + synthetic). See `docs/COLLEAGUE_SETUP.md` for teammate clone flow. Routing reports: `test-reports/index.html`.
 
-Automated coverage: `python scripts/ui_smoke_test.py` and `python scripts/judge50_assessment.py`
+Automated coverage: `python scripts/ui_smoke_test.py` · reports: `test-reports/index.html`
 
 ---
 
@@ -74,13 +74,13 @@ Automated coverage: `python scripts/ui_smoke_test.py` and `python scripts/judge5
 ## 6. Routing metrics (automated)
 
 ```bash
-python scripts/judge50_assessment.py
-open test-reports/judge50_report.html
+open test-reports/index.html
 ```
 
 | Metric | Target | Source |
 |--------|--------|--------|
-| Judge50 routing | ≥85% | 50-firm suite |
+| Classifier fix (Judge100A) | ≥85% | `classifier_fix_validation_report.html` |
+| Judge Pro (200) | jury-ready | `judge_pro_report.html` |
 | Portal UI smoke | 19/19 pass | `scripts/ui_smoke_test.py` |
 
 ---
@@ -104,5 +104,5 @@ Log in as each agent; confirm inbox shows **only** that department's Hand 2/3 ti
 
 ```bash
 python scripts/ui_smoke_test.py
-python scripts/judge50_assessment.py
+bash scripts/prepare_handoff.sh
 ```

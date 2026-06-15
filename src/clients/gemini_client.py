@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, Optional
@@ -31,18 +32,70 @@ class GeminiClient:
     def available(self) -> bool:
         return bool(self.settings.google_api_key.strip())
 
-    def _post(self, model: str, body: Dict[str, Any], timeout: int = 30) -> Dict[str, Any]:
+    def _model_chain(self, primary: str) -> list[str]:
+        chain = [primary]
+        for name in self.settings.gemini_model_fallbacks.split(","):
+            name = name.strip()
+            if name and name not in chain:
+                chain.append(name)
+        return chain
+
+    def _post(
+        self,
+        model: str,
+        body: Dict[str, Any],
+        timeout: int = 30,
+        *,
+        retries: int = 2,
+    ) -> Dict[str, Any]:
         key = self.settings.google_api_key
-        url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{model}:generateContent?key={key}"
-        )
         data = json.dumps(body).encode("utf-8")
-        req = urllib.request.Request(
-            url, data=data, headers={"Content-Type": "application/json"}, method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return json.loads(resp.read().decode())
+        last_exc: Exception | None = None
+        chain = self._model_chain(model)
+        for idx, model_name in enumerate(chain):
+            for attempt in range(retries + 1):
+                url = (
+                    f"https://generativelanguage.googleapis.com/v1beta/models/"
+                    f"{model_name}:generateContent?key={key}"
+                )
+                req = urllib.request.Request(
+                    url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+                )
+                try:
+                    with urllib.request.urlopen(req, timeout=timeout) as resp:
+                        if idx > 0:
+                            logger.info("Gemini fallback succeeded on %s", model_name)
+                        return json.loads(resp.read().decode())
+                except urllib.error.HTTPError as exc:
+                    last_exc = exc
+                    if exc.code in (429, 503) and attempt < retries:
+                        time.sleep(1.5 * (attempt + 1))
+                        continue
+                    if exc.code in (429, 503) and idx < len(chain) - 1:
+                        logger.warning(
+                            "Gemini %s HTTP %s — trying fallback %s",
+                            model_name,
+                            exc.code,
+                            chain[idx + 1],
+                        )
+                        break
+                    raise
+                except urllib.error.URLError as exc:
+                    last_exc = exc
+                    if attempt < retries:
+                        time.sleep(1.5 * (attempt + 1))
+                        continue
+                    if idx < len(chain) - 1:
+                        logger.warning(
+                            "Gemini %s unreachable — trying fallback %s",
+                            model_name,
+                            chain[idx + 1],
+                        )
+                        break
+                    raise
+        if last_exc:
+            raise last_exc
+        raise RuntimeError("Gemini _post failed without exception")
 
     def embed_text(self, text: str, *, timeout: int = 15) -> Optional[list[float]]:
         """Return embedding vector for semantic RAG similarity (gemini-embedding-001)."""
@@ -198,10 +251,11 @@ class GeminiClient:
                     "contents": [{"parts": [{"text": build_classifier_prompt(sanitized_text)}]}],
                     "generationConfig": {
                         "temperature": 0.2,
-                        "maxOutputTokens": 200,
+                        "maxOutputTokens": self.settings.gemini_classify_max_output_tokens,
                         "responseMimeType": "application/json",
                     },
                 },
+                retries=self.settings.gemini_http_retries,
             )
             text = (
                 raw.get("candidates", [{}])[0]

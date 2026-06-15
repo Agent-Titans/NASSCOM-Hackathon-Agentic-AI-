@@ -140,6 +140,8 @@ _NETWORK_OPS_MARKERS = (
     "sd-wan",
     "bgp",
     "wan circuit",
+    "fastconnect",
+    "private circuit",
     "ipsec",
     "dnssec",
     "dns resolution",
@@ -302,10 +304,13 @@ _ACCESS_PROVISIONING_MARKERS = (
     "new hire",
     "new intern",
     "account creation",
+    "account locked",
     "offboarding",
     "shared mailbox",
     "break-glass",
     "service account password rotation",
+    "api key rotation",
+    "key rotation",
     "conditional access",
     "contributor access",
     "license assignment",
@@ -315,6 +320,24 @@ _ACCESS_PROVISIONING_MARKERS = (
     "self-service reset",
     "reset link expired",
     "self service reset",
+    "role mapping",
+    "mfa enrollment",
+    "sso role",
+    "yubikey",
+    "mfa device",
+    "device lost",
+)
+_APP_UI_MARKERS = (
+    "web ui",
+    "portal",
+    "dashboard",
+    "login loop",
+    "page error",
+    "http 500",
+    "http 502",
+    "wizard",
+    "paycheck inquiry",
+    "record page",
 )
 _DB_INCIDENT_MARKERS = (
     "deadlock",
@@ -336,6 +359,9 @@ _DB_INCIDENT_MARKERS = (
     "import script",
     "slow import",
     "transaction log",
+    "jdbc",
+    "ingestion task",
+    "shard unassigned",
 )
 
 _VALID_CATEGORIES = frozenset(
@@ -349,6 +375,42 @@ _VALID_CATEGORIES = frozenset(
         "Access Management",
     }
 )
+
+
+def _has_active_security_incident(text: str) -> bool:
+    """True only for explicit incidents — not routine IAM/network/storage vocabulary."""
+    lower = text.lower()
+    if lower.lstrip().startswith("security incident:"):
+        return True
+    if "account locked" in lower or "account unlock" in lower:
+        attack = (
+            "breach",
+            "compromised",
+            "ransomware",
+            "malware",
+            "active attack",
+            "credential stuffing",
+            "unauthorized access attempt",
+        )
+        if not any(a in lower for a in attack):
+            return False
+    if "security group" in lower:
+        return False
+    if any(
+        phrase in lower
+        for phrase in (
+            "historical incident",
+            "incident search",
+            "find historical",
+        )
+    ):
+        return False
+    if "api key" in lower or "service account key" in lower:
+        routine = ("rotation", "rotate", "flagged for", "rollover", "provision")
+        attack = ("leak", "leaked", "exposed", "public github", "gist", "theft", "stolen")
+        if any(r in lower for r in routine) and not any(a in lower for a in attack):
+            return False
+    return any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS)
 
 
 class ClassifierAgent:
@@ -369,65 +431,19 @@ class ClassifierAgent:
         return head or body
 
     def _try_keyword_short_circuit(self, classify_text: str) -> Optional[ClassificationResult]:
-        """Return early only for decisive security or multi-marker network/access hits."""
+        """Return early only for explicit Security-incident prefix when enabled."""
         settings = get_settings()
         if not settings.classifier_keyword_short_circuit:
             return None
 
         lower = classify_text.lower()
-        if any(marker in lower for marker in _APP_PLATFORM_MARKERS):
+        if not lower.lstrip().startswith("security incident:"):
             return None
 
-        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
-            cat = ClassifierAgent._finalize_category("Security", classify_text)
-            return ClassificationResult(
-                use_case_category=cat,
-                subcategory="keyword_security",
-                confidence_hint="high",
-                source="keyword",
-            )
-
-        net_hits = sum(1 for m in _NETWORK_OPS_MARKERS if m in lower)
-        if net_hits >= 2:
-            cat = ClassifierAgent._finalize_category("Network", classify_text)
-            if cat == "Network":
-                return ClassificationResult(
-                    use_case_category=cat,
-                    subcategory="keyword_network",
-                    confidence_hint="high",
-                    source="keyword",
-                )
-
-        access_hits = sum(1 for m in _ACCESS_PROVISIONING_MARKERS if m in lower)
-        if access_hits >= 1 and any(
-            t in lower for t in ("mfa", "sso", "saml", "okta", "ldap", "password reset", "account")
-        ):
-            cat = ClassifierAgent._finalize_category("Access Management", classify_text)
-            if cat == "Access Management":
-                return ClassificationResult(
-                    use_case_category=cat,
-                    subcategory="keyword_access",
-                    confidence_hint="high",
-                    source="keyword",
-                )
-
-        ranked = score_categories(classify_text)
-        if not ranked:
-            return None
-        top_cat, top_score = ranked[0]
-        second_score = ranked[1][1] if len(ranked) > 1 else 0.0
-        if top_score < settings.classifier_keyword_min_score:
-            return None
-        if (top_score - second_score) < settings.classifier_keyword_min_gap:
-            return None
-        raw = score_categories_raw(classify_text)
-        if not raw or raw[0][1] < 4:
-            return None
-
-        cat = ClassifierAgent._finalize_category(top_cat, classify_text)
+        cat = ClassifierAgent._finalize_category("Security", classify_text)
         return ClassificationResult(
             use_case_category=cat,
-            subcategory="keyword",
+            subcategory="keyword_security",
             confidence_hint="high",
             source="keyword",
         )
@@ -500,7 +516,7 @@ class ClassifierAgent:
             m in lower for m in ("certificate", "ssl", "cert ", "expires", "expiry", "f5")
         ):
             category = "Network"
-        elif any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+        elif _has_active_security_incident(text):
             return "Security"
         category = ClassifierAgent._reconcile_access_provisioning_priority(
             category, text
@@ -510,14 +526,14 @@ class ClassifierAgent:
             category, text
         )
         category = ClassifierAgent._reconcile_cognos_db_priority(category, text)
-        category = ClassifierAgent._reconcile_app_platform_priority(category, text)
         category = ClassifierAgent._reconcile_db_engine_priority(category, text)
+        category = ClassifierAgent._reconcile_database_ops_priority(category, text)
+        category = ClassifierAgent._reconcile_network_ops_priority(category, text)
+        category = ClassifierAgent._reconcile_cloud_network_priority(category, text)
         category = ClassifierAgent._reconcile_storage_platform_priority(category, text)
         category = ClassifierAgent._reconcile_hardware_priority(category, text)
-        category = ClassifierAgent._reconcile_network_ops_priority(category, text)
-        category = ClassifierAgent._reconcile_database_ops_priority(category, text)
-        category = ClassifierAgent._reconcile_cloud_network_priority(category, text)
         category = ClassifierAgent._reconcile_mdm_infra_priority(category, text)
+        category = ClassifierAgent._reconcile_app_platform_priority(category, text)
         category = ClassifierAgent._reconcile_vpn_cert_priority(category, text)
         return ClassifierAgent._reconcile_security_false_positive(category, text)
 
@@ -525,11 +541,11 @@ class ClassifierAgent:
     def _reconcile_access_provisioning_priority(category: str, text: str) -> str:
         """Identity provisioning beats app/DB when no active security incident."""
         lower = text.lower()
-        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+        if _has_active_security_incident(text):
             return category
         if not any(marker in lower for marker in _ACCESS_PROVISIONING_MARKERS):
             return category
-        if category in ("Application", "Database", "Network"):
+        if category in ("Application", "Database", "Network", "Infrastructure"):
             return "Access Management"
         return category
 
@@ -537,7 +553,7 @@ class ClassifierAgent:
     def _reconcile_bsod_hardware_priority(category: str, text: str) -> str:
         """GPU driver BSOD / stop code → Infrastructure, not Application."""
         lower = text.lower()
-        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+        if _has_active_security_incident(text):
             return category
         if not any(marker in lower for marker in _BSOD_MARKERS):
             return category
@@ -587,12 +603,12 @@ class ClassifierAgent:
         if any(marker in lower for marker in _DB_ENGINE_MARKERS):
             if not any(marker in lower for marker in _APP_JOB_MARKERS):
                 return category
+        if category in ("Network", "Infrastructure"):
+            return category
         if category in (
             "Database",
             "Storage",
             "Access Management",
-            "Network",
-            "Infrastructure",
         ):
             return "Application"
         return category
@@ -647,6 +663,8 @@ class ClassifierAgent:
         Firewall/VPN/IP whitelist requests are Network ops even when SQL is mentioned.
         """
         lower = text.lower()
+        if any(marker in lower for marker in _APP_UI_MARKERS):
+            return category
         if not any(marker in lower for marker in _NETWORK_OPS_MARKERS):
             return category
         if any(marker in lower for marker in _DB_INCIDENT_MARKERS):
@@ -714,8 +732,10 @@ class ClassifierAgent:
         if category != "Security":
             return category
         lower = text.lower()
-        if any(marker in lower for marker in _SECURITY_INCIDENT_MARKERS):
+        if _has_active_security_incident(text):
             return category
+        if any(marker in lower for marker in _ACCESS_PROVISIONING_MARKERS):
+            return "Access Management"
         if any(marker in lower for marker in _INFRA_CORE_MARKERS):
             return "Infrastructure"
         if any(marker in lower for marker in _APP_CORE_MARKERS):

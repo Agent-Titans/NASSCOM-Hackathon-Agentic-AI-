@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     google_api_key: str = ""
     gemini_model_classify: str = "gemini-2.5-flash"
     gemini_model_resolve: str = "gemini-2.5-flash"
+    # Comma-separated generate models tried on HTTP 429/503 after primary fails
+    gemini_model_fallbacks: str = "gemini-2.5-flash-lite"
     gemini_model_embed: str = "gemini-embedding-001"
     # Chroma vectors: local (ONNX MiniLM, fast/offline) | gemini (LLD, API)
     rag_embedding_backend: str = "local"
@@ -59,8 +61,10 @@ class Settings(BaseSettings):
 
     routing_rules_path: Path = ROOT_DIR / "config" / "routing_rules.json"
 
-    # Skip Gemini classify when local keyword index is a clear winner (saves ~2–4s/ticket).
+    # Gemini classifies first. When True, only "Security incident:" prefix short-circuits.
     classifier_keyword_short_circuit: bool = True
+    gemini_classify_max_output_tokens: int = 1024
+    gemini_http_retries: int = 2
     classifier_keyword_min_score: float = 0.95
     classifier_keyword_min_gap: float = 0.5
 

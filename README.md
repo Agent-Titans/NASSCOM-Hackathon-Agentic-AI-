@@ -10,17 +10,20 @@ Colleague setup: [`docs/COLLEAGUE_SETUP.md`](docs/COLLEAGUE_SETUP.md)
 ├── design/              # Submitted LLD & architecture (source of truth)
 ├── docs/
 │   ├── COLLEAGUE_SETUP.md   # ★ clone → bootstrap → demo (share with team)
+│   ├── SUBMISSION.md        # Submission layout + archived extras pointer
 │   ├── DEMO_CHECKLIST.md    # Jury walkthrough
+│   ├── SAARTHI_BUSINESS_DOCUMENTATION.pdf  # Business / jury overview (PDF)
+│   ├── SAARTHI_BUSINESS_DOCUMENTATION.html # Same content (print-ready)
 │   ├── PORTAL_UC1_ASSESSMENT.md
-│   ├── test-reports/        # HTML routing test reports (open index.html)
 │   └── JUDGE_SETUP.md       # Short pointer → COLLEAGUE_SETUP
 ├── src/                 # Application code
-├── scripts/             # bootstrap, ingest, seed, run_app, master_assessment, judge50, ui_smoke
+├── scripts/             # bootstrap, ingest, run_app, 3 assessment suites, ui_smoke
 ├── data/
 │   ├── synthetic/       # tickets_1000.json + tickets_1000.csv (RAG corpus)
+│   ├── set_jury100_scenarios.json   # Nasscom self-eval (100 tickets)
 │   ├── app.db           # gitignored — local tickets
 │   └── chroma/          # gitignored — vector index
-└── test-reports/        # HTML assessment reports (open index.html)
+└── test-reports/        # jury100_report.html + index.html
 ```
 
 ## Quick start
@@ -72,8 +75,9 @@ Re-ingest only:
 ```bash
 python scripts/ingest_synthetic_corpus.py          # rebuild Chroma + SQLite syn-*
 python scripts/ingest_synthetic_corpus.py --smoke  # + retrieval smoke test
-python scripts/export_synthetic_corpus_csv.py      # refresh CSV from JSON
 ```
+
+Extra datasets and historical reports: `~/Desktop/SAARTHI-submission-archive/` (see `docs/SUBMISSION.md`).
 
 ## New teammate
 
@@ -93,7 +97,7 @@ Active branch: `final-round-hackathon` — `git pull` before work, `git push` wh
 ```bash
 source .venv/bin/activate
 python scripts/ui_smoke_test.py
-python scripts/judge50_assessment.py
+bash scripts/prepare_handoff.sh
 ```
 
-Open `test-reports/judge50_report.html` for the Nasscom pre-judge report.
+Open `test-reports/index.html` — **Jury100** self-evaluation (F1, LLM jury, latency).

@@ -1,0 +1,844 @@
+{
+  "version": 1,
+  "description": "Clear50 \u2014 50 clear single-intent tickets across Boeing, Caterpillar, FedEx, Marriott, Pfizer, Samsung, Sony, Volkswagen, Walmart, Zoom. Security tickets prefixed 'Security incident:'. Zero overlap with Master50C and Judge suites.",
+  "firms": [
+    "Boeing",
+    "Caterpillar",
+    "FedEx",
+    "Marriott",
+    "Pfizer",
+    "Samsung",
+    "Sony",
+    "Volkswagen",
+    "Walmart",
+    "Zoom"
+  ],
+  "cases": [
+    {
+      "id": "BO01",
+      "firm": "Boeing",
+      "title": "Windchill PLM checkout fails for engineering drawings",
+      "description": "Boeing engineer cannot check out CAD files in Windchill PLM. Server returns HTTP 503 on checkout API. Design review meeting blocked for 737 program.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Windchill PLM"
+    },
+    {
+      "id": "BO02",
+      "firm": "Boeing",
+      "title": "Oracle manufacturing database redo log archive full",
+      "description": "Oracle manufacturing database redo log archive destination full on Boeing Everett plant MES cluster. Database hangs in archiver stuck state. Shop floor scanners cannot post completions.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Oracle archiver"
+    },
+    {
+      "id": "BO03",
+      "firm": "Boeing",
+      "title": "Contractor badge access expired for flight line zone",
+      "description": "Boeing contractor badge access expired for restricted flight line zone. Turnstile denies entry at Gate 18. Contractor cannot reach assigned workstation for safety inspection.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Badge access"
+    },
+    {
+      "id": "BO04",
+      "firm": "Boeing",
+      "title": "WAN link down between Renton and supplier portal",
+      "description": "WAN MPLS link down between Boeing Renton site and external supplier portal datacenter. BGP session down on edge router. Parts status feed stale for assembly line.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "WAN BGP"
+    },
+    {
+      "id": "BO05",
+      "firm": "Boeing",
+      "title": "Security incident: suspicious login on supplier portal admin",
+      "description": "Security incident: multiple failed admin logins on Boeing supplier portal from foreign IP addresses overnight. Account lockout triggered. Need SecOps triage and session revocation.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Admin brute force H3"
+    },
+    {
+      "id": "CT01",
+      "firm": "Caterpillar",
+      "title": "SAP PM work order screen freeze after save",
+      "description": "Caterpillar field service SAP PM work order screen freezes after save. SAP GUI shows short dump in function module. Technicians cannot close completed jobs.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "SAP PM"
+    },
+    {
+      "id": "CT02",
+      "firm": "Caterpillar",
+      "title": "SQL Server tempdb growth on parts inventory DB",
+      "description": "SQL Server tempdb file growth alert on Caterpillar parts inventory database. Disk at 95 percent. Nightly replenishment job failing with out-of-space error.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "SQL tempdb"
+    },
+    {
+      "id": "CT03",
+      "firm": "Caterpillar",
+      "title": "New hire Active Directory account not syncing to email",
+      "description": "Caterpillar new hire Active Directory account created but not syncing to corporate email. User cannot receive onboarding messages. Azure AD Connect delta sync shows error.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "AD sync"
+    },
+    {
+      "id": "CT04",
+      "firm": "Caterpillar",
+      "title": "Plant floor Wi-Fi SSID not broadcasting in Building 7",
+      "description": "Plant floor Wi-Fi SSID not broadcasting in Caterpillar Building 7. Multiple APs show controller disconnected state. Handheld scanners lose connectivity to WMS.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Wi-Fi AP"
+    },
+    {
+      "id": "CT05",
+      "firm": "Caterpillar",
+      "title": "Security incident: malware on dealer portal web server",
+      "description": "Security incident: web shell detected on Caterpillar dealer portal staging server. WAF flagged unusual POST traffic. Server must be isolated and forensics started.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Web shell H3"
+    },
+    {
+      "id": "FX01",
+      "firm": "FedEx",
+      "title": "Package tracking web app returns 500 on scan events",
+      "description": "FedEx hub package tracking web app returns HTTP 500 when loading scan events. Tomcat logs show NullPointerException in tracking service. Sort supervisors blind to misroutes.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tracking app"
+    },
+    {
+      "id": "FX02",
+      "firm": "FedEx",
+      "title": "MongoDB shard chunk migration stuck on routing DB",
+      "description": "MongoDB shard chunk migration stuck on FedEx routing database. Balancer shows active migration for 6 hours. Label API latency above SLA during peak sort.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "MongoDB shard"
+    },
+    {
+      "id": "FX03",
+      "firm": "FedEx",
+      "title": "Driver mobile app SSO token expired after device swap",
+      "description": "FedEx driver mobile app SSO token expired after phone device swap. Driver cannot authenticate to dispatch app. Need identity refresh and mobile SSO rebind.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Mobile SSO"
+    },
+    {
+      "id": "FX04",
+      "firm": "FedEx",
+      "title": "SD-WAN failover failed at Memphis hub edge",
+      "description": "SD-WAN failover failed at FedEx Memphis hub edge during primary circuit outage. Secondary link up but application steering policy did not switch. Hub scanners offline 12 minutes.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "SD-WAN"
+    },
+    {
+      "id": "FX05",
+      "firm": "FedEx",
+      "title": "Security incident: ransomware alert on file server share",
+      "description": "Security incident: ransomware encryption activity detected on FedEx regional file server share. EDR flagged mass file rename with suspicious extension. Isolate host immediately.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Ransomware H3"
+    },
+    {
+      "id": "MR01",
+      "firm": "Marriott",
+      "title": "Opera PMS room assignment screen not loading",
+      "description": "Marriott front desk Opera PMS room assignment screen not loading after midnight rollover. Java applet cache error on workstations. Guests waiting at check-in.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Opera PMS"
+    },
+    {
+      "id": "MR02",
+      "firm": "Marriott",
+      "title": "PostgreSQL replication lag on loyalty points DB",
+      "description": "PostgreSQL replication lag on Marriott Bonvoy loyalty points database exceeds 30 minutes. Read replica serving stale balances to mobile app. Member complaints rising.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "PostgreSQL lag"
+    },
+    {
+      "id": "MR03",
+      "firm": "Marriott",
+      "title": "Housekeeping staff shared account password reset",
+      "description": "Marriott property housekeeping shared floor tablet account password expired. Staff locked out of room status update app. Need service account password reset.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Shared account"
+    },
+    {
+      "id": "MR04",
+      "firm": "Marriott",
+      "title": "Guest Wi-Fi captive portal DNS failure",
+      "description": "Guest Wi-Fi captive portal DNS failure at Marriott downtown property. Guests connect but redirect page does not resolve. Help desk receiving complaints.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Guest Wi-Fi DNS"
+    },
+    {
+      "id": "MR05",
+      "firm": "Marriott",
+      "title": "Security incident: credit card skimmer alert on POS terminal",
+      "description": "Security incident: PCI monitoring alert for possible card skimmer pattern on Marriott property POS terminal. Unusual magstripe read failures logged. SecOps must investigate and quarantine terminal.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "PCI skimmer H3"
+    },
+    {
+      "id": "PF01",
+      "firm": "Pfizer",
+      "title": "Veeva Vault document upload fails validation",
+      "description": "Pfizer clinical team Veeva Vault document upload fails metadata validation. API returns schema mismatch on batch release record. Regulatory submission deadline at risk.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Veeva Vault"
+    },
+    {
+      "id": "PF02",
+      "firm": "Pfizer",
+      "title": "Oracle clinical trials database blocking session alert",
+      "description": "Oracle clinical trials database blocking session alert on Pfizer CTMS schema. Long-running lock held by ETL job. Site coordinators cannot enter patient visit data.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Oracle blocking"
+    },
+    {
+      "id": "PF03",
+      "firm": "Pfizer",
+      "title": "Lab scientist privileged account request for LIMS",
+      "description": "Pfizer lab scientist needs privileged account request approved for LIMS admin role. Standard PAM ticket pending 48 hours. Batch release testing blocked.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "PAM LIMS"
+    },
+    {
+      "id": "PF04",
+      "firm": "Pfizer",
+      "title": "Site-to-site VPN down between lab and HQ",
+      "description": "Site-to-site IPsec VPN tunnel down between Pfizer research lab and corporate HQ. Phase 1 IKE negotiation failing after firewall rule change. Instrument data upload stopped.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "IPsec VPN"
+    },
+    {
+      "id": "PF05",
+      "firm": "Pfizer",
+      "title": "Security incident: unauthorized USB device on GxP workstation",
+      "description": "Security incident: unauthorized USB storage device inserted on Pfizer GxP validated workstation. DLP blocked copy attempt and raised high severity alert. Workstation quarantined.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "USB DLP H3"
+    },
+    {
+      "id": "SS01",
+      "firm": "Samsung",
+      "title": "MES lot tracking screen shows wrong wafer map",
+      "description": "Samsung fab MES lot tracking screen shows wrong wafer map after engineering change. UI cache not refreshing lot genealogy. Line engineer halted lot move.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "MES app"
+    },
+    {
+      "id": "SS02",
+      "firm": "Samsung",
+      "title": "InfluxDB disk full on equipment telemetry cluster",
+      "description": "InfluxDB disk full on Samsung equipment telemetry time-series cluster. Writes rejected with out of disk error. Predictive maintenance dashboards blank.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "InfluxDB disk"
+    },
+    {
+      "id": "SS03",
+      "firm": "Samsung",
+      "title": "Engineer VPN certificate renewal for cleanroom network",
+      "description": "Samsung engineer VPN client certificate expired for cleanroom network access. Authentication fails with certificate validation error. Need cert renewal and profile push.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "VPN cert"
+    },
+    {
+      "id": "SS04",
+      "firm": "Samsung",
+      "title": "Core switch port flapping on assembly line VLAN",
+      "description": "Core switch port flapping on Samsung assembly line VLAN. STP reconvergence causing intermittent PLC connectivity loss. Production stoppage risk.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "STP flapping"
+    },
+    {
+      "id": "SS05",
+      "firm": "Samsung",
+      "title": "Security incident: APT beacon detected on R&D server",
+      "description": "Security incident: APT command-and-control beacon detected on Samsung R&D file server. EDR correlated suspicious outbound DNS. Server isolated pending forensic imaging.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "APT beacon H3"
+    },
+    {
+      "id": "SY01",
+      "firm": "Sony",
+      "title": "Adobe Premiere render farm job queue stuck",
+      "description": "Sony post-production Adobe Premiere render farm job queue stuck in pending state. License server heartbeat timeout. Editors cannot export final cuts.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Render farm"
+    },
+    {
+      "id": "SY02",
+      "firm": "Sony",
+      "title": "MySQL slow query on royalty reporting database",
+      "description": "MySQL slow query alert on Sony music royalty reporting database. Full table scan on 400M row ledger. Finance report runtime exceeds 4 hour window.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "MySQL slow query"
+    },
+    {
+      "id": "SY03",
+      "firm": "Sony",
+      "title": "Contractor Okta account disabled before project end",
+      "description": "Sony contractor Okta account disabled prematurely before project end date. User cannot access Jira or Confluence. Need account re-enable and group membership restore.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Okta contractor"
+    },
+    {
+      "id": "SY04",
+      "firm": "Sony",
+      "title": "Multicast video feed packet loss in studio VLAN",
+      "description": "Multicast video feed packet loss in Sony studio VLAN during live production. IGMP snooping misconfiguration suspected on access switch. Director monitor shows artifacts.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Multicast IGMP"
+    },
+    {
+      "id": "SY05",
+      "firm": "Sony",
+      "title": "Security incident: leaked credentials on GitHub repository",
+      "description": "Security incident: secret scanning found production API credentials in public Sony GitHub fork. Keys must be rotated and repository access audited immediately.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Credential leak H3"
+    },
+    {
+      "id": "VW01",
+      "firm": "Volkswagen",
+      "title": "Dealer portal order configurator JavaScript error",
+      "description": "Volkswagen dealer portal vehicle order configurator throws JavaScript error on trim selection. Browser console shows undefined property on options API response. Sales cannot finalize orders.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Dealer portal"
+    },
+    {
+      "id": "VW02",
+      "firm": "Volkswagen",
+      "title": "DB2 tablespace full on production BOM database",
+      "description": "DB2 tablespace full on Volkswagen production bill-of-materials database. Insert failures on engineering change records. Plant BOM sync halted.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "DB2 tablespace"
+    },
+    {
+      "id": "VW03",
+      "firm": "Volkswagen",
+      "title": "Supplier portal SAML federation certificate expired",
+      "description": "Volkswagen supplier portal SAML federation certificate expired. External suppliers receive authentication failure at login. Need metadata cert rollover.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "SAML cert"
+    },
+    {
+      "id": "VW04",
+      "firm": "Volkswagen",
+      "title": "OT network segmentation blocking PLC heartbeat",
+      "description": "OT network segmentation change blocking PLC heartbeat traffic between Volkswagen weld shop controllers and MES. Production line yellow alarm active.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "OT segmentation"
+    },
+    {
+      "id": "VW05",
+      "firm": "Volkswagen",
+      "title": "Security incident: insider threat alert on CAD export",
+      "description": "Security incident: insider threat alert for bulk CAD file export from Volkswagen design share. User downloaded 2GB outside normal pattern. SecOps investigation required.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Insider threat H3"
+    },
+    {
+      "id": "WM01",
+      "firm": "Walmart",
+      "title": "Inventory POS price lookup API timeout",
+      "description": "Walmart store inventory POS price lookup API timeout on handheld devices. Service mesh shows upstream circuit open to pricing microservice. Checkout delays at peak hours.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "POS API"
+    },
+    {
+      "id": "WM02",
+      "firm": "Walmart",
+      "title": "Cassandra repair failing on supply chain keyspace",
+      "description": "Cassandra node repair failing on Walmart supply chain keyspace. nodetool repair aborts with IOException. Consistency checks failing for DC transfer jobs.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Cassandra repair"
+    },
+    {
+      "id": "WM03",
+      "firm": "Walmart",
+      "title": "Store manager role missing in workforce scheduling app",
+      "description": "Walmart store manager role missing in workforce scheduling app after HR system update. Manager cannot approve shift swaps. Need RBAC role mapping fix.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "RBAC role"
+    },
+    {
+      "id": "WM04",
+      "firm": "Walmart",
+      "title": "BGP route leak affecting DC internet uplink",
+      "description": "BGP route leak affecting Walmart distribution center internet uplink. Incorrect prefix announcement caused partial outage to vendor EDI endpoints. Edge router policy fix needed.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "BGP leak"
+    },
+    {
+      "id": "WM05",
+      "firm": "Walmart",
+      "title": "Security incident: gift card fraud pattern on e-commerce",
+      "description": "Security incident: automated gift card fraud pattern detected on Walmart e-commerce checkout. Fraud rules flagged 400 transactions in 10 minutes. SecOps must block attack IPs.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Fraud pattern H3"
+    },
+    {
+      "id": "ZM01",
+      "firm": "Zoom",
+      "title": "Admin dashboard user provisioning API 403 errors",
+      "description": "Zoom enterprise admin dashboard user provisioning API returns HTTP 403 for SCIM connector. OAuth scope mismatch after platform upgrade. Customer onboarding blocked.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "SCIM API"
+    },
+    {
+      "id": "ZM02",
+      "firm": "Zoom",
+      "title": "Redis cluster failover loop on session store",
+      "description": "Redis cluster failover loop on Zoom session store shard. Clients see intermittent auth failures. SRE dashboard shows repeated master election.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Redis failover"
+    },
+    {
+      "id": "ZM03",
+      "firm": "Zoom",
+      "title": "Support engineer temporary admin access for tenant",
+      "description": "Zoom support engineer needs temporary admin access to customer tenant for outage investigation. Break-glass PAM request pending approval.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Break-glass PAM"
+    },
+    {
+      "id": "ZM04",
+      "firm": "Zoom",
+      "title": "Anycast routing blackhole on US West edge POP",
+      "description": "Anycast routing blackhole on Zoom US West edge POP. Latency spike and packet loss for Bay Area users joining meetings. BGP community tag misapplied.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Anycast BGP"
+    },
+    {
+      "id": "ZM05",
+      "firm": "Zoom",
+      "title": "Security incident: Zoom bombing attack on town hall",
+      "description": "Security incident: Zoom bombing attack during customer town hall with offensive content shared via screen. Meeting host lost control. Need incident response and tenant hardening.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Zoom bombing H3"
+    }
+  ]
+}

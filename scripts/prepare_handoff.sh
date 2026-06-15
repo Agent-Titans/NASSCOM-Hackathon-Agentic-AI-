@@ -42,8 +42,8 @@ cat <<'EOF'
 EOF
 
 echo ""
-echo "=== 4. Judge50 assessment (cached) ==="
-python scripts/judge50_assessment.py || true
+echo "=== 4. Open test reports ==="
+echo "  test-reports/index.html  (Classifier Fix · Judge Pro · Clear50)"
 
 echo ""
 echo "Handoff ready. Chroma is local-only (gitignored); colleague runs bootstrap to build it."

@@ -10,28 +10,24 @@
   p.sub { color: #555; margin-bottom: 1.5rem; }
   ul { list-style: none; padding: 0; }
   li { background: #fff; border: 1px solid #dde3ea; border-radius: 8px; margin-bottom: 0.75rem; padding: 1rem 1.25rem; }
-  li.highlight { border-color: #0d9488; background: #f0fdfa; }
-  li a { font-weight: 600; color: #0f766e; text-decoration: none; font-size: 1.05rem; }
+  li.highlight { border-color: #0369a1; background: #f0f9ff; }
+  li a { font-weight: 600; color: #0369a1; text-decoration: none; font-size: 1.05rem; }
   li a:hover { text-decoration: underline; }
   .meta { display: block; font-size: 0.85rem; color: #666; margin-top: 0.35rem; }
 </style>
 </head>
 <body>
-<h1>SAARTHI test reports</h1>
-<p class="sub">Nasscom UC1 pre-judge assessment · open in any browser</p>
+<h1>SAARTHI — Validation reports</h1>
+<p class="sub">Fresh-machine live routing · open in any browser</p>
 <ul>
-  <li class="highlight"><a href="cognizant30_report.html">Cognizant30 report (latest)</a><span class="meta">30 tickets · Cognizant Technology Services · F1 · per-agent timing</span></li>
-  <li><a href="master_report.html">Master Assessment — Grand Report</a><span class="meta">50 independent tickets · F1 · LLM jury · per-agent timing · RAI/LLD audit · grand score</span></li>
-  <li><a href="judge50_report.html">Judge50 pre-Nasscom report</a><span class="meta">50 tickets · JPMorgan · HSBC · Microsoft · Nasscom · Wipro · jury score + gaps + rank</span></li>
+  <li class="highlight"><a href="clear50_report.html">Clear15 — Clear-title validation</a><span class="meta">15 tickets · 93% pass · F1 0.93 · avg 17.9s · fresh bootstrap · gemini-2.5-flash + lite fallback</span></li>
+  <li><a href="jury100_report.html">Jury100 (deferred)</a><span class="meta">Incomplete 429-heavy run — not for jury handoff</span></li>
 </ul>
 <p style="font-size:0.85rem;color:#888;margin-top:2rem;">
-Run cognizant30: <code>python scripts/cognizant30_assessment.py --live</code><br>
-Run master: <code>python scripts/master_assessment.py --live</code><br>
-Run judge50: <code>python scripts/judge50_assessment.py --live</code><br>
+Run Clear15: <code>python scripts/clear50_assessment.py --live --fresh --limit 15 --delay 2.0</code><br>
+Fresh setup: <code>python scripts/bootstrap_rag_environment.py</code><br>
 UI smoke: <code>python scripts/ui_smoke_test.py</code><br>
-Product overview: <code>docs/saarthi_overview.html</code><br>
-Code map: <code>docs/CODE_WALKTHROUGH.md</code><br>
-Setup: <code>docs/COLLEAGUE_SETUP.md</code>
+Setup: <code>docs/COLLEAGUE_SETUP.md</code> · Business doc: <a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.html">HTML</a> · <a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.pdf">PDF</a>
 </p>
 </body>
 </html>

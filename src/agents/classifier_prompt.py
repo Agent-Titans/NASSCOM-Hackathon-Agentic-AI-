@@ -153,14 +153,19 @@ DO NOT classify as Security because of operational background noise:
 
 ## Step 4 — True Security Scope (narrow)
 Reserve Security ONLY for active structural security events:
+- Ticket begins with "Security incident:" → always Security
 - Explicit security breach or suspected breach
 - Phishing incident (clicked link, suspicious email, spear phishing)
 - Malware / ransomware / unauthorized software / endpoint quarantine
-- Leaked passwords, API keys, secrets, credential compromise
-- Unauthorized access, unauthorized file/folder access, privilege escalation,
-  VPN breach, account takeover, impossible travel logins
+- Leaked/exposed API keys or secrets (public repo, gist, theft) — NOT routine rotation
+- Unauthorized access attempts, privilege escalation, VPN breach, account takeover
 - DLP alerts, WAF-detected SQL injection, active attack patterns in logs
-- SSL/TLS certificate expiry or renewal (compliance risk) → Security
+
+NOT Security (common false positives):
+- Routine IAM/API key rotation or scheduled key rollover → Access Management
+- AWS/Azure "security group" firewall rule changes → Network
+- Elasticsearch/DB "incident search" or historical incident threads → Database
+- Storage object lock / retention / snapshot jobs → Storage
 
 ## Step 5 — Failure owner (WHO owns the broken layer?)
 Ask: "Which team owns fixing the ROOT system — not a symptom or side mention?"
@@ -208,24 +213,17 @@ Storage vs Application (SharePoint):
   → Storage (file/share permission), NOT Application app-feature support
 
 Application vs Network (gateway disambiguation):
+- Named app/web UI/portal/dashboard returning HTTP 500/502 after deploy → Application
+  (e.g. "dispatch simulator web UI 502", "Fusion HCM page HTTP 500")
 - Power BI data gateway offline, dataset refresh gateway connection → Application
-- VPN gateway, F5/nginx reverse proxy 504/502, load balancer timeout → Network
+- MPLS/FastConnect/circuit/BGP/packet-loss/private link/WAN optimizer → Network
+- VPN gateway, F5/nginx reverse proxy 504/502 at infrastructure edge → Network
 - Corp WiFi untrusted certificate warning → Network
 
-## Step 6 — Multi-class disambiguation
-- Docker, Hypervisors, VMs, BIOS, hardware virtualization, DEP/HVCI blocking
-  a local engine → Infrastructure (subcategory e.g. virtualization, docker_desktop)
-- Core code exceptions, compilation failures, script runtime errors → Application
-- Load balancer CPU/latency, 504/502 gateway timeouts at proxy/LB tier,
-  traffic spikes on LB nodes → Network (NOT Application), even when end-users
-  report slowness
-- User viewing folders/files they should not access, NTFS permission violations,
-  privilege escalation → Security (NOT Access Management provisioning)
-- ETL jobs, CSV/data import pipelines, bulk-copy (bcp) performance → Database
-  (NOT Application), even when described as a script or job
-- Password reset, new hire AD account, disable terminated user → Access Management
-- System updates breaking a local engine → updates are context; classify by the
-  engine that broke (Infrastructure or Application)
+App name + database engine (enterprise pattern):
+- If JDBC/replication/shard/vacuum/connection pool fails on a named DB tier
+  (Postgres, Oracle RAC, Elasticsearch, Druid, Cassandra) → Database
+  EVEN IF Workday/Salesforce/Slack appears in the title
 
 ## Confidence hints
 - high: clear core failure maps unambiguously to one category

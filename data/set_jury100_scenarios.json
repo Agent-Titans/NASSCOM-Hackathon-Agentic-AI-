@@ -1,0 +1,1704 @@
+{
+  "version": 1,
+  "description": "Jury100 \u2014 Nasscom self-evaluation suite. 100 office/technology tickets: Microsoft, HSBC Tech, JPMorgan Tech, Capgemini (25 each). Clear titles and descriptions. Security tickets prefixed 'Security incident:'.",
+  "firms": [
+    "Microsoft",
+    "HSBC Tech",
+    "JPMorgan Tech",
+    "Capgemini"
+  ],
+  "cases": [
+    {
+      "id": "MS01",
+      "firm": "Microsoft",
+      "title": "Teams meeting lobby bypass failure",
+      "description": "Microsoft Redmond campus: Microsoft Teams external guest stuck in lobby for executive briefing. Lobby policy change blocked auto-admit for trusted partners. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS02",
+      "firm": "Microsoft",
+      "title": "SharePoint site collection restore pending",
+      "description": "Microsoft Redmond campus: SharePoint Online site collection accidentally deleted. Admin center shows restore window expiring in 4 hours. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS03",
+      "firm": "Microsoft",
+      "title": "Azure DevOps pipeline YAML validation error",
+      "description": "Microsoft Redmond campus: Azure DevOps release pipeline fails YAML schema validation after template library upgrade. Production deployment blocked. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS04",
+      "firm": "Microsoft",
+      "title": "Power BI dataset refresh gateway offline",
+      "description": "Microsoft Redmond campus: On-premises data gateway for Power BI finance dataset offline. Scheduled refresh failed three consecutive runs. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS05",
+      "firm": "Microsoft",
+      "title": "Dynamics 365 sales entity sync failure",
+      "description": "Microsoft Redmond campus: Dynamics 365 opportunity sync to Dataverse failing with plugin exception. EMEA forecast commit at risk. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS06",
+      "firm": "Microsoft",
+      "title": "SQL Azure elastic pool DTU exhaustion",
+      "description": "Microsoft Redmond campus: Azure SQL elastic pool DTU pegged at 100 percent. CRM microservice timeouts during business hours. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Application"
+    },
+    {
+      "id": "MS07",
+      "firm": "Microsoft",
+      "title": "Cosmos DB request rate throttling alert",
+      "description": "Microsoft Redmond campus: Cosmos DB container returning 429 throttling on user profile service. Autoscale not keeping up with peak. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Database"
+    },
+    {
+      "id": "MS08",
+      "firm": "Microsoft",
+      "title": "PostgreSQL flexible server failover test failed",
+      "description": "Microsoft Redmond campus: Azure Database for PostgreSQL planned failover test did not complete. Replica lag above 10 minutes. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Database"
+    },
+    {
+      "id": "MS09",
+      "firm": "Microsoft",
+      "title": "Synapse dedicated SQL pool blocking chain",
+      "description": "Microsoft Redmond campus: Synapse dedicated SQL pool blocking chain on marketing mart load. ETL job killed after 2 hour wait. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Database"
+    },
+    {
+      "id": "MS10",
+      "firm": "Microsoft",
+      "title": "Fabric warehouse load job permission denied",
+      "description": "Microsoft Redmond campus: Microsoft Fabric warehouse COPY INTO fails with permission denied on ADLS Gen2 staging path. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Database"
+    },
+    {
+      "id": "MS11",
+      "firm": "Microsoft",
+      "title": "Entra ID conditional access blocks contractor laptop",
+      "description": "Microsoft Redmond campus: Contractor laptop blocked by Entra conditional access policy requiring compliant device. Project onboarding delayed. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Database"
+    },
+    {
+      "id": "MS12",
+      "firm": "Microsoft",
+      "title": "Privileged Identity Management activation stuck",
+      "description": "Microsoft Redmond campus: PIM role activation for Azure subscription owner pending approval 6 hours. Emergency change window closing. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Access Management"
+    },
+    {
+      "id": "MS13",
+      "firm": "Microsoft",
+      "title": "FIDO2 security key enrollment failure",
+      "description": "Microsoft Redmond campus: Employee FIDO2 key enrollment fails at Windows Hello setup. Smart card middleware conflict suspected. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Access Management"
+    },
+    {
+      "id": "MS14",
+      "firm": "Microsoft",
+      "title": "Service principal secret expired for Graph API",
+      "description": "Microsoft Redmond campus: Automation service principal client secret expired. Mailbox provisioning runbook failing. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Access Management"
+    },
+    {
+      "id": "MS15",
+      "firm": "Microsoft",
+      "title": "MFA number matching not received on mobile",
+      "description": "Microsoft Redmond campus: Authenticator push MFA number matching prompt not received on corporate mobile. User locked out of O365. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Microsoft Access Management"
+    },
+    {
+      "id": "MS16",
+      "firm": "Microsoft",
+      "title": "ExpressRoute BGP session down primary circuit",
+      "description": "Microsoft Redmond campus: ExpressRoute primary circuit BGP session down between Seattle and Azure region. Failover latency spike. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Microsoft Access Management"
+    },
+    {
+      "id": "MS17",
+      "firm": "Microsoft",
+      "title": "VPN split tunnel policy blocking GitHub Copilot",
+      "description": "Microsoft Redmond campus: Corporate VPN split tunnel policy blocks GitHub Copilot endpoints. Developers cannot use approved AI assistant. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Network"
+    },
+    {
+      "id": "MS18",
+      "firm": "Microsoft",
+      "title": "Wi-Fi 6E SSID authentication failure Building 34",
+      "description": "Microsoft Redmond campus: Wi-Fi 6E SSID 802.1X authentication fails for Building 34 engineers. RADIUS timeout to NPS cluster. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Network"
+    },
+    {
+      "id": "MS19",
+      "firm": "Microsoft",
+      "title": "DNS conditional forwarder stale for internal API",
+      "description": "Microsoft Redmond campus: Internal API hostname resolves to decommissioned IP after datacenter migration. Split DNS records stale. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Network"
+    },
+    {
+      "id": "MS20",
+      "firm": "Microsoft",
+      "title": "Hyper-V cluster live migration failure",
+      "description": "Microsoft Redmond campus: Hyper-V cluster live migration fails with insufficient resources on destination node. Patch maintenance blocked. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Network"
+    },
+    {
+      "id": "MS21",
+      "firm": "Microsoft",
+      "title": "Windows Server patch reboot loop on file cluster",
+      "description": "Microsoft Redmond campus: Windows Server cumulative update causes reboot loop on scale-out file server cluster node. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Infrastructure"
+    },
+    {
+      "id": "MS22",
+      "firm": "Microsoft",
+      "title": "OneDrive sync client throttling large engineering share",
+      "description": "Microsoft Redmond campus: OneDrive sync client throttling on 50GB engineering share. Desktop shows constant syncing state. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Infrastructure"
+    },
+    {
+      "id": "MS23",
+      "firm": "Microsoft",
+      "title": "Azure Files share quota exceeded for dev tools",
+      "description": "Microsoft Redmond campus: Azure Files premium share quota exceeded. Build artifact uploads failing for platform team. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Storage",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Microsoft Storage"
+    },
+    {
+      "id": "MS24",
+      "firm": "Microsoft",
+      "title": "Security incident: OAuth consent phishing targeting admins",
+      "description": "Microsoft Redmond campus: Security incident: OAuth consent phishing campaign targeting Entra global admins detected. Suspicious enterprise app consent requests logged. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Microsoft SecOps"
+    },
+    {
+      "id": "MS25",
+      "firm": "Microsoft",
+      "title": "Security incident: malware on build agent VM",
+      "description": "Microsoft Redmond campus: Security incident: Defender alert for malware on self-hosted Azure DevOps build agent. Agent pool quarantined. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Microsoft SecOps"
+    },
+    {
+      "id": "HS01",
+      "firm": "HSBC Tech",
+      "title": "Mainframe CICS transaction abend on payments screen",
+      "description": "HSBC Tech London technology centre: HSBC payments CICS transaction abends with ASRA on high-value transfer screen. EMEA clearing cut-off in 90 minutes. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS02",
+      "firm": "HSBC Tech",
+      "title": "Oracle Flexcube batch job failed overnight",
+      "description": "HSBC Tech London technology centre: Oracle Flexcube end-of-day batch aborts on interest accrual step. Downstream regulatory report delayed. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS03",
+      "firm": "HSBC Tech",
+      "title": "Temenos Transact API timeout on loan origination",
+      "description": "HSBC Tech London technology centre: Temenos Transact REST API timeout during retail loan origination. Branch staff using paper fallback. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS04",
+      "firm": "HSBC Tech",
+      "title": "SWIFT Alliance Access message queue backlog",
+      "description": "HSBC Tech London technology centre: SWIFT Alliance Access message queue backlog after gateway certificate renewal. Outbound payments queuing. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS05",
+      "firm": "HSBC Tech",
+      "title": "Kondor+ risk blotter not loading market data",
+      "description": "HSBC Tech London technology centre: Kondor+ risk blotter fails to load real-time FX rates. Traders using stale prices for VAR. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS06",
+      "firm": "HSBC Tech",
+      "title": "Db2 HADR standby lag on trade ledger",
+      "description": "HSBC Tech London technology centre: Db2 HADR standby lag exceeds 20 minutes on trade ledger database. Failover readiness degraded. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Application"
+    },
+    {
+      "id": "HS07",
+      "firm": "HSBC Tech",
+      "title": "MongoDB sharded cluster balancer stuck",
+      "description": "HSBC Tech London technology centre: MongoDB sharded cluster balancer stuck migrating chunks on customer analytics DB. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Database"
+    },
+    {
+      "id": "HS08",
+      "firm": "HSBC Tech",
+      "title": "SQL Server Always On availability group not synchronizing",
+      "description": "HSBC Tech London technology centre: SQL Server AG secondary not synchronizing after storage firmware upgrade. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Database"
+    },
+    {
+      "id": "HS09",
+      "firm": "HSBC Tech",
+      "title": "Redis cluster memory eviction on session store",
+      "description": "HSBC Tech London technology centre: Redis cluster aggressive eviction on digital banking session store. Mobile logins intermittently fail. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Database"
+    },
+    {
+      "id": "HS10",
+      "firm": "HSBC Tech",
+      "title": "PostgreSQL logical replication slot inactive",
+      "description": "HSBC Tech London technology centre: PostgreSQL logical replication slot inactive on fraud scoring replica. Feature store stale. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Database"
+    },
+    {
+      "id": "HS11",
+      "firm": "HSBC Tech",
+      "title": "CyberArk safe access request expired",
+      "description": "HSBC Tech London technology centre: CyberArk privileged access request for production DB expired before approval. DBA cannot run emergency fix. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Database"
+    },
+    {
+      "id": "HS12",
+      "firm": "HSBC Tech",
+      "title": "SailPoint identity certification campaign stuck",
+      "description": "HSBC Tech London technology centre: SailPoint certification campaign stuck on manager review for 400 trading accounts. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Access Management"
+    },
+    {
+      "id": "HS13",
+      "firm": "HSBC Tech",
+      "title": "Smart card PIN unlock for HSM operator",
+      "description": "HSBC Tech London technology centre: HSM operator smart card locked after three wrong PIN attempts. Payment signing halted. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Access Management"
+    },
+    {
+      "id": "HS14",
+      "firm": "HSBC Tech",
+      "title": "VPN token seed mismatch after phone replacement",
+      "description": "HSBC Tech London technology centre: RSA SecurID soft token seed mismatch after phone replacement. Remote trader cannot connect. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Access Management"
+    },
+    {
+      "id": "HS15",
+      "firm": "HSBC Tech",
+      "title": "Active Directory privileged group nested membership error",
+      "description": "HSBC Tech London technology centre: AD nested group membership not reflecting for SWIFT operator role. Access review failing. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "HSBC Tech Access Management"
+    },
+    {
+      "id": "HS16",
+      "firm": "HSBC Tech",
+      "title": "MPLS link congestion between HK and UK hubs",
+      "description": "HSBC Tech London technology centre: MPLS WAN congestion between Hong Kong and UK trading hubs during month-end. Voice turrets degrading. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "HSBC Tech Access Management"
+    },
+    {
+      "id": "HS17",
+      "firm": "HSBC Tech",
+      "title": "Firewall policy blocking FIX session to LP",
+      "description": "HSBC Tech London technology centre: Perimeter firewall change blocking FIX 4.4 session to liquidity provider. Equities desk offline. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Network"
+    },
+    {
+      "id": "HS18",
+      "firm": "HSBC Tech",
+      "title": "Proxy PAC file serving wrong datacenter route",
+      "description": "HSBC Tech London technology centre: PAC file serving stale route sending APAC users to EU proxy. Latency above 400ms. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Network"
+    },
+    {
+      "id": "HS19",
+      "firm": "HSBC Tech",
+      "title": "Load balancer SSL handshake failure on API gateway",
+      "description": "HSBC Tech London technology centre: F5 load balancer SSL handshake failures on open banking API gateway after cert chain update. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Network"
+    },
+    {
+      "id": "HS20",
+      "firm": "HSBC Tech",
+      "title": "Blade server PSU fault in primary trading rack",
+      "description": "HSBC Tech London technology centre: HP blade chassis PSU fault in primary London trading rack. Redundancy lost on half chassis. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Network"
+    },
+    {
+      "id": "HS21",
+      "firm": "HSBC Tech",
+      "title": "VMware vMotion failure on risk calculation cluster",
+      "description": "HSBC Tech London technology centre: vMotion fails on risk calculation cluster during host maintenance. Batch VAR run delayed. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Infrastructure"
+    },
+    {
+      "id": "HS22",
+      "firm": "HSBC Tech",
+      "title": "NetApp volume snapshot restore needed for legal hold",
+      "description": "HSBC Tech London technology centre: NetApp snapshot restore required for legal hold on archived email PST share. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Infrastructure"
+    },
+    {
+      "id": "HS23",
+      "firm": "HSBC Tech",
+      "title": "SAN fabric zone misconfiguration after switch upgrade",
+      "description": "HSBC Tech London technology centre: Brocade SAN zoning misconfiguration after firmware upgrade. DB LUN paths down. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Storage",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "HSBC Tech Storage"
+    },
+    {
+      "id": "HS24",
+      "firm": "HSBC Tech",
+      "title": "Security incident: credential stuffing on retail banking portal",
+      "description": "HSBC Tech London technology centre: Security incident: credential stuffing attack detected on retail banking login. WAF flagged 12k attempts from botnet. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "HSBC Tech SecOps"
+    },
+    {
+      "id": "HS25",
+      "firm": "HSBC Tech",
+      "title": "Security incident: suspicious PowerShell on trader workstation",
+      "description": "HSBC Tech London technology centre: Security incident: EDR flagged suspicious PowerShell download cradle on trader workstation. Host isolated. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "HSBC Tech SecOps"
+    },
+    {
+      "id": "JP01",
+      "firm": "JPMorgan Tech",
+      "title": "Athena risk report grid timeout",
+      "description": "JPMorgan Tech Brooklyn tech hub: Athena risk report grid times out loading cross-asset Greeks for US desk. Risk meeting in 1 hour. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP02",
+      "firm": "JPMorgan Tech",
+      "title": "LOLR liquidity dashboard stale positions",
+      "description": "JPMorgan Tech Brooklyn tech hub: LOLR liquidity dashboard showing stale positions after ETL failure. Treasury using manual spreadsheet. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP03",
+      "firm": "JPMorgan Tech",
+      "title": "Fusion platform API gateway 502 errors",
+      "description": "JPMorgan Tech Brooklyn tech hub: Fusion platform API gateway returning 502 on client onboarding workflow. API mesh circuit open. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP04",
+      "firm": "JPMorgan Tech",
+      "title": "SimCorp Dimension corporate action import failed",
+      "description": "JPMorgan Tech Brooklyn tech hub: SimCorp Dimension corporate action import failed validation. Fixed income ops blocked. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP05",
+      "firm": "JPMorgan Tech",
+      "title": "Collibra data catalog lineage broken for trade feed",
+      "description": "JPMorgan Tech Brooklyn tech hub: Collibra lineage graph broken for trade feed after schema rename. Data governance audit finding. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP06",
+      "firm": "JPMorgan Tech",
+      "title": "Cassandra repair failing on market data keyspace",
+      "description": "JPMorgan Tech Brooklyn tech hub: Cassandra nodetool repair aborts on market data keyspace. Read consistency warnings. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Application"
+    },
+    {
+      "id": "JP07",
+      "firm": "JPMorgan Tech",
+      "title": "Oracle Exadata cell disk offline",
+      "description": "JPMorgan Tech Brooklyn tech hub: Exadata storage cell disk offline on trade warehouse. Smart scan performance degraded. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Database"
+    },
+    {
+      "id": "JP08",
+      "firm": "JPMorgan Tech",
+      "title": "Sybase ASE tempdb full on equities database",
+      "description": "JPMorgan Tech Brooklyn tech hub: Sybase ASE tempdb full during bulk load on equities database. Batch aborted. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Database"
+    },
+    {
+      "id": "JP09",
+      "firm": "JPMorgan Tech",
+      "title": "Snowflake warehouse auto-suspend during month-end",
+      "description": "JPMorgan Tech Brooklyn tech hub: Snowflake warehouse auto-suspended during month-end regulatory extract. Job queue backed up. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Database"
+    },
+    {
+      "id": "JP10",
+      "firm": "JPMorgan Tech",
+      "title": "ElasticSearch cluster red status on log analytics",
+      "description": "JPMorgan Tech Brooklyn tech hub: ElasticSearch cluster red after unassigned shards on security log index. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Database"
+    },
+    {
+      "id": "JP11",
+      "firm": "JPMorgan Tech",
+      "title": "ForgeRock SSO assertion validation failure",
+      "description": "JPMorgan Tech Brooklyn tech hub: ForgeRock SAML assertion validation failure for internal research portal after IdP cert rollover. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Database"
+    },
+    {
+      "id": "JP12",
+      "firm": "JPMorgan Tech",
+      "title": "BeyondTrust session recording not starting",
+      "description": "JPMorgan Tech Brooklyn tech hub: BeyondTrust privileged session recording not starting for DBA jump box. Compliance audit gap. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Access Management"
+    },
+    {
+      "id": "JP13",
+      "firm": "JPMorgan Tech",
+      "title": "Trading desk badge not provisioning after transfer",
+      "description": "JPMorgan Tech Brooklyn tech hub: Physical access badge not provisioned after internal desk transfer. Trader cannot enter floor. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Access Management"
+    },
+    {
+      "id": "JP14",
+      "firm": "JPMorgan Tech",
+      "title": "Kerberos SPN duplicate on pricing service account",
+      "description": "JPMorgan Tech Brooklyn tech hub: Duplicate Kerberos SPN on pricing service account causing authentication failures. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Access Management"
+    },
+    {
+      "id": "JP15",
+      "firm": "JPMorgan Tech",
+      "title": "YubiKey OTP sync drift on rates desk",
+      "description": "JPMorgan Tech Brooklyn tech hub: YubiKey OTP sync drift blocking VPN login for rates desk analyst. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "JPMorgan Tech Access Management"
+    },
+    {
+      "id": "JP16",
+      "firm": "JPMorgan Tech",
+      "title": "Cross-connect latency spike to NYSE matching engine",
+      "description": "JPMorgan Tech Brooklyn tech hub: Cross-connect latency spike to colo matching engine. Algo orders missing queue position. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "JPMorgan Tech Access Management"
+    },
+    {
+      "id": "JP17",
+      "firm": "JPMorgan Tech",
+      "title": "Multicast feed gap on US equity depth channel",
+      "description": "JPMorgan Tech Brooklyn tech hub: Multicast equity depth feed gap detected on primary channel. Pricing engine using backup. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Network"
+    },
+    {
+      "id": "JP18",
+      "firm": "JPMorgan Tech",
+      "title": "BGP route leak from DR site affecting market data VPN",
+      "description": "JPMorgan Tech Brooklyn tech hub: BGP route leak from DR site injecting prefixes into market data VPN. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Network"
+    },
+    {
+      "id": "JP19",
+      "firm": "JPMorgan Tech",
+      "title": "DNSSEC validation failure on internal pricing hostname",
+      "description": "JPMorgan Tech Brooklyn tech hub: DNSSEC validation failure on internal pricing API hostname after key rollover. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Network"
+    },
+    {
+      "id": "JP20",
+      "firm": "JPMorgan Tech",
+      "title": "Trading floor UPS battery test failure",
+      "description": "JPMorgan Tech Brooklyn tech hub: UPS battery test failure on trading floor power distribution unit. Facilities escalation. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Network"
+    },
+    {
+      "id": "JP21",
+      "firm": "JPMorgan Tech",
+      "title": "Linux kernel panic on low-latency pricing server",
+      "description": "JPMorgan Tech Brooklyn tech hub: Linux kernel panic on low-latency pricing server after NIC driver update. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Infrastructure"
+    },
+    {
+      "id": "JP22",
+      "firm": "JPMorgan Tech",
+      "title": "Isilon cluster snapshot policy not running",
+      "description": "JPMorgan Tech Brooklyn tech hub: Isilon snapshot policy missed 3 cycles on research file share. RPO at risk. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Infrastructure"
+    },
+    {
+      "id": "JP23",
+      "firm": "JPMorgan Tech",
+      "title": "Object storage lifecycle rule deleted research archive",
+      "description": "JPMorgan Tech Brooklyn tech hub: S3 lifecycle misconfiguration moved research archive to Glacier early. Retrieval delay. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Storage",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "JPMorgan Tech Storage"
+    },
+    {
+      "id": "JP24",
+      "firm": "JPMorgan Tech",
+      "title": "Security incident: market data API key exposed in chat",
+      "description": "JPMorgan Tech Brooklyn tech hub: Security incident: production market data API key pasted in Teams channel. Key rotation required. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "JPMorgan Tech SecOps"
+    },
+    {
+      "id": "JP25",
+      "firm": "JPMorgan Tech",
+      "title": "Security incident: ransomware probe on file transfer server",
+      "description": "JPMorgan Tech Brooklyn tech hub: Security incident: ransomware behavior detected on managed file transfer server. Shares isolated. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "JPMorgan Tech SecOps"
+    },
+    {
+      "id": "CG01",
+      "firm": "Capgemini",
+      "title": "SAP SuccessFactors performance review workflow stuck",
+      "description": "Capgemini Paris delivery centre: SuccessFactors performance review workflow stuck in pending step for 200 managers. HR deadline tonight. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG02",
+      "firm": "Capgemini",
+      "title": "ServiceNow CMDB CI reconciliation job failing",
+      "description": "Capgemini Paris delivery centre: ServiceNow CMDB reconciliation job failing on Azure VM discovery. Change calendar inaccurate. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG03",
+      "firm": "Capgemini",
+      "title": "MuleSoft API manager rate limit misconfiguration",
+      "description": "Capgemini Paris delivery centre: MuleSoft API rate limit misconfiguration throttling client portal APIs during UAT. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG04",
+      "firm": "Capgemini",
+      "title": "Salesforce Experience Cloud login branding broken",
+      "description": "Capgemini Paris delivery centre: Salesforce Experience Cloud login page CSS broken after release. Client UAT blocked. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG05",
+      "firm": "Capgemini",
+      "title": "OutSystems mobile app crash on offline sync",
+      "description": "Capgemini Paris delivery centre: OutSystems client mobile app crashes on offline sync after platform upgrade. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG06",
+      "firm": "Capgemini",
+      "title": "Guidewire ClaimCenter UI slowness on search",
+      "description": "Capgemini Paris delivery centre: Guidewire ClaimCenter claim search exceeds 30 seconds. Adjusters cannot process backlog. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Application"
+    },
+    {
+      "id": "CG07",
+      "firm": "Capgemini",
+      "title": "MySQL Galera cluster split-brain warning",
+      "description": "Capgemini Paris delivery centre: MySQL Galera cluster split-brain warning on insurance policy DB. Writes paused. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Database"
+    },
+    {
+      "id": "CG08",
+      "firm": "Capgemini",
+      "title": "Azure SQL managed instance long transaction blocking",
+      "description": "Capgemini Paris delivery centre: Azure SQL MI blocking chain on policy billing schema during month-end. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Database"
+    },
+    {
+      "id": "CG09",
+      "firm": "Capgemini",
+      "title": "Teradata AMP skew on client warehouse job",
+      "description": "Capgemini Paris delivery centre: Teradata AMP skew causing 4 hour runtime on client loyalty warehouse job. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Database"
+    },
+    {
+      "id": "CG10",
+      "firm": "Capgemini",
+      "title": "Elasticsearch index rollover failing on observability",
+      "description": "Capgemini Paris delivery centre: Elasticsearch index rollover failing on client observability cluster. Disk 92 percent. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Database"
+    },
+    {
+      "id": "CG11",
+      "firm": "Capgemini",
+      "title": "HashiCorp Vault namespace policy denying CI pipeline",
+      "description": "Capgemini Paris delivery centre: Vault namespace policy denying CI pipeline secret read after policy refactor. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Database"
+    },
+    {
+      "id": "CG12",
+      "firm": "Capgemini",
+      "title": "Saviynt access review campaign overdue for offshore team",
+      "description": "Capgemini Paris delivery centre: Saviynt access review overdue for offshore delivery team. SOX finding risk. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Access Management"
+    },
+    {
+      "id": "CG13",
+      "firm": "Capgemini",
+      "title": "Client VPN profile corrupt after certificate push",
+      "description": "Capgemini Paris delivery centre: Client VPN profile corrupt after automated certificate push. Consultants locked out. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Access Management"
+    },
+    {
+      "id": "CG14",
+      "firm": "Capgemini",
+      "title": "LDAP bind failures on legacy IAM bridge",
+      "description": "Capgemini Paris delivery centre: LDAP bind failures on legacy IAM bridge synchronizing contractor accounts. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Access Management"
+    },
+    {
+      "id": "CG15",
+      "firm": "Capgemini",
+      "title": "Privileged access break-glass account locked",
+      "description": "Capgemini Paris delivery centre: Break-glass admin account locked after password policy change. Sev1 change blocked. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Capgemini Access Management"
+    },
+    {
+      "id": "CG16",
+      "firm": "Capgemini",
+      "title": "SD-WAN path selection sending traffic via expensive link",
+      "description": "Capgemini Paris delivery centre: SD-WAN sending Mumbai-Poland traffic via expensive backup link. Latency 280ms. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Capgemini Access Management"
+    },
+    {
+      "id": "CG17",
+      "firm": "Capgemini",
+      "title": "Site-to-site VPN down between client DC and Capgemini SOC",
+      "description": "Capgemini Paris delivery centre: IPsec VPN down between client datacenter and Capgemini SOC. SIEM ingestion stopped. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Network"
+    },
+    {
+      "id": "CG18",
+      "firm": "Capgemini",
+      "title": "Wi-Fi captive portal certificate expired at delivery centre",
+      "description": "Capgemini Paris delivery centre: Guest Wi-Fi captive portal TLS certificate expired at delivery centre. Visitors cannot join. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Network"
+    },
+    {
+      "id": "CG19",
+      "firm": "Capgemini",
+      "title": "Core switch VRRP master flapping after VLAN change",
+      "description": "Capgemini Paris delivery centre: Core switch VRRP master flapping after VLAN restructuring. Inter-floor connectivity unstable. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Network"
+    },
+    {
+      "id": "CG20",
+      "firm": "Capgemini",
+      "title": "Hyperconverged node disk failure in client private cloud",
+      "description": "Capgemini Paris delivery centre: Nutanix node disk failure in client private cloud hosting UAT environment. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Network"
+    },
+    {
+      "id": "CG21",
+      "firm": "Capgemini",
+      "title": "Windows patch failure on Citrix VDI golden image",
+      "description": "Capgemini Paris delivery centre: Citrix VDI golden image patch failure prevents new desktop provisioning. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Infrastructure"
+    },
+    {
+      "id": "CG22",
+      "firm": "Capgemini",
+      "title": "Backup job failed on client SharePoint migration share",
+      "description": "Capgemini Paris delivery centre: Veeam backup job failed on SharePoint migration staging share. Delta sync at risk. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Infrastructure"
+    },
+    {
+      "id": "CG23",
+      "firm": "Capgemini",
+      "title": "NetApp volume nearly full on project artifact share",
+      "description": "Capgemini Paris delivery centre: NetApp volume 96 percent full on project artifact share. Build pipeline uploads failing. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Storage",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2",
+        "3"
+      ],
+      "notes": "Capgemini Storage"
+    },
+    {
+      "id": "CG24",
+      "firm": "Capgemini",
+      "title": "Security incident: phishing targeting offshore onboarding inbox",
+      "description": "Capgemini Paris delivery centre: Security incident: phishing campaign targeting offshore onboarding shared mailbox with fake HR forms. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Capgemini SecOps"
+    },
+    {
+      "id": "CG25",
+      "firm": "Capgemini",
+      "title": "Security incident: unauthorized USB on client audit laptop",
+      "description": "Capgemini Paris delivery centre: Security incident: DLP blocked unauthorized USB copy on client audit laptop at client site. Business impact on client delivery timeline. Need IT support triage and resolution.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Capgemini SecOps"
+    }
+  ]
+}
