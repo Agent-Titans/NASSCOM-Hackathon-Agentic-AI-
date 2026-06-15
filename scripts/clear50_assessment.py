@@ -37,12 +37,20 @@ from scripts.master_assessment import (  # noqa: E402
 )
 
 
+def _gemini_case_summary() -> dict[str, object]:
+    from src.clients.gemini_client import GeminiClient
+
+    return GeminiClient.eval_summary()
+
+
 def _process_case(session, requester, spec: CaseSpec) -> dict:
+    from src.clients.gemini_client import GeminiClient
     from src.config.departments import canonical_department
     from src.db.models import ClassificationArtifact
     from src.services.ticket_service import TicketService
     from src.stores.ticket_store import TicketStore
 
+    GeminiClient.reset_eval_log()
     store = TicketStore(session)
     svc = TicketService(session)
     ticket = store.create(requester, spec.title, spec.description, spec.urgency)
@@ -56,6 +64,7 @@ def _process_case(session, requester, spec: CaseSpec) -> dict:
     dept = ticket.department_queue or "?"
     hand_ok = _hand_matches(spec, hand)
     dept_ok = canonical_department(dept) == canonical_department(spec.expected_department)
+    gem = _gemini_case_summary()
     return {
         "case_id": spec.case_id,
         "firm": spec.firm,
@@ -71,6 +80,10 @@ def _process_case(session, requester, spec: CaseSpec) -> dict:
         "hand_ok": hand_ok,
         "department_ok": dept_ok,
         "pass": hand_ok and dept_ok,
+        "gemini_used": gem.get("gemini_used", False),
+        "gemini_models": gem.get("gemini_models", []),
+        "gemini_calls_ok": gem.get("gemini_calls_ok", 0),
+        "gemini_calls_failed": gem.get("gemini_calls_failed", 0),
     }
 
 
@@ -119,6 +132,10 @@ def run_live(*, fresh: bool = False, delay: float = 2.0, limit: int | None = Non
                     "hand_ok": False,
                     "department_ok": False,
                     "pass": False,
+                    "gemini_used": False,
+                    "gemini_models": [],
+                    "gemini_calls_ok": 0,
+                    "gemini_calls_failed": 0,
                     "error": str(exc)[:200],
                 }
             existing[spec.case_id] = row
@@ -129,9 +146,12 @@ def run_live(*, fresh: bool = False, delay: float = 2.0, limit: int | None = Non
             payload["limit"] = limit
             RESULTS.write_text(json.dumps(payload, indent=2))
             mark = "PASS" if row["pass"] else "FAIL"
+            models = row.get("gemini_models") or []
+            gem = "yes" if row.get("gemini_used") else "no"
             print(
                 f"  [{mark}] {spec.case_id} H{row['actual_hand']}/{row['actual_department']} "
-                f"({row.get('classify_source','?')}) {row['latency_sec']}s",
+                f"({row.get('classify_source','?')}) {row['latency_sec']}s "
+                f"gemini={gem} models={models or '—'}",
                 flush=True,
             )
 
@@ -157,6 +177,19 @@ def _latency_stats(cases: list[dict]) -> dict[str, float]:
     }
 
 
+def _gemini_aggregate(cases: list[dict]) -> dict[str, object]:
+    used = sum(1 for c in cases if c.get("gemini_used"))
+    models: dict[str, int] = {}
+    for c in cases:
+        for m in c.get("gemini_models") or []:
+            models[m] = models.get(m, 0) + 1
+    return {
+        "tickets_with_gemini": used,
+        "tickets_without_gemini": len(cases) - used,
+        "model_usage": dict(sorted(models.items(), key=lambda x: -x[1])),
+    }
+
+
 def _render_html(data: dict[str, Any]) -> None:
     cases = data["cases"]
     s = data["summary"]
@@ -168,7 +201,10 @@ def _render_html(data: dict[str, Any]) -> None:
         f'<td>{html_mod.escape(c.get("firm","")[:18])}</td>'
         f'<td>{html_mod.escape(c["title"][:45])}</td>'
         f'<td>{c["expected_department"]}</td><td>{c["actual_department"]}</td>'
-        f'<td>{c.get("classify_source")}</td><td>{c.get("latency_sec")}s</td>'
+        f'<td>{c.get("classify_source")}</td>'
+        f'<td>{"yes" if c.get("gemini_used") else "no"}</td>'
+        f'<td>{html_mod.escape(", ".join(c.get("gemini_models") or []) or "—")}</td>'
+        f'<td>{c.get("latency_sec")}s</td>'
         f'<td>{"PASS" if c.get("pass") else "FAIL"}</td></tr>'
         for c in cases
     )
@@ -176,6 +212,11 @@ def _render_html(data: dict[str, Any]) -> None:
         f"<tr><td>{k}</td><td>{v.get('avg_ms',0)}ms</td><td>{v.get('max_ms',0)}ms</td></tr>"
         for k, v in sorted(agent.items())
         if isinstance(v, dict)
+    )
+    gem = data.get("gemini", {})
+    gem_rows = "".join(
+        f"<tr><td>{html_mod.escape(k)}</td><td>{v}</td></tr>"
+        for k, v in (gem.get("model_usage") or {}).items()
     )
     doc = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>{suite} — Latency &amp; Pass Rate</title>
@@ -191,11 +232,15 @@ th,td{{border:1px solid #ddd;padding:.4rem}}tr.fail{{background:#fef2f2}}tr.pass
 <div class="stat"><div class="num">{lat['avg']}s</div>Avg latency</div>
 <div class="stat"><div class="num">{lat['p50']}s</div>p50 latency</div>
 <div class="stat"><div class="num">{lat['p90']}s</div>p90 latency</div>
+<div class="stat"><div class="num">{gem.get('tickets_with_gemini', 0)}</div>Gemini tickets</div>
 <p>Classify sources: {data['source_mix']}</p>
+<p>Gemini model usage: {gem.get('model_usage', {})}</p>
 <h2>Per-agent timing (avg)</h2>
-<table><thead><tr><th>Agent</th><th>Avg</th><th>p50</th></tr></thead><tbody>{agent_rows}</tbody></table>
+<table><thead><tr><th>Agent</th><th>Avg</th><th>Max</th></tr></thead><tbody>{agent_rows}</tbody></table>
+<h2>Gemini models (ticket count)</h2>
+<table><thead><tr><th>Model</th><th>Tickets</th></tr></thead><tbody>{gem_rows or '<tr><td colspan=2>—</td></tr>'}</tbody></table>
 <h2>Cases</h2>
-<table><thead><tr><th>ID</th><th>Firm</th><th>Title</th><th>Exp</th><th>Act</th><th>Clf</th><th>Lat</th><th></th></tr></thead>
+<table><thead><tr><th>ID</th><th>Firm</th><th>Title</th><th>Exp</th><th>Act</th><th>Clf</th><th>Gemini</th><th>Models</th><th>Lat</th><th></th></tr></thead>
 <tbody>{rows}</tbody></table>
 <p style="color:#64748b;font-size:.75rem">data/set_clear50_scenarios.json · scripts/clear50_assessment.py</p>
 </body></html>"""
@@ -213,6 +258,9 @@ def main() -> int:
 
     if args.fresh:
         from scripts.clear_user_tickets import clear_user_tickets
+
+        if RESULTS.exists():
+            RESULTS.unlink()
         clear_user_tickets(reindex_chroma=True)
 
     if args.live or args.fresh:
@@ -240,6 +288,7 @@ def main() -> int:
         "latency": lat,
         "agent_timing": agent_timing,
         "source_mix": src,
+        "gemini": _gemini_aggregate(cases),
         "cases": cases,
     }
     RESULTS.write_text(json.dumps(out, indent=2))
@@ -252,6 +301,7 @@ def main() -> int:
     print(f"Macro F1: {f1['macro_f1']}")
     print(f"Latency avg {lat['avg']}s · p50 {lat['p50']}s · p90 {lat['p90']}s")
     print(f"Sources: {src}")
+    print(f"Gemini: {out['gemini']}")
     print(f"Report: {REPORT}")
     return 0
 

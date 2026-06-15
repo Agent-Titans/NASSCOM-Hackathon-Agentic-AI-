@@ -126,6 +126,33 @@ def _ensure_specialists_ticket() -> str:
         return ticket.ticket_id
 
 
+def _ensure_agent_detail_ticket(user: User) -> str:
+    """Application/SecOps H2 ticket that renders agent detail (Back + Route buttons)."""
+    from src.config.specialists import SPECIALISTS_QUEUE
+
+    dept = user.department or "Application"
+    _ensure_routable_app_ticket()
+    with get_session_factory()() as session:
+        t = (
+            session.query(Ticket)
+            .filter(
+                Ticket.department_queue == dept,
+                Ticket.hand.in_(("2", "3")),
+                Ticket.status.notin_(("RESOLVED", "CLOSED")),
+                Ticket.department_queue != SPECIALISTS_QUEUE,
+            )
+            .order_by(Ticket.created_at.desc())
+            .first()
+        )
+        if t:
+            t.assignee_id = None
+            t.hand = "2" if t.hand not in ("2", "3") else t.hand
+            t.status = "ROUTED" if t.status in ("RESOLVED", "CLOSED") else t.status
+            session.commit()
+            return t.ticket_id
+    return _ensure_dept_ticket(dept, user)
+
+
 def _ensure_dept_ticket(dept: str, user: User) -> str:
     tid = _dept_ticket(dept)
     if tid:
@@ -240,6 +267,7 @@ def _ensure_secops_ops_ticket() -> str:
 def main() -> int:
     app_path = ROOT / "src" / "ui" / "app.py"
     errors: list[str] = []
+    _ensure_routable_app_ticket()
 
     cases = [
         ("employee_home", "pallavi@user", lambda at, u: None),
@@ -266,7 +294,7 @@ def main() -> int:
                 at,
                 agent_view="detail",
                 page="agent",
-                ticket_id=_ensure_dept_ticket(u.department or "Application", u),
+                ticket_id=_ensure_agent_detail_ticket(u),
             ),
         ),
         ("admin_home", "admin@employee", lambda at, u: None),

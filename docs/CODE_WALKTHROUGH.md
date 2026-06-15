@@ -1,6 +1,8 @@
 # SAARTHI — Code walkthrough (start to finish)
 
-This document traces a ticket from browser submit to agent queue. Read top-to-bottom once; use the file paths when debugging.
+**Team:** Sagar, Sree, Subbu, Karan, Shashi Pathi, Narsimha, Gajanan, Satya Sai — [`TEAM.md`](TEAM.md)
+
+This document traces a ticket from browser submit to agent queue. For repo layout see [`CODE_STRUCTURE.md`](CODE_STRUCTURE.md).
 
 ---
 
@@ -217,12 +219,12 @@ python scripts/bootstrap_rag_environment.py
 ## 10. Test commands
 
 ```bash
-python scripts/ui_smoke_test.py              # all portal pages
-python scripts/master_portal_assessment.py   # UI + 30-ticket score
-python scripts/master_portal_assessment.py --live-routing
+python scripts/ui_smoke_test.py
+python scripts/master100_assessment.py --live --fresh --delay 4.0
+python scripts/demo20_assessment.py --live --fresh --delay 2.0
 ```
 
-Reports: `test-reports/portal_master_report.html`, `test-reports/index.html`
+Reports: `test-reports/index.html`, `test-reports/master100_report.html`
 
 ---
 
@@ -241,19 +243,8 @@ src/config/departments.py        Category → queue map
 src/stores/ticket_store.py       Ticket CRUD + SLA labels
 data/synthetic/tickets_1000.json RAG corpus
 scripts/bootstrap_rag_environment.py  First-run setup
-scripts/master_assessment.py       Master50 grand report (F1, LLM jury, timing)
-scripts/judge50_assessment.py      Nasscom Judge50 firm scenarios
-docs/MASTER_ASSESSMENT_METHODOLOGY.md  Efficiency & scalability write-up
+scripts/master100_assessment.py  Primary 100-ticket jury eval
+scripts/demo20_assessment.py     Live demo eval
+docs/CODE_STRUCTURE.md           Repo layout + architecture summary
+docs/MASTER100_JUDGE_EVALUATION.md  Jury validation methodology
 ```
-
----
-
-## 10. Master validation (independent of Judge50)
-
-| Command | Output |
-|---------|--------|
-| `python scripts/master_assessment.py --live` | 50 new tickets (Amazon, Google, Deloitte, …) |
-| `test-reports/master_report.html` | Grand score, macro-F1, per-agent `duration_ms`, LLM jury |
-| `docs/MASTER_ASSESSMENT_METHODOLOGY.md` | Latency/CPU/cost/scalability methodologies |
-
-Latest Master50 result: **50/50 routing**, **macro-F1 1.0**, **grand score 94.2/100**.

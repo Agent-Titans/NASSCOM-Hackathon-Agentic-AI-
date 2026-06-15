@@ -20,14 +20,18 @@
 <h1>SAARTHI — Nasscom jury reports</h1>
 <p class="sub">Open in any browser · setup: <code>docs/NASSCOM_JUDGE_SETUP.md</code></p>
 <ul>
+  <li class="highlight" style="border-color:#0c4a6e;background:#e0f2fe"><a href="master100_report.html">Master100 — Primary jury validation (Nextera Technologies)</a><span class="meta">Run B frozen: 86/100 · F1 0.87 · Run A baseline: 75/100 · security 10/10 · <code>docs/MASTER100_JUDGE_EVALUATION.md</code></span></li>
   <li class="highlight"><a href="demo20_report.html">Demo20 — Jury demo validation</a><span class="meta">20 tickets · 80% pass · F1 0.78 · avg 11.5s · LLM jury 8.5/10 · security 3/3 · UI smoke PASS</span></li>
+  <li class="highlight"><a href="clear50_report.html">Clear50 — Enterprise validation</a><span class="meta">50 tickets · 88% pass · F1 0.64 · avg 15.9s · Gemini 50/50 · flash-lite fallback 11×</span></li>
+  <li class="highlight"><a href="final50_report.html">Final50 — Final evaluation suite</a><span class="meta">50 tickets · 94% pass · F1 0.92 · avg 14.0s · LLM jury 9/10 · security 5/5 · UI smoke PASS</span></li>
   <li><a href="../docs/SAARTHI_BUSINESS_DOCUMENTATION.html">Business documentation</a><span class="meta">Product overview, team, responsible AI, integrations, roadmap</span></li>
   <li><a href="../docs/saarthi_overview.html">Product overview</a><span class="meta">What / why / how</span></li>
 </ul>
 <p style="font-size:0.85rem;color:#888;margin-top:2rem;">
 Setup: <code>docs/NASSCOM_JUDGE_SETUP.md</code><br>
-Scenarios: <code>data/set_demo20_scenarios.json</code><br>
-Re-run: <code>python scripts/demo20_assessment.py --live --fresh --delay 2.0</code><br>
+Scenarios: <code>data/set_master100_scenarios.json</code> (primary) · <code>data/set_demo20_scenarios.json</code> · <code>data/set_clear50_scenarios.json</code> · <code>data/set_final50_scenarios.json</code><br>
+Master100: <code>python scripts/master100_assessment.py --live --fresh --delay 4.0</code><br>
+Re-run Demo20: <code>python scripts/demo20_assessment.py --live --fresh --delay 2.0</code><br>
 UI smoke: <code>python scripts/ui_smoke_test.py</code>
 </p>
 </body>

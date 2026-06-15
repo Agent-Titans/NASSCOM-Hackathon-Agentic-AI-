@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-SAARTHI Master Assessment — independent 50-ticket validation suite.
+Shared assessment utilities for SAARTHI validation suites.
 
-Dimensions: routing F1, per-agent latency, UI smoke, UC1/LLD alignment,
-responsible AI, privacy, security, scalability, LLM-as-judge (optional).
+Imported by demo20, clear50, final50, and master100 assessment runners:
+  _load_cases, _f1_metrics, _grand_score, _hand_matches, _architecture_audit, …
 
-  python scripts/master_assessment.py              # cached + report
-  python scripts/master_assessment.py --live       # full live run (~12 min)
+Suite-specific runners:
+  scripts/master100_assessment.py   # Primary — 100 Nextera tickets
+  scripts/demo20_assessment.py      # Live demo — 20 tickets
+  scripts/final50_assessment.py     # Multi-firm — 50 tickets
+  scripts/clear50_assessment.py     # Enterprise — 50 tickets
 
-Output: test-reports/master_report.html, docs/master50_results.json
+Legacy Master50 standalone entry point removed; see docs/archive/.
 """
 from __future__ import annotations
 

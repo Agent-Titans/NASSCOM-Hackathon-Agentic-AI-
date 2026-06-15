@@ -1,0 +1,821 @@
+{
+  "version": 2,
+  "description": "Final50 \u2014 50 unique Nasscom evaluation tickets (Amazon, Google, Deloitte, Nike, Tesla). Per-ticket gold labels aligned to content. Zero overlap with Demo20/Clear50.",
+  "firms": [
+    "Amazon",
+    "Google",
+    "Deloitte",
+    "Nike",
+    "Tesla"
+  ],
+  "cases": [
+    {
+      "id": "AM01",
+      "firm": "Amazon",
+      "title": "Seller Central listing upload API errors",
+      "description": "Amazon Seller Central bulk listing upload API returns HTTP 503 for India marketplace sellers. Peak sale event starts in 2 hours.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Application"
+    },
+    {
+      "id": "AM02",
+      "firm": "Amazon",
+      "title": "AWS WorkSpaces client disconnect loop on macOS",
+      "description": "AWS WorkSpaces client disconnects every 5 minutes on macOS Sonoma. Remote merchandising team cannot access catalog tools.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Application"
+    },
+    {
+      "id": "AM03",
+      "firm": "Amazon",
+      "title": "Redshift cluster disk full on analytics schema",
+      "description": "Amazon Redshift RA3 cluster disk full on analytics schema. Nightly ETL for demand forecast failing.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Database"
+    },
+    {
+      "id": "AM04",
+      "firm": "Amazon",
+      "title": "Aurora PostgreSQL read replica lag critical",
+      "description": "Aurora PostgreSQL read replica lag exceeds 15 minutes on order pipeline. Checkout microservice reading stale inventory.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Database"
+    },
+    {
+      "id": "AM05",
+      "firm": "Amazon",
+      "title": "Forgot password on internal retail portal",
+      "description": "Forgot password on internal Amazon retail associate portal. Account locked after failed attempts. Shift starts in 30 minutes.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Access Management"
+    },
+    {
+      "id": "AM06",
+      "firm": "Amazon",
+      "title": "MFA device lost \u2014 cannot access vendor portal",
+      "description": "Lost phone with Authenticator app for vendor portal MFA. Need temporary access to approve PO workflow.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Access Management"
+    },
+    {
+      "id": "AM07",
+      "firm": "Amazon",
+      "title": "Direct Connect BGP flapping to us-east-1",
+      "description": "AWS Direct Connect BGP session flapping between corporate DC and us-east-1. Latency spikes on fulfillment APIs.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Network"
+    },
+    {
+      "id": "AM08",
+      "firm": "Amazon",
+      "title": "Corporate VPN split tunnel blocks internal wiki",
+      "description": "Amazon corporate VPN split tunnel policy blocks internal wiki host. New hire onboarding docs unreachable from home.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Network"
+    },
+    {
+      "id": "AM09",
+      "firm": "Amazon",
+      "title": "Warehouse Zebra scanner Wi-Fi roaming drops",
+      "description": "Zebra handheld scanners lose Wi-Fi when roaming between fulfillment center AP zones. Pick path delays increasing.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Amazon \u00b7 Network"
+    },
+    {
+      "id": "AM10",
+      "firm": "Amazon",
+      "title": "Security incident: exposed S3 bucket with customer PII",
+      "description": "Security incident: public S3 bucket discovered containing customer PII export. Bucket policy shows world-readable ACL.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Amazon \u00b7 SecOps"
+    },
+    {
+      "id": "GO01",
+      "firm": "Google",
+      "title": "Gmail delegated inbox sync stopped for exec assistant",
+      "description": "Gmail delegated inbox stopped syncing for executive assistant account. Calendar invites not appearing.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Application"
+    },
+    {
+      "id": "GO02",
+      "firm": "Google",
+      "title": "Google Meet live stream fails for all-hands",
+      "description": "Google Meet live stream encoder fails 10 minutes before APAC all-hands. 4000 employees waiting.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Application"
+    },
+    {
+      "id": "GO03",
+      "firm": "Google",
+      "title": "BigQuery scheduled query slot exhaustion",
+      "description": "BigQuery on-demand slots exhausted for marketing attribution scheduled query. Campaign ROI dashboard stale.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Database"
+    },
+    {
+      "id": "GO04",
+      "firm": "Google",
+      "title": "Cloud Spanner transaction aborted rate spike",
+      "description": "Cloud Spanner transaction aborted rate spike on identity service. Login error budget burning.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Database"
+    },
+    {
+      "id": "GO05",
+      "firm": "Google",
+      "title": "Cloud SQL MySQL replication broken after upgrade",
+      "description": "Cloud SQL MySQL cross-region replica replication broken after maintenance upgrade. Read traffic failing over.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Database"
+    },
+    {
+      "id": "GO06",
+      "firm": "Google",
+      "title": "Workspace admin locked out after role change",
+      "description": "Google Workspace super admin locked out after accidental OU role change. Cannot reset via recovery admin.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Google \u00b7 Access Management"
+    },
+    {
+      "id": "GO07",
+      "firm": "Google",
+      "title": "BeyondCorp access denied for new contractor",
+      "description": "BeyondCorp access denied for new contractor on ChromeOS. Zero-trust policy shows device not compliant.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Access Management"
+    },
+    {
+      "id": "GO08",
+      "firm": "Google",
+      "title": "Inter-VPC firewall rule blocking Pub/Sub",
+      "description": "New VPC firewall rule blocking Pub/Sub push subscription to Cloud Run. Event pipeline backlog growing.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Network"
+    },
+    {
+      "id": "GO09",
+      "firm": "Google",
+      "title": "Office Wi-Fi 802.1X certificate expired",
+      "description": "Bangalore office Wi-Fi 802.1X radius certificate expired. Hundreds of engineers on guest network only.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Google \u00b7 Network"
+    },
+    {
+      "id": "GO10",
+      "firm": "Google",
+      "title": "Security incident: service account key in public repo",
+      "description": "Security incident: GCP service account JSON key found in public GitHub fork. Key has storage admin scope.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Google \u00b7 SecOps"
+    },
+    {
+      "id": "DL01",
+      "firm": "Deloitte",
+      "title": "SAP Fiori tile timeout for audit workflow",
+      "description": "SAP Fiori approve-audit tile times out for EMEA consultants. Month-end sign-off deadline today.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Application"
+    },
+    {
+      "id": "DL02",
+      "firm": "Deloitte",
+      "title": "Workday time entry not submitting",
+      "description": "Workday time entry page spins on submit for offshore team. Payroll extract runs tonight.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Application"
+    },
+    {
+      "id": "DL03",
+      "firm": "Deloitte",
+      "title": "Tableau Server extract refresh failed",
+      "description": "Tableau Server extract refresh failed on client utilization workbook. Partner review meeting in 1 hour.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Application"
+    },
+    {
+      "id": "DL04",
+      "firm": "Deloitte",
+      "title": "SQL Server AG failover group not synchronizing",
+      "description": "SQL Server availability group secondary not synchronizing after patch Tuesday. Reporting DB read-only.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Database"
+    },
+    {
+      "id": "DL05",
+      "firm": "Deloitte",
+      "title": "Oracle audit vault agent offline",
+      "description": "Oracle Audit Vault agent offline on finance DB host. Compliance scan window open.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Database"
+    },
+    {
+      "id": "DL06",
+      "firm": "Deloitte",
+      "title": "Password reset for client VPN portal",
+      "description": "Forgot password for Deloitte client VPN portal. Need access to shared engagement folder.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Access Management"
+    },
+    {
+      "id": "DL07",
+      "firm": "Deloitte",
+      "title": "Smart card PIN locked on engagement laptop",
+      "description": "PIV smart card PIN locked on engagement laptop. Cannot authenticate to client VDI.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Access Management"
+    },
+    {
+      "id": "DL08",
+      "firm": "Deloitte",
+      "title": "Client site MPLS circuit down \u2014 no RDP",
+      "description": "MPLS circuit to client site down. Team cannot RDP to client jump server for go-live.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Network"
+    },
+    {
+      "id": "DL09",
+      "firm": "Deloitte",
+      "title": "Conference room AV controller offline",
+      "description": "Video conference room AV controller offline on 14th floor. Client workshop starting.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Deloitte \u00b7 Infrastructure"
+    },
+    {
+      "id": "DL10",
+      "firm": "Deloitte",
+      "title": "Security incident: phishing report with malware attachment",
+      "description": "Security incident: user reported phishing email with macro-enabled attachment opened. Endpoint isolation requested.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Deloitte \u00b7 SecOps"
+    },
+    {
+      "id": "NK01",
+      "firm": "Nike",
+      "title": "SAP retail POS integration timeout",
+      "description": "SAP CAR POS integration timeout at outlet stores. End-of-day sales upload failing.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Application"
+    },
+    {
+      "id": "NK02",
+      "firm": "Nike",
+      "title": "Adobe Creative Cloud license not provisioning",
+      "description": "Adobe Creative Cloud license not provisioning for design team. Campaign asset deadline tomorrow.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Application"
+    },
+    {
+      "id": "NK03",
+      "firm": "Nike",
+      "title": "Snowflake warehouse suspend blocking BI job",
+      "description": "Snowflake virtual warehouse auto-suspend blocking overnight BI job. Inventory dashboard outdated.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Database"
+    },
+    {
+      "id": "NK04",
+      "firm": "Nike",
+      "title": "MongoDB Atlas cluster CPU throttling",
+      "description": "MongoDB Atlas M30 cluster CPU throttling on product catalog API. Mobile app search slow.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Database"
+    },
+    {
+      "id": "NK05",
+      "firm": "Nike",
+      "title": "Okta SSO loop on employee benefits portal",
+      "description": "Okta SSO redirect loop on employee benefits portal after password change.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Nike \u00b7 Access Management"
+    },
+    {
+      "id": "NK06",
+      "firm": "Nike",
+      "title": "New hire AD account not syncing to Mac login",
+      "description": "New hire Active Directory account not syncing to Mac login. Cannot access Nike network drives.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Access Management"
+    },
+    {
+      "id": "NK07",
+      "firm": "Nike",
+      "title": "GlobalProtect VPN error 619 on travel",
+      "description": "GlobalProtect VPN error 619 connecting from hotel Wi-Fi. Remote designer blocked from PLM.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Network"
+    },
+    {
+      "id": "NK08",
+      "firm": "Nike",
+      "title": "DNS failure for internal sample tracking app",
+      "description": "Internal sample tracking app DNS record points to retired server. Factory line using paper log.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Network"
+    },
+    {
+      "id": "NK09",
+      "firm": "Nike",
+      "title": "Label printer offline on distribution center line 4",
+      "description": "Zebra label printer offline on distribution center line 4. Carton routing labels not printing.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Infrastructure",
+        "category": "Infrastructure"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Nike \u00b7 Infrastructure"
+    },
+    {
+      "id": "NK10",
+      "firm": "Nike",
+      "title": "Security incident: ransomware alert on file server",
+      "description": "Security incident: Defender ransomware alert on regional marketing file server. Shares offline.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Nike \u00b7 SecOps"
+    },
+    {
+      "id": "TS01",
+      "firm": "Tesla",
+      "title": "MES workstation HMI freeze on Gigafactory line",
+      "description": "Manufacturing execution HMI freezes on Gigafactory battery line. Operators cannot acknowledge quality holds.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Application"
+    },
+    {
+      "id": "TS02",
+      "firm": "Tesla",
+      "title": "Factory CAD viewer crash after GPU driver update",
+      "description": "Factory floor CAD viewer crashes after NVIDIA driver push. Maintenance cannot open station diagrams.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Application",
+        "category": "Application"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Application"
+    },
+    {
+      "id": "TS03",
+      "firm": "Tesla",
+      "title": "InfluxDB time-series gap on weld telemetry",
+      "description": "InfluxDB gap in weld telemetry stream. Quality analytics missing last 6 hours of data.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Database"
+    },
+    {
+      "id": "TS04",
+      "firm": "Tesla",
+      "title": "PostgreSQL connection pool exhausted on logistics API",
+      "description": "PostgreSQL connection pool exhausted on parts logistics API. AGV routing commands timing out.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "2",
+        "department": "Database",
+        "category": "Database"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Database"
+    },
+    {
+      "id": "TS05",
+      "firm": "Tesla",
+      "title": "Contractor badge not activating for plant access",
+      "description": "Contractor physical badge not activating at plant turnstile. Safety induction completed but access denied.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Access Management"
+    },
+    {
+      "id": "TS06",
+      "firm": "Tesla",
+      "title": "RSA token out of sync after phone replacement",
+      "description": "RSA SecurID token out of sync after mobile device replacement. Cannot login to plant SCADA read-only.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "1",
+        "department": "Access Management",
+        "category": "Access Management"
+      },
+      "acceptable_hands": [
+        "1",
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Access Management"
+    },
+    {
+      "id": "TS07",
+      "firm": "Tesla",
+      "title": "Plant floor VLAN isolation blocking PLC historian",
+      "description": "New VLAN segmentation blocking PLC historian collector. Engineering cannot trend oven temperatures.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Network"
+    },
+    {
+      "id": "TS08",
+      "firm": "Tesla",
+      "title": "5G private network handoff drops on mobile tablets",
+      "description": "Private 5G handoff drops for quality inspection tablets moving between zones.",
+      "urgency": "medium",
+      "expect": {
+        "hand": "2",
+        "department": "Network",
+        "category": "Network"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Network"
+    },
+    {
+      "id": "TS09",
+      "firm": "Tesla",
+      "title": "NAS snapshot replication lag for engineering shares",
+      "description": "Engineering NAS snapshot replication lag exceeds 24 hours. Design branch worried about RPO.",
+      "urgency": "high",
+      "expect": {
+        "hand": "2",
+        "department": "Storage",
+        "category": "Storage"
+      },
+      "acceptable_hands": [
+        "2"
+      ],
+      "notes": "Tesla \u00b7 Storage"
+    },
+    {
+      "id": "TS10",
+      "firm": "Tesla",
+      "title": "Security incident: unauthorized Modbus write attempt",
+      "description": "Security incident: IDS alert for unauthorized Modbus write attempt on paint line controller.",
+      "urgency": "critical",
+      "expect": {
+        "hand": "3",
+        "department": "SecOps",
+        "category": "Security"
+      },
+      "acceptable_hands": [
+        "3"
+      ],
+      "notes": "Tesla \u00b7 SecOps"
+    }
+  ]
+}

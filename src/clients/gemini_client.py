@@ -1,6 +1,8 @@
 """
-Thin Gemini HTTP client — classify + generate only when API key present.
+Thin Gemini HTTP client — classify, embed, generate when API key present.
 
+- generateContent: model fallback chain on 429/503 (`gemini_model_fallbacks`)
+- embedContent / batchEmbedContents: retries with backoff on 429/503 (`gemini_http_retries`)
 Network calls dominate latency; local work stays O(1) or O(n) on small JSON.
 """
 from __future__ import annotations
@@ -25,8 +27,38 @@ SECURITY_FAIL_TOKEN = "SECURITY_FAIL"
 
 
 class GeminiClient:
+    """HTTP client for Gemini generate + embed APIs."""
+
+    # Populated per ticket during live assessments (see reset_eval_log / eval_summary).
+    _eval_calls: list[dict[str, object]]
+
     def __init__(self) -> None:
         self.settings = get_settings()
+        if not hasattr(GeminiClient, "_eval_calls"):
+            GeminiClient._eval_calls = []
+
+    @classmethod
+    def reset_eval_log(cls) -> None:
+        cls._eval_calls = []
+
+    @classmethod
+    def eval_summary(cls) -> dict[str, object]:
+        ok = [c for c in cls._eval_calls if c.get("ok")]
+        failed = [c for c in cls._eval_calls if not c.get("ok")]
+        models = sorted({str(c["model"]) for c in ok})
+        return {
+            "gemini_used": bool(ok),
+            "gemini_calls_ok": len(ok),
+            "gemini_calls_failed": len(failed),
+            "gemini_models": models,
+            "gemini_primary_model": models[0] if len(models) == 1 else (models if models else None),
+            "gemini_calls": list(cls._eval_calls),
+        }
+
+    def _log_eval_call(self, *, operation: str, model: str, ok: bool) -> None:
+        GeminiClient._eval_calls.append(
+            {"operation": operation, "model": model, "ok": ok}
+        )
 
     @property
     def available(self) -> bool:
@@ -65,6 +97,7 @@ class GeminiClient:
                     with urllib.request.urlopen(req, timeout=timeout) as resp:
                         if idx > 0:
                             logger.info("Gemini fallback succeeded on %s", model_name)
+                        self._log_eval_call(operation="generate", model=model_name, ok=True)
                         return json.loads(resp.read().decode())
                 except urllib.error.HTTPError as exc:
                     last_exc = exc
@@ -78,7 +111,9 @@ class GeminiClient:
                             exc.code,
                             chain[idx + 1],
                         )
+                        self._log_eval_call(operation="generate", model=model_name, ok=False)
                         break
+                    self._log_eval_call(operation="generate", model=model_name, ok=False)
                     raise
                 except urllib.error.URLError as exc:
                     last_exc = exc
@@ -91,11 +126,51 @@ class GeminiClient:
                             model_name,
                             chain[idx + 1],
                         )
+                        self._log_eval_call(operation="generate", model=model_name, ok=False)
                         break
+                    self._log_eval_call(operation="generate", model=model_name, ok=False)
                     raise
         if last_exc:
             raise last_exc
         raise RuntimeError("Gemini _post failed without exception")
+
+    def _embed_post(
+        self,
+        url: str,
+        body: Dict[str, Any],
+        *,
+        timeout: int,
+        retries: int | None = None,
+    ) -> Dict[str, Any]:
+        """HTTP POST for embed APIs with 429/503 backoff (same policy as generateContent)."""
+        retries = self.settings.gemini_http_retries if retries is None else retries
+        data = json.dumps(body).encode("utf-8")
+        last_exc: Exception | None = None
+        for attempt in range(retries + 1):
+            req = urllib.request.Request(
+                url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    self._log_eval_call(operation="embed", model=self.settings.gemini_model_embed, ok=True)
+                    return json.loads(resp.read().decode())
+            except urllib.error.HTTPError as exc:
+                last_exc = exc
+                if exc.code in (429, 503) and attempt < retries:
+                    time.sleep(1.5 * (attempt + 1))
+                    continue
+                self._log_eval_call(operation="embed", model=self.settings.gemini_model_embed, ok=False)
+                raise
+            except urllib.error.URLError as exc:
+                last_exc = exc
+                if attempt < retries:
+                    time.sleep(1.5 * (attempt + 1))
+                    continue
+                self._log_eval_call(operation="embed", model=self.settings.gemini_model_embed, ok=False)
+                raise
+        if last_exc:
+            raise last_exc
+        raise RuntimeError("Gemini _embed_post failed without exception")
 
     def embed_text(self, text: str, *, timeout: int = 15) -> Optional[list[float]]:
         """Return embedding vector for semantic RAG similarity (gemini-embedding-001)."""
@@ -112,12 +187,7 @@ class GeminiClient:
             "content": {"parts": [{"text": text[:8000]}]},
         }
         try:
-            data = json.dumps(body).encode("utf-8")
-            req = urllib.request.Request(
-                url, data=data, headers={"Content-Type": "application/json"}, method="POST"
-            )
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                raw = json.loads(resp.read().decode())
+            raw = self._embed_post(url, body, timeout=timeout)
             values = raw.get("embedding", {}).get("values")
             if not values:
                 return None
@@ -151,12 +221,7 @@ class GeminiClient:
             ]
         }
         try:
-            data = json.dumps(body).encode("utf-8")
-            req = urllib.request.Request(
-                url, data=data, headers={"Content-Type": "application/json"}, method="POST"
-            )
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                raw = json.loads(resp.read().decode())
+            raw = self._embed_post(url, body, timeout=timeout)
             embeddings = raw.get("embeddings") or []
             out: list[Optional[list[float]]] = []
             for item in embeddings:

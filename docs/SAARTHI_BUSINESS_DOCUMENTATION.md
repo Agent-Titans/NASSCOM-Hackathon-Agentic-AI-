@@ -1,7 +1,9 @@
 # SAARTHI — Intelligent IT Service Management
 ## Business & Technical Overview · Nasscom Agentic AI Hackathon 2026
 
-**Document version:** 1.0 · June 2026  
+**Team:** Sagar, Sree, Subbu, Karan, Shashi Pathi, Narsimha, Gajanan, Satya Sai — see `docs/TEAM.md`
+
+**Document version:** 1.1 · June 2026  
 **Use case:** UC1 — Classify, route, and resolve IT incidents with agentic AI  
 **Classification:** Internal / Jury presentation
 
@@ -16,7 +18,7 @@
 | **Problem** | Manual triage is slow, inconsistent, and expensive at scale |
 | **Solution** | Five-agent AI pipeline + RAG + deterministic routing |
 | **Outcome** | Faster resolution, reduced SLA risk, audit-ready decisions |
-| **Validation** | Up to **88%** routing pass on 100-ticket live suites; macro-F1 up to **0.86** |
+| **Validation** | **Master100 Run B:** 86/100 · F1 0.87 · security 10/10 · **Demo20:** 80% · UI smoke PASS |
 | **Responsible AI** | PII guardrails, security force-escalation, human-in-the-loop triage |
 
 > **Development note:** This product was built with **AI-assisted engineering** (Cursor / LLM pair-programming) under human review, architecture governance, and structured test validation.
@@ -193,13 +195,13 @@ Per-agent timing captured in SQLite audit (`guardrail`, `retrieval`, `classifier
 
 | Evaluation suite | Tickets | Pass rate | Macro F1 | Context |
 |------------------|--------:|----------:|---------:|---------|
-| Classifier fix — Judge100A | 100 | **88%** | **0.86** | Post Gemini-primary fix |
-| Classifier opt — Judge100B | 100 | **86%** | **0.74** | Industrial / healthcare mix |
-| Portal batch 50 | 50 | **82%** | **0.85** | Enterprise firms |
-| Smoke30 | 30 | **90%** | — | Regression smoke |
-| Jury100 (in progress) | 100 | Target ≥85% | — | Microsoft, HSBC Tech, JPMorgan Tech, Capgemini |
+| **Demo20** (primary jury) | 20 | **80%** | **0.781** | Nasscom demo scenarios — `test-reports/demo20_report.html` |
+| **Clear50** (enterprise) | 50 | **88%** | **0.64** | Boeing–Zoom clear titles — `test-reports/clear50_report.html` |
+| UI smoke | 19 checks | **PASS** | — | Employee, agent, admin portals |
 
 **Pass criteria:** Correct Hand (or acceptable alternatives) **and** correct department queue.
+
+Re-run Demo20: `python scripts/demo20_assessment.py --live --fresh --delay 2.0`
 
 ### SLA impact (business framing)
 

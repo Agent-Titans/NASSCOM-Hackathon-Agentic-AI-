@@ -1,25 +1,25 @@
-# SAARTHI Demo20 — Jury Demo Self-Evaluation
+# SAARTHI Master100 — Final Self-Evaluation Report
 
-**Generated:** 2026-06-15T12:04:08.370830+00:00
+**Generated:** 2026-06-15T17:07:49.940159+00:00
 
 ## Executive summary
 
 | Metric | Value |
 |--------|-------|
-| **Routing pass rate** | **13/20 (65%)** |
-| **Grand score** | **69.3/100** |
-| **Department macro-F1** | 0.595 |
-| **Security H3 correct** | 3/3 |
-| **Avg latency** | 18.41s (p50 15.09s, p90 39.39s) |
+| **Routing pass rate** | **86/100 (86%)** |
+| **Grand score** | **82.2/100** |
+| **Department macro-F1** | 0.87 |
+| **Security H3 correct** | 10/10 |
+| **Avg latency** | 15.07s (p50 15.7s, p90 28.23s) |
 | **UI smoke** | PASS |
 
 ## LLM jury
 
 - **Overall:** 7/10 (gemini)
-- **Verdict:** SAARTHI ITSM demonstrates a promising foundation for automated ticket routing and classification, though further refinement in accuracy and robustness is needed.
+- **Verdict:** SAARTHI ITSM shows promise with strong routing accuracy and good macro-F1, but requires improvement in classification accuracy and robustness against edge cases.
 - **Responsible AI:** 7
-- **Ethical AI:** 7
-- **Security posture:** 7
+- **Ethical AI:** 8
+- **Security posture:** 9
 
 ## Responsible AI / security checklist
 
@@ -39,27 +39,38 @@
 
 ## Classify source mix
 
-- **error:** 2
-- **gemini:** 10
-- **keyword:** 7
+- **gemini:** 59
+- **keyword:** 40
 - **rag:** 1
+
+## Gemini API usage
+
+- **Tickets with Gemini:** 100/100
+- **Model usage:** {'gemini-embedding-001': 100, 'gemini-2.5-flash': 90, 'gemini-2.5-flash-lite': 2}
 
 ## Per-agent timing (avg ms)
 
-- **classifier:** 7959ms
-- **guardrail:** 5ms
+- **classifier:** 3787ms
+- **guardrail:** 3ms
 - **resolution_format:** 3ms
-- **resolver:** 12394ms
-- **retrieval:** 709ms
+- **resolver:** 11984ms
+- **retrieval:** 646ms
 - **router:** 4ms
 - **supervisor:** 4ms
 
-## Failures (7)
+## Failures (14)
 
-- DM05: expected Application / H2, got ? / H?
-- DM07: expected Network / H2, got Access Management / H2
-- DM13: expected Infrastructure / H2, got Application / H2
-- DM15: expected Application / H1, got Infrastructure / H2
-- DM16: expected Network / H2, got SecOps / H3
-- DM17: expected Access Management / H2, got ? / H?
-- DM20: expected Database / H2, got Storage / H2
+- NX008: expected Access Management / H2, got Application / H3
+- NX013: expected Application / H1, got Infrastructure / H2
+- NX014: expected Access Management / H2, got Storage / H2
+- NX023: expected Application / H2, got Infrastructure / H2
+- NX025: expected Application / H2, got Access Management / H2
+- NX028: expected Application / H2, got Access Management / H2
+- NX064: expected Application / H2, got Storage / H2
+- NX068: expected Database / H2, got Storage / H3
+- NX070: expected Storage / H2, got Application / H2
+- NX072: expected Infrastructure / H2, got Application / H2
+- NX074: expected Infrastructure / H2, got Application / H2
+- NX094: expected Network / H2, got SecOps / H3
+- NX095: expected Infrastructure / H2, got Application / H2
+- NX096: expected Application / H2, got SecOps / H3

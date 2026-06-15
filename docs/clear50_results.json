@@ -1,98 +1,120 @@
 {
-  "evaluated_at": "2026-06-15T09:36:04.020957+00:00",
-  "suite": "Clear15",
-  "limit": 15,
+  "evaluated_at": "2026-06-15T12:59:40.294052+00:00",
+  "suite": "Clear50",
+  "limit": null,
   "summary": {
-    "total": 15,
-    "passed": 14,
-    "pass_rate": 0.933,
+    "total": 50,
+    "passed": 44,
+    "pass_rate": 0.88,
     "source": "live",
-    "started_at": "2026-06-15T09:36:04.017772+00:00"
+    "started_at": "2026-06-15T12:59:40.287752+00:00"
   },
   "f1": {
-    "macro_f1": 0.931,
-    "micro_f1": 0.933,
+    "macro_f1": 0.64,
+    "micro_f1": 0.88,
     "per_label": {
       "Access Management": {
         "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0,
-        "support": 3
+        "recall": 0.8,
+        "f1": 0.889,
+        "support": 10
       },
       "Application": {
-        "precision": 0.75,
-        "recall": 1.0,
-        "f1": 0.857,
-        "support": 3
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1": 0.8,
+        "support": 10
       },
       "Database": {
         "precision": 1.0,
-        "recall": 0.667,
-        "f1": 0.8,
-        "support": 3
+        "recall": 0.8,
+        "f1": 0.889,
+        "support": 10
+      },
+      "Infrastructure": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
       },
       "Network": {
-        "precision": 1.0,
+        "precision": 0.909,
         "recall": 1.0,
-        "f1": 1.0,
-        "support": 3
+        "f1": 0.952,
+        "support": 10
       },
       "SecOps": {
-        "precision": 1.0,
+        "precision": 0.909,
         "recall": 1.0,
-        "f1": 1.0,
-        "support": 3
+        "f1": 0.952,
+        "support": 10
+      },
+      "Storage": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
       }
     }
   },
   "latency": {
-    "avg": 17.86,
-    "p50": 16.63,
-    "p90": 32.75,
-    "min": 0.73,
-    "max": 41.64
+    "avg": 15.9,
+    "p50": 17.81,
+    "p90": 31.69,
+    "min": 0.67,
+    "max": 40.97
   },
   "agent_timing": {
     "guardrail": {
       "avg_ms": 3,
-      "max_ms": 7,
-      "samples": 15
+      "max_ms": 9,
+      "samples": 50
     },
     "retrieval": {
-      "avg_ms": 792,
-      "max_ms": 1277,
-      "samples": 15
+      "avg_ms": 743,
+      "max_ms": 1103,
+      "samples": 50
     },
     "classifier": {
-      "avg_ms": 4061,
-      "max_ms": 14202,
-      "samples": 15
+      "avg_ms": 4629,
+      "max_ms": 14435,
+      "samples": 50
     },
     "router": {
       "avg_ms": 3,
       "max_ms": 6,
-      "samples": 15
+      "samples": 50
     },
     "resolver": {
-      "avg_ms": 16151,
-      "max_ms": 37521,
-      "samples": 12
+      "avg_ms": 13377,
+      "max_ms": 33118,
+      "samples": 39
     },
     "supervisor": {
-      "avg_ms": 4,
-      "max_ms": 5,
-      "samples": 15
+      "avg_ms": 6,
+      "max_ms": 98,
+      "samples": 50
     },
     "resolution_format": {
-      "avg_ms": 2,
-      "max_ms": 4,
-      "samples": 15
+      "avg_ms": 3,
+      "max_ms": 6,
+      "samples": 50
     },
-    "_pipeline_avg_ms": 21016
+    "_pipeline_avg_ms": 18764
   },
   "source_mix": {
-    "gemini": 12,
-    "keyword": 3
+    "keyword": 20,
+    "gemini": 29,
+    "rag": 1
+  },
+  "gemini": {
+    "tickets_with_gemini": 50,
+    "tickets_without_gemini": 0,
+    "model_usage": {
+      "gemini-embedding-001": 50,
+      "gemini-2.5-flash": 39,
+      "gemini-2.5-flash-lite": 11
+    }
   },
   "cases": [
     {
@@ -102,22 +124,29 @@
       "expected_hand": "2",
       "expected_department": "Application",
       "actual_hand": "2",
-      "actual_department": "Application",
-      "actual_category": "Application",
-      "classify_source": "gemini",
-      "latency_sec": 16.63,
+      "actual_department": "Infrastructure",
+      "actual_category": "Infrastructure",
+      "classify_source": "keyword",
+      "latency_sec": 20.5,
       "agent_ms": {
-        "guardrail": 7,
-        "retrieval": 579,
-        "classifier": 4917,
-        "router": 4,
-        "resolver": 10974,
-        "supervisor": 5,
-        "resolution_format": 4
+        "guardrail": 4,
+        "retrieval": 889,
+        "classifier": 3889,
+        "router": 5,
+        "resolver": 15573,
+        "supervisor": 8,
+        "resolution_format": 3
       },
       "hand_ok": true,
-      "department_ok": true,
-      "pass": true
+      "department_ok": false,
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "BO02",
@@ -129,19 +158,26 @@
       "actual_department": "Application",
       "actual_category": "Application",
       "classify_source": "gemini",
-      "latency_sec": 25.72,
+      "latency_sec": 19.7,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 1277,
-        "classifier": 3573,
+        "retrieval": 722,
+        "classifier": 3708,
         "router": 4,
-        "resolver": 20779,
-        "supervisor": 5,
-        "resolution_format": 3
+        "resolver": 15191,
+        "supervisor": 4,
+        "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": false,
-      "pass": false
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "BO03",
@@ -152,20 +188,27 @@
       "actual_hand": "2",
       "actual_department": "Access Management",
       "actual_category": "Access Management",
-      "classify_source": "gemini",
-      "latency_sec": 12.65,
+      "classify_source": "keyword",
+      "latency_sec": 15.93,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 626,
-        "classifier": 3530,
-        "router": 5,
-        "resolver": 8398,
-        "supervisor": 5,
+        "retrieval": 928,
+        "classifier": 3951,
+        "router": 3,
+        "resolver": 10960,
+        "supervisor": 4,
         "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "BO04",
@@ -177,19 +220,26 @@
       "actual_department": "Network",
       "actual_category": "Network",
       "classify_source": "gemini",
-      "latency_sec": 19.59,
+      "latency_sec": 17.81,
       "agent_ms": {
-        "guardrail": 4,
-        "retrieval": 874,
-        "classifier": 7520,
+        "guardrail": 3,
+        "retrieval": 666,
+        "classifier": 3351,
         "router": 3,
-        "resolver": 11113,
+        "resolver": 13697,
         "supervisor": 4,
-        "resolution_format": 4
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "BO05",
@@ -201,18 +251,24 @@
       "actual_department": "SecOps",
       "actual_category": "Security",
       "classify_source": "keyword",
-      "latency_sec": 0.85,
+      "latency_sec": 0.92,
       "agent_ms": {
-        "guardrail": 4,
-        "retrieval": 772,
+        "guardrail": 3,
+        "retrieval": 838,
         "classifier": 3,
         "router": 3,
-        "supervisor": 3,
+        "supervisor": 2,
         "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "CT01",
@@ -224,19 +280,26 @@
       "actual_department": "Application",
       "actual_category": "Application",
       "classify_source": "gemini",
-      "latency_sec": 32.75,
+      "latency_sec": 17.56,
       "agent_ms": {
-        "guardrail": 3,
-        "retrieval": 816,
-        "classifier": 2992,
+        "guardrail": 5,
+        "retrieval": 653,
+        "classifier": 2887,
         "router": 4,
-        "resolver": 28853,
-        "supervisor": 5,
+        "resolver": 13923,
+        "supervisor": 7,
         "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "CT02",
@@ -247,20 +310,27 @@
       "actual_hand": "2",
       "actual_department": "Database",
       "actual_category": "Database",
-      "classify_source": "gemini",
-      "latency_sec": 41.64,
+      "classify_source": "keyword",
+      "latency_sec": 17.17,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 634,
-        "classifier": 3410,
+        "retrieval": 763,
+        "classifier": 3814,
         "router": 4,
-        "resolver": 37521,
-        "supervisor": 3,
-        "resolution_format": 2
+        "resolver": 12494,
+        "supervisor": 6,
+        "resolution_format": 5
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "CT03",
@@ -271,20 +341,27 @@
       "actual_hand": "2",
       "actual_department": "Access Management",
       "actual_category": "Access Management",
-      "classify_source": "gemini",
-      "latency_sec": 15.08,
+      "classify_source": "rag",
+      "latency_sec": 4.9,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 787,
-        "classifier": 14202,
-        "router": 3,
-        "resolver": 4,
-        "supervisor": 5,
-        "resolution_format": 2
+        "guardrail": 5,
+        "retrieval": 664,
+        "classifier": 4148,
+        "router": 4,
+        "resolver": 5,
+        "supervisor": 3,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "CT04",
@@ -296,19 +373,26 @@
       "actual_department": "Network",
       "actual_category": "Network",
       "classify_source": "gemini",
-      "latency_sec": 4.35,
+      "latency_sec": 4.17,
       "agent_ms": {
         "guardrail": 4,
-        "retrieval": 839,
-        "classifier": 3436,
-        "router": 2,
-        "resolver": 3,
-        "supervisor": 3,
+        "retrieval": 702,
+        "classifier": 3387,
+        "router": 4,
+        "resolver": 2,
+        "supervisor": 2,
         "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "CT05",
@@ -320,18 +404,24 @@
       "actual_department": "SecOps",
       "actual_category": "Security",
       "classify_source": "keyword",
-      "latency_sec": 1.13,
+      "latency_sec": 1.11,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 1056,
-        "classifier": 2,
+        "retrieval": 1029,
+        "classifier": 3,
         "router": 4,
         "supervisor": 3,
-        "resolution_format": 2
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "FX01",
@@ -343,19 +433,26 @@
       "actual_department": "Application",
       "actual_category": "Application",
       "classify_source": "gemini",
-      "latency_sec": 15.95,
+      "latency_sec": 19.86,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 801,
-        "classifier": 3128,
+        "guardrail": 3,
+        "retrieval": 728,
+        "classifier": 3824,
         "router": 4,
-        "resolver": 11938,
-        "supervisor": 4,
-        "resolution_format": 3
+        "resolver": 15210,
+        "supervisor": 7,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "FX02",
@@ -367,19 +464,26 @@
       "actual_department": "Database",
       "actual_category": "Database",
       "classify_source": "gemini",
-      "latency_sec": 23.3,
+      "latency_sec": 21.85,
       "agent_ms": {
-        "guardrail": 3,
-        "retrieval": 701,
-        "classifier": 3282,
-        "router": 4,
-        "resolver": 19230,
-        "supervisor": 4,
-        "resolution_format": 3
+        "guardrail": 4,
+        "retrieval": 856,
+        "classifier": 3322,
+        "router": 3,
+        "resolver": 17577,
+        "supervisor": 5,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "FX03",
@@ -390,20 +494,27 @@
       "actual_hand": "2",
       "actual_department": "Access Management",
       "actual_category": "Access Management",
-      "classify_source": "gemini",
-      "latency_sec": 29.43,
+      "classify_source": "keyword",
+      "latency_sec": 19.23,
       "agent_ms": {
-        "guardrail": 4,
-        "retrieval": 584,
-        "classifier": 7034,
-        "router": 6,
-        "resolver": 21719,
-        "supervisor": 5,
+        "guardrail": 3,
+        "retrieval": 703,
+        "classifier": 7226,
+        "router": 4,
+        "resolver": 11208,
+        "supervisor": 6,
         "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "FX04",
@@ -414,20 +525,27 @@
       "actual_hand": "2",
       "actual_department": "Network",
       "actual_category": "Network",
-      "classify_source": "gemini",
-      "latency_sec": 28.14,
+      "classify_source": "keyword",
+      "latency_sec": 19.4,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 887,
-        "classifier": 3886,
-        "router": 2,
-        "resolver": 23282,
-        "supervisor": 3,
-        "resolution_format": 4
+        "guardrail": 3,
+        "retrieval": 721,
+        "classifier": 4265,
+        "router": 3,
+        "resolver": 14311,
+        "supervisor": 6,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
     },
     {
       "case_id": "FX05",
@@ -439,10 +557,10 @@
       "actual_department": "SecOps",
       "actual_category": "Security",
       "classify_source": "keyword",
-      "latency_sec": 0.73,
+      "latency_sec": 0.94,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 651,
+        "retrieval": 860,
         "classifier": 3,
         "router": 3,
         "supervisor": 3,
@@ -450,7 +568,1093 @@
       },
       "hand_ok": true,
       "department_ok": true,
-      "pass": true
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "MR01",
+      "firm": "Marriott",
+      "title": "Opera PMS room assignment screen not loading",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 17.23,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 734,
+        "classifier": 3296,
+        "router": 4,
+        "resolver": 13101,
+        "supervisor": 5,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "MR02",
+      "firm": "Marriott",
+      "title": "PostgreSQL replication lag on loyalty points DB",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 33.13,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 692,
+        "classifier": 3685,
+        "router": 3,
+        "resolver": 28658,
+        "supervisor": 6,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "MR03",
+      "firm": "Marriott",
+      "title": "Housekeeping staff shared account password reset",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 4.82,
+      "agent_ms": {
+        "guardrail": 6,
+        "retrieval": 646,
+        "classifier": 4086,
+        "router": 3,
+        "resolver": 5,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "MR04",
+      "firm": "Marriott",
+      "title": "Guest Wi-Fi captive portal DNS failure",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 5.57,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 775,
+        "classifier": 4707,
+        "router": 5,
+        "resolver": 3,
+        "supervisor": 5,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "MR05",
+      "firm": "Marriott",
+      "title": "Security incident: credit card skimmer alert on POS terminal",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.88,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 807,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "PF01",
+      "firm": "Pfizer",
+      "title": "Veeva Vault document upload fails validation",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 21.98,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 778,
+        "classifier": 4265,
+        "router": 5,
+        "resolver": 16846,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "PF02",
+      "firm": "Pfizer",
+      "title": "Oracle clinical trials database blocking session alert",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 30.53,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 671,
+        "classifier": 13465,
+        "router": 4,
+        "resolver": 16304,
+        "supervisor": 5,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "PF03",
+      "firm": "Pfizer",
+      "title": "Lab scientist privileged account request for LIMS",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "keyword",
+      "latency_sec": 24.18,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 762,
+        "classifier": 9092,
+        "router": 3,
+        "resolver": 14224,
+        "supervisor": 4,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "PF04",
+      "firm": "Pfizer",
+      "title": "Site-to-site VPN down between lab and HQ",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 12.64,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 795,
+        "classifier": 11752,
+        "router": 4,
+        "resolver": 4,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "PF05",
+      "firm": "Pfizer",
+      "title": "Security incident: unauthorized USB device on GxP workstation",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 1.18,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 1103,
+        "classifier": 4,
+        "router": 2,
+        "supervisor": 3,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SS01",
+      "firm": "Samsung",
+      "title": "MES lot tracking screen shows wrong wafer map",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "gemini",
+      "latency_sec": 4.61,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 635,
+        "classifier": 3891,
+        "router": 4,
+        "supervisor": 3,
+        "resolution_format": 4
+      },
+      "hand_ok": false,
+      "department_ok": false,
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SS02",
+      "firm": "Samsung",
+      "title": "InfluxDB disk full on equipment telemetry cluster",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Storage",
+      "actual_category": "Storage",
+      "classify_source": "keyword",
+      "latency_sec": 34.05,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 676,
+        "classifier": 4034,
+        "router": 4,
+        "resolver": 29252,
+        "supervisor": 4,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "SS03",
+      "firm": "Samsung",
+      "title": "Engineer VPN certificate renewal for cleanroom network",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 15.21,
+      "agent_ms": {
+        "guardrail": 6,
+        "retrieval": 801,
+        "classifier": 14316,
+        "router": 4,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": false,
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SS04",
+      "firm": "Samsung",
+      "title": "Core switch port flapping on assembly line VLAN",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 21.24,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 679,
+        "classifier": 2863,
+        "router": 3,
+        "resolver": 17589,
+        "supervisor": 6,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SS05",
+      "firm": "Samsung",
+      "title": "Security incident: APT beacon detected on R&D server",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.8,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 722,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 4,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SY01",
+      "firm": "Sony",
+      "title": "Adobe Premiere render farm job queue stuck",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 32.62,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 616,
+        "classifier": 11080,
+        "router": 4,
+        "resolver": 20834,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "SY02",
+      "firm": "Sony",
+      "title": "MySQL slow query on royalty reporting database",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 3.64,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 664,
+        "classifier": 2880,
+        "router": 4,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SY03",
+      "firm": "Sony",
+      "title": "Contractor Okta account disabled before project end",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "3",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 3.7,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 700,
+        "classifier": 2916,
+        "router": 4,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": false,
+      "department_ok": false,
+      "pass": false,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "SY04",
+      "firm": "Sony",
+      "title": "Multicast video feed packet loss in studio VLAN",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "keyword",
+      "latency_sec": 27.15,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 653,
+        "classifier": 4422,
+        "router": 4,
+        "resolver": 21981,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "SY05",
+      "firm": "Sony",
+      "title": "Security incident: leaked credentials on GitHub repository",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.79,
+      "agent_ms": {
+        "guardrail": 9,
+        "retrieval": 707,
+        "classifier": 3,
+        "router": 4,
+        "supervisor": 4,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "VW01",
+      "firm": "Volkswagen",
+      "title": "Dealer portal order configurator JavaScript error",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 16.15,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 680,
+        "classifier": 3498,
+        "router": 4,
+        "resolver": 11880,
+        "supervisor": 6,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "VW02",
+      "firm": "Volkswagen",
+      "title": "DB2 tablespace full on production BOM database",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 31.69,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 742,
+        "classifier": 4035,
+        "router": 4,
+        "resolver": 26825,
+        "supervisor": 6,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "VW03",
+      "firm": "Volkswagen",
+      "title": "Supplier portal SAML federation certificate expired",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 30.88,
+      "agent_ms": {
+        "guardrail": 6,
+        "retrieval": 753,
+        "classifier": 12490,
+        "router": 4,
+        "resolver": 17543,
+        "supervisor": 6,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "VW04",
+      "firm": "Volkswagen",
+      "title": "OT network segmentation blocking PLC heartbeat",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 21.88,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 697,
+        "classifier": 4209,
+        "router": 4,
+        "resolver": 16875,
+        "supervisor": 7,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "VW05",
+      "firm": "Volkswagen",
+      "title": "Security incident: insider threat alert on CAD export",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.94,
+      "agent_ms": {
+        "guardrail": 5,
+        "retrieval": 861,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 3,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "WM01",
+      "firm": "Walmart",
+      "title": "Inventory POS price lookup API timeout",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "gemini",
+      "latency_sec": 25.41,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 668,
+        "classifier": 11702,
+        "router": 6,
+        "resolver": 12950,
+        "supervisor": 6,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "WM02",
+      "firm": "Walmart",
+      "title": "Cassandra repair failing on supply chain keyspace",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 27.91,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 663,
+        "classifier": 3684,
+        "router": 4,
+        "resolver": 23467,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "WM03",
+      "firm": "Walmart",
+      "title": "Store manager role missing in workforce scheduling app",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "gemini",
+      "latency_sec": 26.7,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 673,
+        "classifier": 14435,
+        "router": 5,
+        "resolver": 11485,
+        "supervisor": 5,
+        "resolution_format": 4
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 1
+    },
+    {
+      "case_id": "WM04",
+      "firm": "Walmart",
+      "title": "BGP route leak affecting DC internet uplink",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 3.51,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 889,
+        "classifier": 2534,
+        "router": 6,
+        "resolver": 4,
+        "supervisor": 3,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 2,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "WM05",
+      "firm": "Walmart",
+      "title": "Security incident: gift card fraud pattern on e-commerce",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.67,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 598,
+        "classifier": 3,
+        "router": 3,
+        "supervisor": 4,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "ZM01",
+      "firm": "Zoom",
+      "title": "Admin dashboard user provisioning API 403 errors",
+      "expected_hand": "2",
+      "expected_department": "Application",
+      "actual_hand": "2",
+      "actual_department": "Application",
+      "actual_category": "Application",
+      "classify_source": "keyword",
+      "latency_sec": 40.97,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 822,
+        "classifier": 6937,
+        "router": 5,
+        "resolver": 33118,
+        "supervisor": 5,
+        "resolution_format": 5
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "ZM02",
+      "firm": "Zoom",
+      "title": "Redis cluster failover loop on session store",
+      "expected_hand": "2",
+      "expected_department": "Database",
+      "actual_hand": "2",
+      "actual_department": "Database",
+      "actual_category": "Database",
+      "classify_source": "gemini",
+      "latency_sec": 24.59,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 621,
+        "classifier": 7655,
+        "router": 4,
+        "resolver": 16218,
+        "supervisor": 5,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "ZM03",
+      "firm": "Zoom",
+      "title": "Support engineer temporary admin access for tenant",
+      "expected_hand": "2",
+      "expected_department": "Access Management",
+      "actual_hand": "2",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "keyword",
+      "latency_sec": 27.35,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 822,
+        "classifier": 8668,
+        "router": 3,
+        "resolver": 17761,
+        "supervisor": 3,
+        "resolution_format": 2
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "ZM04",
+      "firm": "Zoom",
+      "title": "Anycast routing blackhole on US West edge POP",
+      "expected_hand": "2",
+      "expected_department": "Network",
+      "actual_hand": "2",
+      "actual_department": "Network",
+      "actual_category": "Network",
+      "classify_source": "gemini",
+      "latency_sec": 18.51,
+      "agent_ms": {
+        "guardrail": 4,
+        "retrieval": 717,
+        "classifier": 3085,
+        "router": 5,
+        "resolver": 14617,
+        "supervisor": 5,
+        "resolution_format": 6
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-2.5-flash",
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 3,
+      "gemini_calls_failed": 0
+    },
+    {
+      "case_id": "ZM05",
+      "firm": "Zoom",
+      "title": "Security incident: Zoom bombing attack on town hall",
+      "expected_hand": "3",
+      "expected_department": "SecOps",
+      "actual_hand": "3",
+      "actual_department": "SecOps",
+      "actual_category": "Security",
+      "classify_source": "keyword",
+      "latency_sec": 0.78,
+      "agent_ms": {
+        "guardrail": 3,
+        "retrieval": 616,
+        "classifier": 2,
+        "router": 2,
+        "supervisor": 98,
+        "resolution_format": 3
+      },
+      "hand_ok": true,
+      "department_ok": true,
+      "pass": true,
+      "gemini_used": true,
+      "gemini_models": [
+        "gemini-embedding-001"
+      ],
+      "gemini_calls_ok": 1,
+      "gemini_calls_failed": 0
     }
   ]
 }

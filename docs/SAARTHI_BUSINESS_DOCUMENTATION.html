@@ -174,8 +174,8 @@
   <p class="subtitle">Intelligent IT Service Management — classify, route, and resolve every incident with agentic AI and human-in-the-loop triage.</p>
   <div class="meta">
     <strong>Business &amp; Technical Overview</strong><br>
-    Version 1.0 · June 2026<br>
-    Document owner: SAARTHI Team
+    Version 1.1 · June 2026<br>
+    <strong>Team:</strong> Sagar, Sree, Subbu, Karan, Shashi Pathi, Narsimha, Gajanan, Satya Sai
   </div>
   <div class="ai-note">
     <strong>AI-assisted development disclosure:</strong> This platform was built with AI-assisted coding tools (Cursor / LLM pair-programming) under human architecture review, security governance, and live validation suites. All routing rules, guardrails, and test evidence are team-owned.
@@ -188,8 +188,8 @@
   <h2>Executive summary</h2>
   <p><strong>SAARTHI</strong> (Sanskrit: <em>companion, guide</em>) automates the first mile of enterprise IT incident handling. Every ticket is sanitized, classified, matched against 1,000 resolved historical cases, routed to the correct department and <strong>Hand</strong>, and given actionable guidance — typically in <strong>under 20 seconds</strong>.</p>
   <div class="exec-grid">
-    <div class="exec-card"><div class="num">88%</div><div class="lbl">Peak routing pass (100-ticket live)</div></div>
-    <div class="exec-card"><div class="num">0.86</div><div class="lbl">Macro F1 (department)</div></div>
+    <div class="exec-card"><div class="num">86%</div><div class="lbl">Master100 pass (primary)</div></div>
+    <div class="exec-card"><div class="num">0.87</div><div class="lbl">Macro F1 (Master100)</div></div>
     <div class="exec-card"><div class="num">~15s</div><div class="lbl">Avg end-to-end latency</div></div>
     <div class="exec-card"><div class="num">5</div><div class="lbl">AI agents in pipeline</div></div>
     <div class="exec-card"><div class="num">3</div><div class="lbl">Hands (outcomes)</div></div>
@@ -311,14 +311,15 @@
   <table>
     <thead><tr><th>Suite</th><th>Tickets</th><th>Pass</th><th>Macro F1</th></tr></thead>
     <tbody>
-      <tr><td>Classifier fix — Judge100A</td><td>100</td><td><strong>88%</strong></td><td><strong>0.86</strong></td></tr>
-      <tr><td>Judge100B (post-fix)</td><td>100</td><td><strong>86%</strong></td><td>0.74</td></tr>
-      <tr><td>Portal batch 50</td><td>50</td><td><strong>82%</strong></td><td>0.85</td></tr>
-      <tr><td>Smoke30 regression</td><td>30</td><td><strong>90%</strong></td><td>—</td></tr>
-      <tr><td>Jury100 (Microsoft, HSBC, JPM, Capgemini)</td><td>100</td><td>In progress</td><td>Target ≥0.80</td></tr>
+      <tr><td><strong>Master100</strong> (primary jury)</td><td>100</td><td><strong>86%</strong></td><td><strong>0.87</strong></td></tr>
+      <tr><td><strong>Final50</strong> (multi-firm)</td><td>50</td><td><strong>94%</strong></td><td>0.92</td></tr>
+      <tr><td><strong>Demo20</strong> (live demo)</td><td>20</td><td><strong>80%</strong></td><td>0.78</td></tr>
+      <tr><td><strong>Clear50</strong> (enterprise)</td><td>50</td><td><strong>88%</strong></td><td>0.64</td></tr>
+      <tr><td>Security H3 incidents</td><td>10</td><td><strong>10/10</strong></td><td>—</td></tr>
+      <tr><td>UI smoke</td><td>19 checks</td><td><strong>PASS</strong></td><td>—</td></tr>
     </tbody>
   </table>
-  <p><em>Pass = correct Hand + correct department queue. Per-agent timing logged in audit trail.</em></p>
+  <p><em>Primary report: <code>test-reports/master100_report.html</code> · Methodology: <code>docs/MASTER100_JUDGE_EVALUATION.md</code></em></p>
   <h3>SLA impact</h3>
   <ul>
     <li><strong>Time to first route:</strong> minutes–hours → ~15–20 seconds</li>

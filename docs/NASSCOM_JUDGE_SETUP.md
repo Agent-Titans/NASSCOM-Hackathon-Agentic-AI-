@@ -124,12 +124,20 @@ Submit as **employee** (`pallavi@user`). Pipeline shows **stage-by-stage progres
 | Report | Path |
 |--------|------|
 | **Report index** | `test-reports/index.html` |
+| **Master100 validation (primary)** | `test-reports/master100_report.html` |
+| **Master100 jury package** | `docs/MASTER100_JUDGE_EVALUATION.md` |
 | **Demo20 validation** | `test-reports/demo20_report.html` |
 | **Business documentation** | `docs/SAARTHI_BUSINESS_DOCUMENTATION.html` |
 | **Product overview** | `docs/saarthi_overview.html` |
 | **Architecture (LLD)** | `design/LLD.html` |
 
-Re-run Demo20 live evaluation (optional — requires API quota):
+Re-run Master100 live evaluation (optional — ~45–60 min, requires API quota):
+
+```bash
+python scripts/master100_assessment.py --live --fresh --delay 4.0
+```
+
+Re-run Demo20 live evaluation:
 
 ```bash
 python scripts/demo20_assessment.py --live --fresh --delay 2.0
@@ -166,6 +174,10 @@ Walkthrough checklist: `docs/DEMO_CHECKLIST.md`
 
 | Document | Purpose |
 |----------|---------|
+| `docs/INDEX.md` | Documentation map |
+| `docs/TEAM.md` | Builder names |
+| `docs/CODE_STRUCTURE.md` | How the code is organized |
+| `docs/MASTER100_JUDGE_EVALUATION.md` | Primary validation methodology |
 | `docs/SAARTHI_BUSINESS_DOCUMENTATION.html` | Business + technical jury pack |
 | `docs/SUBMISSION.md` | What ships in this repository |
 | `docs/CODE_WALKTHROUGH.md` | Code routing map |

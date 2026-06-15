@@ -1,30 +1,36 @@
 {
-  "evaluated_at": "2026-06-15T10:53:44.607775+00:00",
+  "evaluated_at": "2026-06-15T12:04:08.370830+00:00",
   "suite": "Demo20",
   "summary": {
     "total": 20,
-    "passed": 16,
-    "pass_rate": 0.8,
+    "passed": 13,
+    "pass_rate": 0.65,
     "security_hand_ok": 3,
     "security_total": 3,
     "security_downgrades": 0,
-    "avg_latency_sec": 11.46,
-    "grand_score": 82.1
+    "avg_latency_sec": 18.41,
+    "grand_score": 69.3
   },
   "f1_department": {
-    "macro_f1": 0.781,
-    "micro_f1": 0.8,
+    "macro_f1": 0.595,
+    "micro_f1": 0.65,
     "per_label": {
+      "?": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
       "Access Management": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0,
+        "precision": 0.667,
+        "recall": 0.667,
+        "f1": 0.667,
         "support": 3
       },
       "Application": {
-        "precision": 0.75,
-        "recall": 0.75,
-        "f1": 0.75,
+        "precision": 0.667,
+        "recall": 0.5,
+        "f1": 0.571,
         "support": 4
       },
       "Database": {
@@ -41,8 +47,8 @@
       },
       "Network": {
         "precision": 1.0,
-        "recall": 0.75,
-        "f1": 0.857,
+        "recall": 0.5,
+        "f1": 0.667,
         "support": 4
       },
       "SecOps": {
@@ -60,72 +66,73 @@
     }
   },
   "latency": {
-    "avg": 11.46,
-    "p50": 13.64,
-    "p90": 29.14,
-    "min": 0.72,
-    "max": 30.1
+    "avg": 18.41,
+    "p50": 15.09,
+    "p90": 39.39,
+    "min": 0.75,
+    "max": 47.53
   },
   "agent_timing": {
     "guardrail": {
-      "avg_ms": 7,
-      "max_ms": 19,
-      "samples": 20
+      "avg_ms": 5,
+      "max_ms": 32,
+      "samples": 18
     },
     "retrieval": {
-      "avg_ms": 784,
-      "max_ms": 1057,
-      "samples": 20
+      "avg_ms": 709,
+      "max_ms": 882,
+      "samples": 18
     },
     "classifier": {
-      "avg_ms": 4966,
-      "max_ms": 16155,
-      "samples": 20
+      "avg_ms": 7959,
+      "max_ms": 24146,
+      "samples": 18
     },
     "router": {
-      "avg_ms": 5,
-      "max_ms": 12,
-      "samples": 20
+      "avg_ms": 4,
+      "max_ms": 7,
+      "samples": 18
     },
     "resolver": {
-      "avg_ms": 6947,
-      "max_ms": 18895,
-      "samples": 16
+      "avg_ms": 12394,
+      "max_ms": 40965,
+      "samples": 14
     },
     "supervisor": {
-      "avg_ms": 5,
-      "max_ms": 11,
-      "samples": 20
+      "avg_ms": 4,
+      "max_ms": 7,
+      "samples": 18
     },
     "resolution_format": {
-      "avg_ms": 5,
-      "max_ms": 11,
-      "samples": 20
+      "avg_ms": 3,
+      "max_ms": 5,
+      "samples": 18
     },
-    "_pipeline_avg_ms": 12719
+    "_pipeline_avg_ms": 21078
   },
   "source_mix": {
-    "gemini": 13,
-    "keyword": 7
+    "gemini": 10,
+    "keyword": 7,
+    "error": 2,
+    "rag": 1
   },
   "llm_judge": {
-    "overall": 8.5,
-    "verdict": "SAARTHI ITSM presents a robust solution with excellent security and architectural adherence, demonstrating good performance, though its classification accuracy requires further refinement.",
-    "use_case_alignment": 7.5,
-    "lld_alignment": 9.0,
-    "responsible_ai": 7.5,
-    "ethical_ai": 7.0,
-    "security_posture": 9.5,
-    "evaluation_rigor": 9.0,
+    "overall": 7,
+    "verdict": "SAARTHI ITSM demonstrates a promising foundation for automated ticket routing and classification, though further refinement in accuracy and robustness is needed.",
+    "use_case_alignment": 8,
+    "lld_alignment": 7,
+    "responsible_ai": 7,
+    "ethical_ai": 7,
+    "security_posture": 7,
+    "evaluation_rigor": 8,
     "strengths": [
-      "Exceptional security posture with zero H3 downgrades.",
-      "Strong architectural adherence, scoring 9.2/10 on the checklist.",
-      "Efficient performance with a low average latency of 11.46 seconds.",
-      "Effective hybrid classification leveraging both Gemini AI and keyword matching."
+      "Good initial routing pass rate (65%) indicating potential for automation.",
+      "Clear classification of sources, with Gemini being a significant contributor."
     ],
     "improvements": [
-      "Enhance classification accuracy to reduce misroutes, specifically addressing the identified failures between departments like Infrastructure/Application and Network/SecOps.",
-      "Increase the overall routing pass rate beyond 80% for critical demo tickets."
+      "Improve accuracy in ticket classification, as evidenced by the number of failures and unexpected actual classifications.",
+      "Address the '?' classifications to ensure all tickets are properly categorized.",
+      "Investigate the root cause of the 'error' classifications to prevent future occurrences."
     ],
     "source": "gemini"
   },
@@ -186,7 +193,7 @@
   "ui": {
     "ok": true,
     "checks": 18,
-    "output": "OK   employee_home: buttons=23 expanders=2\nOK   employee_create: buttons=3 expanders=0\nOK   employee_detail: buttons=3 expanders=1\nOK   agent_home: buttons=9 expanders=1\nOK   agent_detail: buttons=6 expanders=2\nOK   admin_home: buttons=5 expanders=0\nOK   admin_all_tickets: buttons=7 expanders=0\nOK   admin_audit: buttons=6 expanders=0\nOK   admin_ticket_detail: buttons=2 expanders=0\nOK   secops_specialists_detail: buttons=6 expanders=3\nOK   secops_regular_detail: buttons=6 expanders=2\nOK   employee_url_restore\nOK   agent_url_restore\n---\nApple QA (logic checks)\nOK   qa_operational_set\nOK   qa_security_map\nOK   qa_category_count\nOK   qa_can_route\nOK   qa_specialists_detect\n---\nAll UI smoke checks passed\n"
+    "output": "OK   employee_home: buttons=22 expanders=2\nOK   employee_create: buttons=3 expanders=0\nOK   employee_detail: buttons=3 expanders=1\nOK   agent_home: buttons=7 expanders=1\nOK   agent_detail: buttons=6 expanders=2\nOK   admin_home: buttons=5 expanders=0\nOK   admin_all_tickets: buttons=7 expanders=0\nOK   admin_audit: buttons=6 expanders=0\nOK   admin_ticket_detail: buttons=2 expanders=0\nOK   secops_specialists_detail: buttons=6 expanders=3\nOK   secops_regular_detail: buttons=6 expanders=2\nOK   employee_url_restore\nOK   agent_url_restore\n---\nApple QA (logic checks)\nOK   qa_operational_set\nOK   qa_security_map\nOK   qa_category_count\nOK   qa_can_route\nOK   qa_specialists_detect\n---\nAll UI smoke checks passed\n"
   },
   "cases": [
     {
@@ -202,15 +209,15 @@
       "actual_category": "Access Management",
       "classify_source": "gemini",
       "status": "SELF_HELP",
-      "latency_sec": 13.64,
+      "latency_sec": 11.16,
       "agent_ms": {
-        "guardrail": 11,
-        "retrieval": 878,
-        "classifier": 12318,
-        "router": 10,
-        "resolver": 9,
-        "supervisor": 11,
-        "resolution_format": 8
+        "guardrail": 32,
+        "retrieval": 811,
+        "classifier": 10211,
+        "router": 7,
+        "resolver": 3,
+        "supervisor": 3,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": true,
@@ -233,15 +240,15 @@
       "actual_category": "Network",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 3.9,
+      "latency_sec": 6.85,
       "agent_ms": {
-        "guardrail": 9,
-        "retrieval": 845,
-        "classifier": 2820,
-        "router": 10,
-        "resolver": 9,
-        "supervisor": 9,
-        "resolution_format": 9
+        "guardrail": 3,
+        "retrieval": 639,
+        "classifier": 6120,
+        "router": 5,
+        "resolver": 2,
+        "supervisor": 4,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": true,
@@ -264,15 +271,15 @@
       "actual_category": "Infrastructure",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 4.49,
+      "latency_sec": 4.15,
       "agent_ms": {
-        "guardrail": 11,
-        "retrieval": 759,
-        "classifier": 3531,
-        "router": 9,
-        "resolver": 7,
-        "supervisor": 9,
-        "resolution_format": 8
+        "guardrail": 3,
+        "retrieval": 790,
+        "classifier": 3270,
+        "router": 4,
+        "resolver": 3,
+        "supervisor": 5,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
@@ -295,14 +302,14 @@
       "actual_category": "Security",
       "classify_source": "keyword",
       "status": "ESCALATED",
-      "latency_sec": 1.02,
+      "latency_sec": 0.96,
       "agent_ms": {
-        "guardrail": 16,
-        "retrieval": 782,
-        "classifier": 8,
-        "router": 8,
-        "supervisor": 8,
-        "resolution_format": 8
+        "guardrail": 3,
+        "retrieval": 882,
+        "classifier": 2,
+        "router": 3,
+        "supervisor": 3,
+        "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": true,
@@ -315,33 +322,15 @@
     {
       "case_id": "DM05",
       "title": "Microsoft Teams not launching after update",
-      "description": "Microsoft Teams crashes on launch after Windows update overnight. Error code 0xc0000142. Cannot join customer meetings.",
-      "urgency": "high",
       "expected_hand": "2",
       "expected_department": "Application",
-      "expected_category": "Application",
-      "actual_hand": "2",
-      "actual_department": "Application",
-      "actual_category": "Application",
-      "classify_source": "gemini",
-      "status": "ROUTED",
-      "latency_sec": 15.74,
-      "agent_ms": {
-        "guardrail": 10,
-        "retrieval": 722,
-        "classifier": 3255,
-        "router": 11,
-        "resolver": 11495,
-        "supervisor": 10,
-        "resolution_format": 8
-      },
-      "hand_ok": true,
-      "department_ok": true,
-      "category_ok": true,
-      "security_hand_ok": true,
-      "security_downgrade": false,
-      "pass": true,
-      "notes": "Teams application"
+      "actual_hand": "?",
+      "actual_department": "?",
+      "classify_source": "error",
+      "latency_sec": 0,
+      "agent_ms": {},
+      "pass": false,
+      "error": "The read operation timed out"
     },
     {
       "case_id": "DM06",
@@ -354,17 +343,17 @@
       "actual_hand": "2",
       "actual_department": "Application",
       "actual_category": "Application",
-      "classify_source": "keyword",
+      "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 18.99,
+      "latency_sec": 32.03,
       "agent_ms": {
-        "guardrail": 11,
-        "retrieval": 1057,
-        "classifier": 4344,
-        "router": 12,
-        "resolver": 13370,
-        "supervisor": 10,
-        "resolution_format": 8
+        "guardrail": 4,
+        "retrieval": 801,
+        "classifier": 6645,
+        "router": 6,
+        "resolver": 24486,
+        "supervisor": 5,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
@@ -383,26 +372,26 @@
       "expected_department": "Network",
       "expected_category": "Network",
       "actual_hand": "2",
-      "actual_department": "Network",
-      "actual_category": "Network",
-      "classify_source": "gemini",
+      "actual_department": "Access Management",
+      "actual_category": "Access Management",
+      "classify_source": "keyword",
       "status": "ROUTED",
-      "latency_sec": 29.14,
+      "latency_sec": 29.22,
       "agent_ms": {
-        "guardrail": 19,
-        "retrieval": 758,
-        "classifier": 16155,
-        "router": 11,
-        "resolver": 11936,
-        "supervisor": 11,
-        "resolution_format": 10
+        "guardrail": 4,
+        "retrieval": 710,
+        "classifier": 3884,
+        "router": 4,
+        "resolver": 24527,
+        "supervisor": 5,
+        "resolution_format": 3
       },
       "hand_ok": true,
-      "department_ok": true,
-      "category_ok": true,
+      "department_ok": false,
+      "category_ok": false,
       "security_hand_ok": true,
       "security_downgrade": false,
-      "pass": true,
+      "pass": false,
       "notes": "Wi-Fi network"
     },
     {
@@ -418,15 +407,15 @@
       "actual_category": "Application",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 14.67,
+      "latency_sec": 36.92,
       "agent_ms": {
-        "guardrail": 15,
-        "retrieval": 747,
-        "classifier": 3628,
-        "router": 10,
-        "resolver": 10068,
-        "supervisor": 11,
-        "resolution_format": 11
+        "guardrail": 3,
+        "retrieval": 625,
+        "classifier": 16674,
+        "router": 4,
+        "resolver": 19519,
+        "supervisor": 6,
+        "resolution_format": 5
       },
       "hand_ok": true,
       "department_ok": true,
@@ -449,15 +438,15 @@
       "actual_category": "Database",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 3.91,
+      "latency_sec": 4.45,
       "agent_ms": {
-        "guardrail": 14,
-        "retrieval": 696,
-        "classifier": 3071,
-        "router": 3,
-        "resolver": 3,
-        "supervisor": 3,
-        "resolution_format": 2
+        "guardrail": 4,
+        "retrieval": 700,
+        "classifier": 3648,
+        "router": 5,
+        "resolver": 2,
+        "supervisor": 5,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
@@ -480,15 +469,15 @@
       "actual_category": "Storage",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 4.67,
+      "latency_sec": 14.44,
       "agent_ms": {
-        "guardrail": 3,
-        "retrieval": 859,
-        "classifier": 3725,
-        "router": 3,
+        "guardrail": 4,
+        "retrieval": 621,
+        "classifier": 13729,
+        "router": 5,
         "resolver": 3,
-        "supervisor": 5,
-        "resolution_format": 3
+        "supervisor": 3,
+        "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": true,
@@ -509,17 +498,17 @@
       "actual_hand": "2",
       "actual_department": "Access Management",
       "actual_category": "Access Management",
-      "classify_source": "gemini",
+      "classify_source": "keyword",
       "status": "ROUTED",
-      "latency_sec": 17.23,
+      "latency_sec": 37.52,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 658,
-        "classifier": 2731,
-        "router": 2,
-        "resolver": 13766,
-        "supervisor": 2,
-        "resolution_format": 2
+        "guardrail": 9,
+        "retrieval": 853,
+        "classifier": 12773,
+        "router": 4,
+        "resolver": 23782,
+        "supervisor": 4,
+        "resolution_format": 3
       },
       "hand_ok": true,
       "department_ok": true,
@@ -542,13 +531,13 @@
       "actual_category": "Security",
       "classify_source": "keyword",
       "status": "ESCALATED",
-      "latency_sec": 0.83,
+      "latency_sec": 0.75,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 757,
-        "classifier": 2,
+        "retrieval": 663,
+        "classifier": 3,
         "router": 3,
-        "supervisor": 2,
+        "supervisor": 3,
         "resolution_format": 3
       },
       "hand_ok": true,
@@ -572,15 +561,15 @@
       "actual_category": "Application",
       "classify_source": "keyword",
       "status": "ROUTED",
-      "latency_sec": 14.26,
+      "latency_sec": 17.21,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 922,
-        "classifier": 3660,
-        "router": 2,
-        "resolver": 9616,
-        "supervisor": 3,
-        "resolution_format": 2
+        "guardrail": 6,
+        "retrieval": 590,
+        "classifier": 3895,
+        "router": 5,
+        "resolver": 12616,
+        "supervisor": 7,
+        "resolution_format": 5
       },
       "hand_ok": true,
       "department_ok": false,
@@ -601,17 +590,17 @@
       "actual_hand": "2",
       "actual_department": "Network",
       "actual_category": "Network",
-      "classify_source": "gemini",
+      "classify_source": "rag",
       "status": "ROUTED",
-      "latency_sec": 5.19,
+      "latency_sec": 9.6,
       "agent_ms": {
-        "guardrail": 3,
-        "retrieval": 1041,
-        "classifier": 4080,
-        "router": 3,
+        "guardrail": 4,
+        "retrieval": 614,
+        "classifier": 8880,
+        "router": 5,
         "resolver": 3,
         "supervisor": 3,
-        "resolution_format": 3
+        "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": true,
@@ -634,15 +623,15 @@
       "actual_category": "Infrastructure",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 30.1,
+      "latency_sec": 23.21,
       "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 868,
-        "classifier": 10252,
-        "router": 2,
-        "resolver": 18895,
-        "supervisor": 3,
-        "resolution_format": 3
+        "guardrail": 9,
+        "retrieval": 835,
+        "classifier": 9207,
+        "router": 6,
+        "resolver": 13063,
+        "supervisor": 5,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": false,
@@ -663,16 +652,16 @@
       "actual_hand": "3",
       "actual_department": "SecOps",
       "actual_category": "Security",
-      "classify_source": "keyword",
+      "classify_source": "gemini",
       "status": "ESCALATED",
-      "latency_sec": 5.17,
+      "latency_sec": 15.09,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 665,
-        "classifier": 4429,
+        "retrieval": 637,
+        "classifier": 14363,
         "router": 4,
-        "supervisor": 3,
-        "resolution_format": 3
+        "supervisor": 4,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": false,
@@ -685,33 +674,15 @@
     {
       "case_id": "DM17",
       "title": "MFA SMS code not received",
-      "description": "Multi-factor authentication SMS codes not arriving for VPN login. Tried twice with correct mobile number on file.",
-      "urgency": "high",
       "expected_hand": "2",
       "expected_department": "Access Management",
-      "expected_category": "Access Management",
-      "actual_hand": "2",
-      "actual_department": "Access Management",
-      "actual_category": "Access Management",
-      "classify_source": "gemini",
-      "status": "ROUTED",
-      "latency_sec": 13.26,
-      "agent_ms": {
-        "guardrail": 2,
-        "retrieval": 667,
-        "classifier": 12529,
-        "router": 2,
-        "resolver": 2,
-        "supervisor": 3,
-        "resolution_format": 2
-      },
-      "hand_ok": true,
-      "department_ok": true,
-      "category_ok": true,
-      "security_hand_ok": true,
-      "security_downgrade": false,
-      "pass": true,
-      "notes": "MFA access"
+      "actual_hand": "?",
+      "actual_department": "?",
+      "classify_source": "error",
+      "latency_sec": 0,
+      "agent_ms": {},
+      "pass": false,
+      "error": "The read operation timed out"
     },
     {
       "case_id": "DM18",
@@ -726,14 +697,14 @@
       "actual_category": "Security",
       "classify_source": "keyword",
       "status": "ESCALATED",
-      "latency_sec": 0.72,
+      "latency_sec": 0.82,
       "agent_ms": {
-        "guardrail": 3,
-        "retrieval": 624,
+        "guardrail": 4,
+        "retrieval": 743,
         "classifier": 3,
-        "router": 3,
-        "supervisor": 4,
-        "resolution_format": 5
+        "router": 4,
+        "supervisor": 3,
+        "resolution_format": 2
       },
       "hand_ok": true,
       "department_ok": true,
@@ -756,15 +727,15 @@
       "actual_category": "Infrastructure",
       "classify_source": "gemini",
       "status": "ROUTED",
-      "latency_sec": 15.49,
+      "latency_sec": 39.39,
       "agent_ms": {
         "guardrail": 3,
-        "retrieval": 666,
-        "classifier": 3266,
+        "retrieval": 607,
+        "classifier": 24146,
         "router": 5,
-        "resolver": 11483,
-        "supervisor": 3,
-        "resolution_format": 3
+        "resolver": 14552,
+        "supervisor": 5,
+        "resolution_format": 5
       },
       "hand_ok": true,
       "department_ok": true,
@@ -787,15 +758,15 @@
       "actual_category": "Storage",
       "classify_source": "keyword",
       "status": "ROUTED",
-      "latency_sec": 16.82,
+      "latency_sec": 47.53,
       "agent_ms": {
-        "guardrail": 4,
-        "retrieval": 716,
-        "classifier": 5514,
-        "router": 4,
-        "resolver": 10500,
-        "supervisor": 4,
-        "resolution_format": 7
+        "guardrail": 3,
+        "retrieval": 643,
+        "classifier": 5821,
+        "router": 6,
+        "resolver": 40965,
+        "supervisor": 6,
+        "resolution_format": 4
       },
       "hand_ok": true,
       "department_ok": false,

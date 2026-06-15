@@ -1,25 +1,25 @@
-# SAARTHI Demo20 — Jury Demo Self-Evaluation
+# SAARTHI Final50 — Final Self-Evaluation Report
 
-**Generated:** 2026-06-15T12:04:08.370830+00:00
+**Generated:** 2026-06-15T15:18:59.963860+00:00
 
 ## Executive summary
 
 | Metric | Value |
 |--------|-------|
-| **Routing pass rate** | **13/20 (65%)** |
-| **Grand score** | **69.3/100** |
-| **Department macro-F1** | 0.595 |
-| **Security H3 correct** | 3/3 |
-| **Avg latency** | 18.41s (p50 15.09s, p90 39.39s) |
+| **Routing pass rate** | **47/50 (94%)** |
+| **Grand score** | **91.1/100** |
+| **Department macro-F1** | 0.924 |
+| **Security H3 correct** | 5/5 |
+| **Avg latency** | 13.95s (p50 16.96s, p90 25.25s) |
 | **UI smoke** | PASS |
 
 ## LLM jury
 
-- **Overall:** 7/10 (gemini)
-- **Verdict:** SAARTHI ITSM demonstrates a promising foundation for automated ticket routing and classification, though further refinement in accuracy and robustness is needed.
-- **Responsible AI:** 7
-- **Ethical AI:** 7
-- **Security posture:** 7
+- **Overall:** 9/10 (gemini)
+- **Verdict:** SAARTHI ITSM demonstrates exceptional performance in ticket routing and classification, underpinned by a robust architecture and flawless handling of security-critical incidents, though latency presents a minor area for optimization.
+- **Responsible AI:** 8
+- **Ethical AI:** 8
+- **Security posture:** 10
 
 ## Responsible AI / security checklist
 
@@ -39,27 +39,27 @@
 
 ## Classify source mix
 
-- **error:** 2
-- **gemini:** 10
-- **keyword:** 7
-- **rag:** 1
+- **gemini:** 34
+- **keyword:** 13
+- **rag:** 3
+
+## Gemini API usage
+
+- **Tickets with Gemini:** 50/50
+- **Model usage:** {'gemini-embedding-001': 50, 'gemini-2.5-flash': 45}
 
 ## Per-agent timing (avg ms)
 
-- **classifier:** 7959ms
-- **guardrail:** 5ms
+- **classifier:** 4125ms
+- **guardrail:** 3ms
 - **resolution_format:** 3ms
-- **resolver:** 12394ms
-- **retrieval:** 709ms
-- **router:** 4ms
+- **resolver:** 10067ms
+- **retrieval:** 669ms
+- **router:** 3ms
 - **supervisor:** 4ms
 
-## Failures (7)
+## Failures (3)
 
-- DM05: expected Application / H2, got ? / H?
-- DM07: expected Network / H2, got Access Management / H2
-- DM13: expected Infrastructure / H2, got Application / H2
-- DM15: expected Application / H1, got Infrastructure / H2
-- DM16: expected Network / H2, got SecOps / H3
-- DM17: expected Access Management / H2, got ? / H?
-- DM20: expected Database / H2, got Storage / H2
+- AM08: expected Network / H2, got Access Management / H2
+- TS01: expected Application / H2, got Infrastructure / H2
+- TS02: expected Application / H2, got Infrastructure / H2
